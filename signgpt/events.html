@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events &amp; Resources — SignGPT</title>
+  <meta name="description" content="Events, workshops, outreach activities, and open resources from the SignGPT EPSRC Programme Grant." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ---- Event cards ---- */
+    .event-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      transition: box-shadow var(--transition), border-color var(--transition);
+      margin-bottom: 14px;
+    }
+    .event-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--gray-400);
+    }
+    .event-cal {
+      flex-shrink: 0;
+      width: 64px;
+      text-align: center;
+      background: var(--gray-100);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 4px;
+    }
+    .ec-month {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--gray-500);
+    }
+    .ec-day {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      color: var(--black);
+      line-height: 1.1;
+    }
+    .ec-year {
+      font-size: 0.62rem;
+      color: var(--gray-400);
+      font-weight: 500;
+    }
+    .event-body { flex: 1; }
+    .event-title-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 4px;
+      line-height: 1.35;
+      letter-spacing: -.01em;
+    }
+    .event-host {
+      font-size: 0.82rem;
+      color: var(--gray-500);
+      margin-bottom: 10px;
+    }
+    .event-desc {
+      font-size: 0.875rem;
+      color: var(--gray-700);
+      line-height: 1.7;
+      max-width: 70ch;
+      margin-bottom: 14px;
+    }
+    .event-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* ---- Resource cards ---- */
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    @media (max-width: 768px) {
+      .resource-grid { grid-template-columns: 1fr; }
+    }
+    .resource-card {
+      background: var(--surface);
+      padding: 28px 24px;
+      transition: background var(--transition);
+    }
+    .resource-card:hover { background: var(--gray-50); }
+    .res-icon {
+      font-size: 1.5rem;
+      margin-bottom: 14px;
+      color: var(--gray-700);
+      display: block;
+    }
+    .res-type {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--gray-400);
+      margin-bottom: 6px;
+    }
+    .res-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -.01em;
+    }
+    .res-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: none;
+      margin-bottom: 16px;
+    }
+
+    /* ---- Past events table ---- */
+    .past-event-list { display: flex; flex-direction: column; }
+    .past-event-row {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .past-event-row:last-child { border-bottom: none; }
+    .past-event-date {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gray-400);
+      min-width: 72px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding-top: 3px;
+      flex-shrink: 0;
+    }
+    .past-event-info { flex: 1; }
+    .past-event-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--black);
+      margin-bottom: 3px;
+    }
+    .past-event-venue { font-size: 0.82rem; color: var(--gray-500); }
+
+    /* ---- Outreach note ---- */
+    .outreach-box {
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+    }
+    .outreach-box p { font-size: 0.9rem; color: var(--gray-700); line-height: 1.75; max-width: 72ch; }
+    .outreach-box p + p { margin-top: .75em; }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav class="nav" role="navigation">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      Sign<span style="color:var(--indigo)">GPT</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="team.html">Team</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="../index.html" style="color:var(--gray-400); font-size:0.82rem;">← CogVis Lab</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+  <div class="container page-header-inner">
+    <div class="page-header-eyebrow">SignGPT · EPSRC Programme Grant</div>
+    <h1>Events &amp; Resources</h1>
+    <p>
+      Workshops, invited talks, community outreach activities, and open resources
+      produced by the SignGPT programme.
+    </p>
+  </div>
+</div>
+
+<!-- ========== UPCOMING EVENTS ========== -->
+<section class="section" style="padding-bottom:56px; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:28px;">
+      <span class="section-eyebrow">Programme Activities</span>
+      <h2 class="section-title">Upcoming &amp; Recent Events</h2>
+      <p class="section-desc">
+        Academic events, workshops, and public engagement activities associated with the
+        SignGPT programme. All events where possible are made accessible in BSL.
+      </p>
+    </div>
+
+    <!-- Event 1 -->
+    <div class="event-card reveal">
+      <div class="event-cal">
+        <div class="ec-month">Dec</div>
+        <div class="ec-day">10</div>
+        <div class="ec-year">2025</div>
+      </div>
+      <div class="event-body">
+        <div class="event-title-text">
+          AI for Sign Language Translation, Production &amp; Linguistics
+        </div>
+        <div class="event-host">
+          <i class="fas fa-building" style="margin-right:4px;"></i>
+          British Machine Vision Association (BMVA) &amp; Society for Pattern Recognition —
+          One-Day Technical Meeting, London
+        </div>
+        <p class="event-desc">
+          A full-day scientific meeting bringing together researchers working on AI and
+          sign language from across Europe. Topics include continuous sign language recognition,
+          gloss-free translation, avatar-based production, and linguistic evaluation.
+          The event is fully accessible in British Sign Language.
+        </p>
+        <div class="event-tags">
+          <span class="badge badge-green">BSL Accessible</span>
+          <span class="badge badge-indigo">Workshop</span>
+          <span class="badge">Computer Vision</span>
+          <span class="badge">NLP</span>
+        </div>
+        <div style="margin-top:14px;">
+          <a href="https://www.bmva.org/meetings/25-12-10-Sign.html" target="_blank" rel="noopener"
+             class="btn btn-outline btn-sm">
+            <i class="fas fa-up-right-from-square"></i> Event details
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event 2 -->
+    <div class="event-card reveal">
+      <div class="event-cal">
+        <div class="ec-month">Dec</div>
+        <div class="ec-day">9</div>
+        <div class="ec-year">2025</div>
+      </div>
+      <div class="event-body">
+        <div class="event-title-text">
+          Deaf in AI &amp; Technology Workshop
+        </div>
+        <div class="event-host">
+          <i class="fas fa-building" style="margin-right:4px;"></i>
+          DCAL Research Centre, University College London
+        </div>
+        <p class="event-desc">
+          A multidisciplinary workshop bringing together researchers, technologists, and
+          Deaf community members to discuss the opportunities and challenges of AI for
+          Deaf accessibility. Organised by UCL DCAL, a core partner of the SignGPT programme.
+          Includes presentations from SignGPT investigators.
+        </p>
+        <div class="event-tags">
+          <span class="badge badge-green">Community</span>
+          <span class="badge badge-indigo">Workshop</span>
+          <span class="badge">Accessibility</span>
+        </div>
+        <div style="margin-top:14px;">
+          <a href="https://www.ucl.ac.uk/brain-sciences/deafness-cognition-and-language-research-centre-dcal/deaf-ai-and-technology-workshop"
+             target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+            <i class="fas fa-up-right-from-square"></i> Workshop archive
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:0.84rem; color:var(--gray-400); margin-top:10px;">
+      <i class="fas fa-circle-info" style="margin-right:4px;"></i>
+      More events will be announced on the
+      <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener">official project site</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ========== PAST EVENTS ========== -->
+<section class="section" style="padding-top:56px; padding-bottom:56px; background:var(--gray-50); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:24px;">
+      <span class="section-eyebrow">Archive</span>
+      <h2 class="section-title" style="font-size:1.3rem;">Past Presentations &amp; Invited Talks</h2>
+    </div>
+    <div class="past-event-list">
+      <div class="past-event-row reveal">
+        <div class="past-event-date">2025</div>
+        <div class="past-event-info">
+          <div class="past-event-title">SignGPT Programme Launch</div>
+          <div class="past-event-venue">
+            University of Surrey, CVSSP — Internal launch event; community partnerships activated.
+          </div>
+        </div>
+        <span class="badge">Internal</span>
+      </div>
+      <div class="past-event-row reveal">
+        <div class="past-event-date">Ongoing</div>
+        <div class="past-event-info">
+          <div class="past-event-title">Invited Seminar Series: AI and Sign Language</div>
+          <div class="past-event-venue">
+            University of Surrey, CVSSP — periodic invited seminars on BSL technology and linguistics.
+          </div>
+        </div>
+        <span class="badge">Seminar</span>
+      </div>
+    </div>
+    <p style="font-size:0.84rem; color:var(--gray-400); margin-top:20px;">
+      A full event archive will be maintained here throughout the grant period.
+    </p>
+  </div>
+</section>
+
+<!-- ========== OPEN RESOURCES ========== -->
+<section class="section" id="resources" style="padding-top:56px; padding-bottom:56px; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:28px;">
+      <span class="section-eyebrow">Open Access</span>
+      <h2 class="section-title">Resources</h2>
+      <p class="section-desc">
+        Open tools, educational materials, and lexical resources produced by the SignGPT
+        programme, freely available to the research community and the public.
+      </p>
+    </div>
+    <div class="resource-grid">
+
+      <div class="resource-card reveal">
+        <span class="res-icon"><i class="fas fa-toolbox"></i></span>
+        <div class="res-type">Software Toolkit</div>
+        <div class="res-title">Visual Language Toolkit (VLT)</div>
+        <p class="res-desc">
+          An open-source Python toolkit for processing and analysing sign language video.
+          Components include hand and body tracking, face analysis (expression, gaze,
+          mouthing), phonological parameter extraction, and sign spotting, all built
+          on the SignGPT visual backbone.
+        </p>
+        <span class="badge">Release: forthcoming</span>
+      </div>
+
+      <div class="resource-card reveal">
+        <span class="res-icon"><i class="fas fa-book"></i></span>
+        <div class="res-type">Educational Resource</div>
+        <div class="res-title">AI Glossary of Terms in BSL</div>
+        <p class="res-desc">
+          A community-developed, expert-reviewed glossary of artificial intelligence and
+          computing terminology translated into British Sign Language. Co-created with Deaf
+          advisors to support accessible communication about AI research and to establish
+          agreed signs for emerging technical vocabulary.
+        </p>
+        <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener"
+           class="btn btn-outline btn-xs">
+          View on official site →
+        </a>
+      </div>
+
+      <div class="resource-card reveal">
+        <span class="res-icon"><i class="fas fa-circle-play"></i></span>
+        <div class="res-type">Explainer</div>
+        <div class="res-title">What is AI? — English &amp; BSL</div>
+        <p class="res-desc">
+          Bilingual explainer content presenting key concepts in artificial intelligence
+          in both English and British Sign Language. Aimed at broadening AI literacy
+          among Deaf audiences and demonstrating the project's commitment to accessible
+          public engagement.
+        </p>
+        <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener"
+           class="btn btn-outline btn-xs">
+          View on official site →
+        </a>
+      </div>
+
+      <div class="resource-card reveal">
+        <span class="res-icon"><i class="fas fa-database"></i></span>
+        <div class="res-type">Dataset</div>
+        <div class="res-title">BSL Video Corpus (v1)</div>
+        <p class="res-desc">
+          A large-scale, multi-source BSL video corpus collected under the programme.
+          Includes broadcast material, educational video, and community-contributed
+          recordings, with partial phonological and semantic annotation.
+          Largest publicly available annotated BSL corpus.
+        </p>
+        <span class="badge">Release: forthcoming</span>
+      </div>
+
+      <div class="resource-card reveal">
+        <span class="res-icon"><i class="fas fa-clipboard-check"></i></span>
+        <div class="res-type">Benchmark</div>
+        <div class="res-title">BSL Translation Benchmark</div>
+        <p class="res-desc">
+          Standardised test sets and evaluation scripts for continuous BSL-to-English
+          translation, with linguistically informed metrics that go beyond BLEU —
+          including spatial grammar adequacy and non-manual feature retention scores.
+        </p>
+        <span class="badge">Release: forthcoming</span>
+      </div>
+
+      <div class="resource-card reveal">
+        <span class="res-icon"><i class="fas fa-code"></i></span>
+        <div class="res-type">Code</div>
+        <div class="res-title">SignGPT Model Weights &amp; Code</div>
+        <p class="res-desc">
+          Pre-trained model weights, training scripts, and inference code for the
+          SignGPT transformer, to be released progressively as papers are published
+          under open-source licences on GitHub.
+        </p>
+        <span class="badge">Release: forthcoming</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========== OUTREACH ========== -->
+<section class="section" style="padding-top:56px; padding-bottom:72px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:28px;">
+      <span class="section-eyebrow">Public Engagement</span>
+      <h2 class="section-title" style="font-size:1.3rem;">Outreach &amp; Community Engagement</h2>
+    </div>
+    <div class="outreach-box reveal">
+      <p>
+        The SignGPT programme has a strong commitment to public engagement and to keeping
+        the Deaf community at the centre of its work. This means going beyond passive
+        consultation: Deaf advisors and community organisation partners are involved in
+        research design, and our public engagement activities are co-created with
+        Deaf presenters and communicators.
+      </p>
+      <p>
+        We run regular public events — including school visits, science fairs, and
+        Deaf community open days — to explain the research and gather community input.
+        All public-facing materials from the programme are produced bilingually in
+        English and BSL. The AI Glossary and "What is AI?" explainer are examples
+        of this bilingual-first approach.
+      </p>
+      <p>
+        If you would like to invite a member of the SignGPT team to speak at your event,
+        or would like to partner with the programme on community engagement activities,
+        please contact <a href="mailto:s.emery@surrey.ac.uk"><strong>Dr. Steven Emery</strong></a>
+        (Programme Manager) at s.emery@surrey.ac.uk.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Sign<span style="color:#818cf8">GPT</span></div>
+        <p class="footer-desc">
+          EPSRC Programme Grant 2025–2031<br />
+          Centre for Vision, Speech and Signal Processing<br />
+          University of Surrey, Guildford, GU2 7XH
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <div class="footer-links">
+          <a href="index.html">Overview</a>
+          <a href="research.html">Research</a>
+          <a href="team.html">Team</a>
+          <a href="publications.html">Publications</a>
+          <a href="events.html">Events</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-links">
+          <a href="mailto:r.bowden@surrey.ac.uk">r.bowden@surrey.ac.uk</a>
+          <a href="mailto:s.emery@surrey.ac.uk">s.emery@surrey.ac.uk</a>
+          <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener">Official Site ↗</a>
+          <a href="../index.html">← CogVis Lab</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025–2031 SignGPT Programme. Funded by UKRI EPSRC.</span>
+      <span class="footer-copy">University of Surrey</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

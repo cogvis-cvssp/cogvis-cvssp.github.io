@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research — SignGPT</title>
+  <meta name="description" content="The four research pillars of the SignGPT EPSRC Programme Grant: visual sign understanding, generative modelling, BSL linguistics integration, and community co-design." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .pillar-anchor { scroll-margin-top: 80px; }
+
+    .pillar-block {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .pillar-block:last-child { border-bottom: none; }
+
+    .pillar-header {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+    .pillar-num-badge {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: var(--black);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .pillar-meta { flex: 1; }
+    .pillar-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 4px;
+    }
+    .pillar-title-main {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 0;
+    }
+
+    .pillar-body {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .pillar-body { grid-template-columns: 1fr; gap: 28px; }
+    }
+
+    .pillar-text p {
+      font-size: 0.975rem;
+      line-height: 1.82;
+      color: var(--gray-700);
+      margin-bottom: 1em;
+      max-width: 68ch;
+    }
+    .pillar-text p:last-child { margin-bottom: 0; }
+
+    .pillar-sidebar {
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+    }
+    .sidebar-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--gray-400);
+      margin-bottom: 14px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: var(--gray-700);
+      line-height: 1.5;
+    }
+    .sidebar-item:last-child { margin-bottom: 0; }
+    .sidebar-item i {
+      color: var(--gray-400);
+      margin-top: 2px;
+      flex-shrink: 0;
+      width: 14px;
+    }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 24px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: var(--border);
+    }
+    .tl-item {
+      position: relative;
+      padding: 0 0 32px 24px;
+    }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--black);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 1px var(--black);
+    }
+    .tl-year {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--indigo);
+      margin-bottom: 4px;
+    }
+    .tl-heading { font-weight: 700; font-size: 0.92rem; margin-bottom: 4px; }
+    .tl-desc { font-size: 0.875rem; color: var(--gray-600); line-height: 1.65; max-width: 65ch; }
+
+    /* Novelty table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .comparison-table thead {
+      background: var(--gray-50);
+    }
+    .comparison-table th {
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.72rem;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .comparison-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      color: var(--gray-700);
+      vertical-align: middle;
+    }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr.highlight td {
+      background: var(--gray-50);
+      font-weight: 600;
+      color: var(--black);
+    }
+    .comparison-table tr.highlight td:first-child {
+      border-left: 3px solid var(--black);
+    }
+    .check { color: #15803d; font-weight: 700; }
+    .cross { color: #be123c; font-weight: 700; }
+    .partial { color: #a16207; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav class="nav" role="navigation">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      Sign<span style="color:var(--indigo)">GPT</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html" class="active">Research</a></li>
+      <li><a href="team.html">Team</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="../index.html" style="color:var(--gray-400); font-size:0.82rem;">← CogVis Lab</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+  <div class="container page-header-inner">
+    <div class="page-header-eyebrow">SignGPT · EPSRC Programme Grant</div>
+    <h1>Research</h1>
+    <p>
+      Four tightly integrated pillars spanning visual sign understanding, generative modelling,
+      linguistic grounding, and community co-design — working toward unconstrained,
+      bidirectional BSL–English translation.
+    </p>
+  </div>
+</div>
+
+<!-- ========== MOTIVATION ========== -->
+<section class="section" style="padding-top:56px; padding-bottom:48px; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:1fr 2fr; gap:56px; align-items:start;">
+      <div>
+        <span class="section-eyebrow">Motivation</span>
+        <h2 style="font-size:1.25rem; margin-top:8px;">Why BSL Needs a New Approach</h2>
+      </div>
+      <div>
+        <p style="font-size:0.975rem; line-height:1.82; color:var(--gray-700); max-width:70ch; margin-bottom:1em;">
+          British Sign Language is the primary language of approximately 87,000 Deaf people in the
+          United Kingdom. Despite being a recognised minority language with its own grammar,
+          phonology, and discourse structure, BSL remains severely underserved by existing
+          natural language technology. Most current systems either require constraining signers
+          to a predefined vocabulary, rely on explicit gloss annotations as an intermediate
+          representation, or operate only in the isolated-sign regime.
+        </p>
+        <p style="font-size:0.975rem; line-height:1.82; color:var(--gray-700); max-width:70ch; margin-bottom:1.5em;">
+          The core hypothesis of SignGPT is that the limitations of prior work stem from an
+          architectural mismatch: treating sign language as a structured sequence of discrete
+          symbols, rather than as a spatiotemporal, multi-channel signal governed by a rich
+          generative grammar. A truly generative model — one that learns to predict the next
+          visual token given linguistic context — can overcome these limitations.
+        </p>
+        <div style="overflow-x:auto; margin-top:1rem;">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Capability</th>
+                <th>Vocabulary-constrained</th>
+                <th>Gloss-mediated</th>
+                <th>SignGPT (target)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Unconstrained vocabulary</td>
+                <td class="cross">✗</td>
+                <td class="partial">~</td>
+                <td class="check">✓</td>
+              </tr>
+              <tr>
+                <td>Gloss-free translation</td>
+                <td class="cross">✗</td>
+                <td class="cross">✗</td>
+                <td class="check">✓</td>
+              </tr>
+              <tr>
+                <td>Bidirectional (BSL↔English)</td>
+                <td class="cross">✗</td>
+                <td class="partial">~</td>
+                <td class="check">✓</td>
+              </tr>
+              <tr>
+                <td>Non-manual features</td>
+                <td class="cross">✗</td>
+                <td class="partial">~</td>
+                <td class="check">✓</td>
+              </tr>
+              <tr>
+                <td>Spatial grammar</td>
+                <td class="cross">✗</td>
+                <td class="cross">✗</td>
+                <td class="check">✓</td>
+              </tr>
+              <tr class="highlight">
+                <td>Generative production</td>
+                <td class="cross">✗</td>
+                <td class="partial">Limited</td>
+                <td class="check">✓</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.8rem; color:var(--gray-500); margin-top:8px;">
+          Table 1. Comparison of architectural approaches to BSL translation.
+          ✓ = fully addressed; ~ = partially; ✗ = not addressed.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PILLAR 1 ========== -->
+<section class="section" id="pillar-1" style="padding-top:0; padding-bottom:0; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="pillar-block pillar-anchor">
+      <div class="pillar-header">
+        <div class="pillar-num-badge">P1</div>
+        <div class="pillar-meta">
+          <div class="pillar-eyebrow">Pillar One</div>
+          <h2 class="pillar-title-main">Visual Sign Understanding</h2>
+        </div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-text">
+          <p>
+            The first pillar addresses the fundamental perceptual challenge: extracting
+            linguistically meaningful representations from raw BSL video. A signer communicates
+            simultaneously through hand shape (<em>handshape</em>), hand position relative to the
+            body and signing space (<em>location</em>), direction and speed of movement
+            (<em>movement</em>), palm/finger orientation, and a range of non-manual articulators
+            — facial expression, eye gaze, mouth patterns, and head position.
+          </p>
+          <p>
+            Existing visual backbones were designed for action recognition and are poorly suited
+            to this multi-channel, fine-grained signal. SignGPT will develop purpose-built video
+            encoders that factorize the sign stream into its phonological parameters, enabling
+            the downstream transformer to reason at the appropriate level of linguistic
+            abstraction. Pre-training will be conducted on a newly collected, large-scale BSL
+            corpus drawn from broadcast media and community-contributed recordings.
+          </p>
+          <p>
+            A key research challenge is handling the continuous, co-articulated nature of
+            natural signing: signs blur into one another without clear boundaries, and many
+            sign classes differ only in subtle spatial or kinematic details. We will investigate
+            learned temporal segmentation, phoneme-level tokenisation, and self-supervised
+            objectives derived from BSL linguistic structure.
+          </p>
+        </div>
+        <div class="pillar-sidebar">
+          <div class="sidebar-label">Key Research Questions</div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>What visual representations best capture the phonological parameters of BSL?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>How can non-manual articulators be jointly modelled with manual signs?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>What self-supervised objectives leverage BSL linguistic structure during pre-training?</span>
+          </div>
+          <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+            <div class="sidebar-label">Techniques</div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <span class="badge badge-indigo">Video transformers</span>
+              <span class="badge">Phonological tokenisation</span>
+              <span class="badge">Self-supervised pre-training</span>
+              <span class="badge">Pose estimation</span>
+              <span class="badge badge-indigo">Face analysis</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PILLAR 2 ========== -->
+<section class="section" id="pillar-2" style="padding-top:0; padding-bottom:0; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="pillar-block pillar-anchor">
+      <div class="pillar-header">
+        <div class="pillar-num-badge">P2</div>
+        <div class="pillar-meta">
+          <div class="pillar-eyebrow">Pillar Two</div>
+          <h2 class="pillar-title-main">Generative Sign Language Modelling</h2>
+        </div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-text">
+          <p>
+            The centrepiece of SignGPT is a novel <strong>generative predictive transformer</strong>
+            trained to model the joint distribution over visual sign tokens and their linguistic
+            meaning. Inspired by the success of large language models for spoken language —
+            which learn by predicting the next token — our architecture extends this paradigm
+            to the visual-linguistic domain of sign language.
+          </p>
+          <p>
+            The model operates on a discrete codebook of visual sign tokens produced by the
+            Pillar 1 encoder. At inference time, it can be conditioned on English text to
+            generate a sequence of sign tokens (production), or conditioned on a sign token
+            sequence to decode English (translation). This unified architecture avoids the
+            asymmetry of separate recognition and production systems and enables joint training
+            on heterogeneous data sources — annotated BSL video, unannotated BSL broadcast
+            material, and parallel text corpora.
+          </p>
+          <p>
+            Bidirectional training is central to our approach: a model that can produce
+            plausible BSL from English has, by necessity, learned a generative model of BSL
+            structure, which in turn improves translation accuracy. We will investigate
+            scaling laws for this class of models, the effect of visual token vocabulary size,
+            and methods for conditioning on speaker identity and register.
+          </p>
+        </div>
+        <div class="pillar-sidebar">
+          <div class="sidebar-label">Key Research Questions</div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>Can a single generative transformer achieve state-of-the-art performance on both BSL recognition and production?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>How does visual token vocabulary size affect translation quality and production diversity?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>What scaling laws apply to sign language generative models?</span>
+          </div>
+          <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+            <div class="sidebar-label">Techniques</div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <span class="badge badge-indigo">Generative transformers</span>
+              <span class="badge">Visual tokenisation (VQ-VAE)</span>
+              <span class="badge">Seq2Seq pre-training</span>
+              <span class="badge">Cross-modal alignment</span>
+              <span class="badge badge-indigo">Large-scale pre-training</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PILLAR 3 ========== -->
+<section class="section" id="pillar-3" style="padding-top:0; padding-bottom:0; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="pillar-block pillar-anchor">
+      <div class="pillar-header">
+        <div class="pillar-num-badge">P3</div>
+        <div class="pillar-meta">
+          <div class="pillar-eyebrow">Pillar Three</div>
+          <h2 class="pillar-title-main">BSL Linguistics Integration</h2>
+        </div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-text">
+          <p>
+            BSL is a full natural language with its own distinct grammar — it is not a manual
+            encoding of English. Its grammatical devices include use of three-dimensional signing
+            space to establish referents, classify predicates that indicate shape, size, and
+            movement of objects, and a topic-comment discourse structure. Non-manual articulators
+            carry essential grammatical information: raised eyebrows mark yes/no questions;
+            furrowed brows mark wh-questions; backward head tilt marks rhetorical questions.
+          </p>
+          <p>
+            The Pillar 3 work, led by linguists at UCL DCAL, ensures that the transformer
+            architecture is informed by — and evaluated against — this rich structural knowledge.
+            Specific contributions include: (i) a formal computational specification of BSL
+            spatial grammar suitable for neural grounding; (ii) annotated training data capturing
+            classifier predicates and agreement verbs; (iii) linguistically motivated evaluation
+            metrics that go beyond surface BLEU scores.
+          </p>
+          <p>
+            This pillar also addresses the question of variation within BSL — regional dialects,
+            age-related variation, and differences between Deaf and hearing signers — ensuring
+            that the system is robust and inclusive rather than trained to a narrow standard.
+          </p>
+        </div>
+        <div class="pillar-sidebar">
+          <div class="sidebar-label">Key Research Questions</div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>How can spatial grammar be represented in a differentiable, learnable form?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>What evaluation metrics capture linguistic adequacy beyond BLEU and ROUGE?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>How should the model handle dialectal variation within BSL?</span>
+          </div>
+          <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+            <div class="sidebar-label">Techniques</div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <span class="badge badge-indigo">Formal grammar formalisms</span>
+              <span class="badge">Annotation tooling</span>
+              <span class="badge">Classifier predicate modelling</span>
+              <span class="badge">Discourse structure</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PILLAR 4 ========== -->
+<section class="section" id="pillar-4" style="padding-top:0; padding-bottom:0; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="pillar-block pillar-anchor">
+      <div class="pillar-header">
+        <div class="pillar-num-badge">P4</div>
+        <div class="pillar-meta">
+          <div class="pillar-eyebrow">Pillar Four</div>
+          <h2 class="pillar-title-main">Community Co-Design &amp; Evaluation</h2>
+        </div>
+      </div>
+      <div class="pillar-body">
+        <div class="pillar-text">
+          <p>
+            Technical excellence alone does not guarantee that an AI system serves the
+            community it is intended to benefit. Pillar 4 embeds Deaf community participation
+            throughout the programme — not as a downstream validation step, but as a
+            co-design activity that shapes research questions, dataset construction, and
+            evaluation criteria from the outset.
+          </p>
+          <p>
+            We work with the British Deaf Association (BDA), the Royal Association of the Deaf
+            (RAD), and BSL Broadcasting Trust (BSLBT / LumoTV) to co-create recording protocols,
+            annotation guidelines, and test sets that reflect the diversity of BSL usage. An
+            Advisory Board including representatives from these organisations, BBC R&amp;D,
+            Microsoft Munich, and leading European sign language research groups provides
+            programme-level oversight and strategic input.
+          </p>
+          <p>
+            Evaluation extends beyond automatic metrics to structured Deaf-user studies measuring
+            intelligibility, naturalness, and communicative adequacy of system outputs.
+            Community feedback is integrated into each major development cycle, creating a
+            continuous co-design loop between researchers and end users.
+          </p>
+        </div>
+        <div class="pillar-sidebar">
+          <div class="sidebar-label">Key Research Questions</div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>How should Deaf community members be meaningfully included at each stage of the research cycle?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>What user-centred evaluation protocols best measure real-world communicative utility?</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-circle-dot"></i>
+            <span>How can dataset collection be designed to be inclusive of BSL's linguistic diversity?</span>
+          </div>
+          <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+            <div class="sidebar-label">Partners</div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+              <span class="badge badge-green">BDA</span>
+              <span class="badge badge-green">RAD</span>
+              <span class="badge badge-green">BSLBT / LumoTV</span>
+              <span class="badge">BBC R&D</span>
+              <span class="badge">Microsoft Munich</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ROADMAP ========== -->
+<section class="section" style="border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:40px;">
+      <span class="section-eyebrow">Programme Timeline</span>
+      <h2 class="section-title">Research Roadmap</h2>
+      <p class="section-desc">
+        Key milestones across the six-year programme, structured around the four research pillars.
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 2fr; gap:56px; align-items:start;">
+      <div style="background:var(--gray-50); border:1px solid var(--border); border-radius:var(--radius); padding:24px 20px;">
+        <div class="sidebar-label">Programme Phases</div>
+        <div class="sidebar-item" style="margin-bottom:14px;">
+          <i class="fas fa-layer-group" style="color:var(--indigo);"></i>
+          <span><strong>Phase I (Y1–2):</strong> Foundations &amp; corpus collection</span>
+        </div>
+        <div class="sidebar-item" style="margin-bottom:14px;">
+          <i class="fas fa-layer-group" style="color:var(--indigo);"></i>
+          <span><strong>Phase II (Y3–4):</strong> Model training &amp; benchmarks</span>
+        </div>
+        <div class="sidebar-item" style="margin-bottom:14px;">
+          <i class="fas fa-layer-group" style="color:var(--indigo);"></i>
+          <span><strong>Phase III (Y5–6):</strong> Integration &amp; pilot deployment</span>
+        </div>
+        <div class="sidebar-item">
+          <i class="fas fa-flag-checkered"></i>
+          <span><strong>Completion (2031):</strong> Legacy &amp; policy outputs</span>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-year">2025 — Programme Launch</div>
+          <div class="tl-heading">Infrastructure &amp; team onboarding</div>
+          <div class="tl-desc">
+            All three partner sites activated; initial PhD and postdoctoral recruitment;
+            community partnership agreements established with BDA, RAD, and BSLBT;
+            corpus collection protocols agreed with linguistic advisors.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2026 — Phase I Milestones</div>
+          <div class="tl-heading">BSL corpus v1 &amp; visual backbone pre-training</div>
+          <div class="tl-desc">
+            First large-scale BSL corpus release; phonological tokeniser trained and
+            benchmarked; Pillar 3 annotation schema finalised; community co-design
+            workshops completed across all Deaf organisation partners.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2027–2028 — Phase II Milestones</div>
+          <div class="tl-heading">Generative transformer training &amp; evaluation benchmarks</div>
+          <div class="tl-desc">
+            First generation of the SignGPT transformer trained at scale; new BSL
+            translation and production benchmarks released; Deaf-user evaluation study 1
+            conducted; Pillar 3 linguistic evaluation framework published.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2029–2030 — Phase III Milestones</div>
+          <div class="tl-heading">End-to-end system &amp; community pilots</div>
+          <div class="tl-desc">
+            Bidirectional BSL–English system integrated into pilot accessibility
+            applications with BDA and BSLBT; production avatar system released;
+            open-source model weights and toolkit published.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2031 — Completion</div>
+          <div class="tl-heading">Legacy outputs, open datasets &amp; policy recommendations</div>
+          <div class="tl-desc">
+            Final programme report; open release of all datasets, benchmarks, and
+            model weights; policy white paper on AI for Deaf accessibility;
+            roadmap for continued community-led development beyond the grant.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DATA & BENCHMARKS ========== -->
+<section class="section" style="padding-bottom:72px;">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:36px;">
+      <span class="section-eyebrow">Infrastructure</span>
+      <h2 class="section-title">Data &amp; Benchmarks</h2>
+      <p class="section-desc">
+        New large-scale corpora and evaluation benchmarks co-designed with the Deaf community,
+        to be released openly throughout the programme.
+      </p>
+    </div>
+    <div class="area-grid" style="grid-template-columns:repeat(3, 1fr);">
+      <div class="area-card">
+        <div class="area-num">Corpus</div>
+        <div class="area-name">Large-Scale BSL Video Corpus</div>
+        <p class="area-desc">
+          A new multi-source BSL corpus drawn from broadcast media, educational content,
+          and community-contributed recordings, with partial phonological and semantic
+          annotation. Target: largest annotated BSL corpus to date.
+        </p>
+        <span class="badge" style="margin-top:12px;">Release: forthcoming</span>
+      </div>
+      <div class="area-card">
+        <div class="area-num">Benchmark</div>
+        <div class="area-name">BSL Translation Benchmark</div>
+        <p class="area-desc">
+          A held-out test set for continuous BSL-to-English translation with
+          linguistically informed evaluation metrics, including spatial grammar
+          adequacy and non-manual feature retention, beyond standard BLEU.
+        </p>
+        <span class="badge" style="margin-top:12px;">Release: forthcoming</span>
+      </div>
+      <div class="area-card">
+        <div class="area-num">Toolkit</div>
+        <div class="area-name">Visual Language Toolkit (VLT)</div>
+        <p class="area-desc">
+          Open-source software for BSL video processing: hand tracking, face analysis,
+          phonological parameter extraction, and sign spotting, built on the
+          SignGPT visual backbone.
+        </p>
+        <a href="events.html#resources" class="btn btn-outline btn-xs" style="margin-top:12px; display:inline-flex;">
+          Learn more →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Sign<span style="color:#818cf8">GPT</span></div>
+        <p class="footer-desc">
+          EPSRC Programme Grant 2025–2031<br />
+          Centre for Vision, Speech and Signal Processing<br />
+          University of Surrey, Guildford, GU2 7XH
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <div class="footer-links">
+          <a href="index.html">Overview</a>
+          <a href="research.html">Research</a>
+          <a href="team.html">Team</a>
+          <a href="publications.html">Publications</a>
+          <a href="events.html">Events</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-links">
+          <a href="mailto:r.bowden@surrey.ac.uk">r.bowden@surrey.ac.uk</a>
+          <a href="mailto:s.emery@surrey.ac.uk">s.emery@surrey.ac.uk</a>
+          <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener">Official Site ↗</a>
+          <a href="../index.html">← CogVis Lab</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025–2031 SignGPT Programme. Funded by UKRI EPSRC.</span>
+      <span class="footer-copy">University of Surrey</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

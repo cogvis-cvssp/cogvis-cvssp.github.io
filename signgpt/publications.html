@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Publications — SignGPT</title>
+  <meta name="description" content="Publications from the SignGPT EPSRC Programme Grant on sign language translation, production, spotting, and linguistic analysis." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .year-header {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--gray-400);
+      margin: 40px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .year-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .year-header:first-child { margin-top: 0; }
+
+    .pub-icon {
+      width: 82px;
+      height: 82px;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: var(--gray-100);
+      border: 1px solid var(--border-soft);
+      color: var(--gray-400);
+    }
+
+    .tba-section {
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-align: center;
+      margin-top: 16px;
+    }
+    .tba-section i { font-size: 2rem; color: var(--gray-300); margin-bottom: 12px; display: block; }
+    .tba-section p { font-size: 0.9rem; color: var(--gray-500); max-width: 48ch; margin: 0 auto; }
+
+    .cite-block {
+      background: var(--black);
+      color: rgba(255,255,255,.75);
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.75;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .filter-btn {
+      padding: 5px 14px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      border-color: var(--black);
+      background: var(--black);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav class="nav" role="navigation">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      Sign<span style="color:var(--indigo)">GPT</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="team.html">Team</a></li>
+      <li><a href="publications.html" class="active">Publications</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="../index.html" style="color:var(--gray-400); font-size:0.82rem;">← CogVis Lab</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+  <div class="container page-header-inner">
+    <div class="page-header-eyebrow">SignGPT · EPSRC Programme Grant</div>
+    <h1>Publications</h1>
+    <p>
+      Research outputs from the SignGPT programme and related prior work by the team.
+      Papers will be added as they are published throughout the grant period (2025–2031).
+    </p>
+  </div>
+</div>
+
+<!-- ========== PUBLICATIONS ========== -->
+<section class="section" style="padding-top:56px; padding-bottom:72px;">
+  <div class="container">
+
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:32px;">
+      <div>
+        <span class="section-eyebrow">Programme Outputs</span>
+        <h2 class="section-title" style="margin-bottom:0; margin-top:6px; font-size:1.3rem;">Research Papers</h2>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <a href="https://scholar.google.com/citations?hl=en&user=mvvgDvcAAAAJ&view_op=list_works&sortby=pubdate"
+           target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+          <i class="fas fa-graduation-cap"></i> Google Scholar
+        </a>
+        <a href="https://sites.google.com/view/signgpt/publications" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+          <i class="fas fa-up-right-from-square"></i> Official list
+        </a>
+      </div>
+    </div>
+
+    <!-- Filter (visual only, no JS filter logic needed as papers are few) -->
+    <div class="filter-row">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Translation</button>
+      <button class="filter-btn">Production</button>
+      <button class="filter-btn">Recognition</button>
+      <button class="filter-btn">Agentic / LLMs</button>
+    </div>
+
+    <!-- ---- 2025 ---- -->
+    <div class="year-header">2025</div>
+    <div class="pub-list">
+
+      <div class="pub-item reveal">
+        <div class="pub-icon"><i class="fas fa-hands-asl-interpreting"></i></div>
+        <div class="pub-body">
+          <div class="pub-title">
+            Geo-Sign: Hyperbolic Contrastive Regularisation for Geometrically Aware Sign Language Translation
+          </div>
+          <div class="pub-authors">
+            <strong>E. Fish</strong>, <strong>R. Bowden</strong>
+          </div>
+          <div class="pub-meta">
+            <span class="venue venue-neurips">NeurIPS 2025</span>
+            <span class="badge">Translation</span>
+          </div>
+          <p style="font-size:0.84rem; color:var(--gray-600); margin-top:8px; max-width:70ch; line-height:1.6;">
+            Introduces hyperbolic geometry as an inductive bias for sign language translation,
+            showing that contrastive regularisation in a Poincaré disk space captures the
+            hierarchical structure of sign language semantics and improves translation quality
+            across four benchmarks.
+          </p>
+        </div>
+        <div class="pub-links">
+          <a href="#" class="btn btn-outline btn-xs"><i class="fas fa-file-pdf"></i> PDF</a>
+          <a href="#" class="btn btn-outline btn-xs"><i class="fab fa-github"></i> Code</a>
+        </div>
+      </div>
+
+      <div class="pub-item reveal">
+        <div class="pub-icon"><i class="fas fa-language"></i></div>
+        <div class="pub-body">
+          <div class="pub-title">
+            Gloss-Free Sign Language Translation: An Unbiased Evaluation of Progress in the Field
+          </div>
+          <div class="pub-authors">
+            <strong>O. Mercanoglu Sincan</strong>, <strong>J.H. Low</strong>,
+            <strong>S. Asasi</strong>, <strong>R. Bowden</strong>
+          </div>
+          <div class="pub-meta">
+            <span class="venue venue-cviu">CVIU 2025</span>
+            <span class="badge">Translation</span>
+          </div>
+          <p style="font-size:0.84rem; color:var(--gray-600); margin-top:8px; max-width:70ch; line-height:1.6;">
+            A systematic, protocol-controlled benchmarking study of gloss-free sign language
+            translation methods, identifying sources of variance in reported results and
+            establishing standardised evaluation conditions for reproducible comparison.
+          </p>
+        </div>
+        <div class="pub-links">
+          <a href="#" class="btn btn-outline btn-xs"><i class="fas fa-file-pdf"></i> PDF</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ---- 2026 (forthcoming) ---- -->
+    <div class="year-header">2026</div>
+    <div class="pub-list">
+
+      <div class="pub-item reveal">
+        <div class="pub-icon"><i class="fas fa-brain"></i></div>
+        <div class="pub-body">
+          <div class="pub-title">
+            SignAgent: Agentic LLMs for Linguistically-Grounded Sign Language Annotation and Dataset Curation
+          </div>
+          <div class="pub-authors">
+            <strong>O. Cory</strong>, <strong>O.M. Sincan</strong>, <strong>R. Bowden</strong>
+          </div>
+          <div class="pub-meta">
+            <span class="venue venue-arxiv">arXiv 2026</span>
+            <span class="badge">Agentic / LLMs</span>
+          </div>
+          <p style="font-size:0.84rem; color:var(--gray-600); margin-top:8px; max-width:70ch; line-height:1.6;">
+            Proposes an agentic LLM pipeline for semi-automatic annotation of sign language
+            corpora, grounded in BSL linguistic theory. Demonstrates substantial reductions
+            in annotation cost while maintaining agreement with expert annotators on
+            phonological and semantic labels.
+          </p>
+        </div>
+        <div class="pub-links">
+          <a href="#" class="btn btn-outline btn-xs"><i class="ai ai-arxiv"></i> arXiv</a>
+        </div>
+      </div>
+
+      <div class="pub-item reveal">
+        <div class="pub-icon"><i class="fas fa-film"></i></div>
+        <div class="pub-body">
+          <div class="pub-title">
+            M3T: Discrete Multi-Modal Motion Tokens for Sign Language Production
+          </div>
+          <div class="pub-authors">
+            <strong>A. Symeonidis-Herzig</strong>, <strong>J. Low</strong>,
+            <strong>O.M. Sincan</strong>, <strong>R. Bowden</strong>
+          </div>
+          <div class="pub-meta">
+            <span class="venue venue-arxiv">arXiv 2026</span>
+            <span class="badge">Production</span>
+          </div>
+          <p style="font-size:0.84rem; color:var(--gray-600); margin-top:8px; max-width:70ch; line-height:1.6;">
+            Introduces a discrete multi-modal codebook for representing sign language motion,
+            enabling high-quality avatar-based sign production via a two-stage tokenise-then-generate
+            pipeline. Outperforms continuous motion regression baselines on naturalness metrics.
+          </p>
+        </div>
+        <div class="pub-links">
+          <a href="#" class="btn btn-outline btn-xs"><i class="ai ai-arxiv"></i> arXiv</a>
+        </div>
+      </div>
+
+      <div class="pub-item reveal">
+        <div class="pub-icon"><i class="fas fa-bolt"></i></div>
+        <div class="pub-body">
+          <div class="pub-title">
+            SignSparK: Efficient Multilingual Sign Language Production via Sparse Keyframe Learning
+          </div>
+          <div class="pub-authors">
+            <strong>J. Low</strong>, <strong>A. Symeonidis-Herzig</strong>,
+            <strong>M. Ivashechkin</strong>, <strong>O.M. Sincan</strong>, <strong>R. Bowden</strong>
+          </div>
+          <div class="pub-meta">
+            <span class="venue venue-arxiv">arXiv 2026</span>
+            <span class="badge">Production</span>
+          </div>
+          <p style="font-size:0.84rem; color:var(--gray-600); margin-top:8px; max-width:70ch; line-height:1.6;">
+            A sparse keyframe approach to sign language production that achieves competitive
+            quality at a fraction of the computational cost of dense generation. Demonstrates
+            zero-shot transfer across BSL, DGS, and ASL.
+          </p>
+        </div>
+        <div class="pub-links">
+          <a href="#" class="btn btn-outline btn-xs"><i class="ai ai-arxiv"></i> arXiv</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ---- SignGPT forthcoming ---- -->
+    <div class="year-header">SignGPT Programme Papers — Forthcoming</div>
+    <div class="tba-section">
+      <i class="fas fa-hourglass-half"></i>
+      <p>
+        Programme papers from the core SignGPT grant are currently under development
+        and will appear here as they are accepted. Check the
+        <a href="https://sites.google.com/view/signgpt/publications" target="_blank" rel="noopener">official publications page</a>
+        or
+        <a href="https://scholar.google.com/citations?hl=en&user=mvvgDvcAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
+        for the latest updates.
+      </p>
+    </div>
+
+    <!-- ---- Acknowledgement / Citation ---- -->
+    <div style="margin-top:56px; padding-top:40px; border-top:1px solid var(--border);">
+      <h3 style="font-size:1.1rem; margin-bottom:12px;">Acknowledging the Programme</h3>
+      <p style="font-size:0.9rem; color:var(--gray-600); max-width:72ch; line-height:1.7; margin-bottom:16px;">
+        If you use code, data, or findings from the SignGPT programme in your research, please
+        acknowledge the EPSRC Programme Grant and cite the relevant paper(s). The general
+        programme citation is:
+      </p>
+      <div class="bibtex-wrap">
+        <div class="bibtex-header">
+          <span style="font-size:0.8rem; color:var(--gray-500); font-weight:600;">BibTeX</span>
+          <button class="copy-btn" id="copy-bibtex">&#x2398; Copy BibTeX</button>
+        </div>
+        <pre class="bibtex-block"><code>@misc{signgpt2025,
+  author       = {Bowden, Richard and Zisserman, Andrew and
+                  Cormier, Kearsy and Woll, Bencie},
+  title        = {{SignGPT}: Building Generative Predictive Transformers
+                  for Sign Language},
+  year         = {2025},
+  note         = {EPSRC Programme Grant 2025--2031},
+  institution  = {University of Surrey, University of Oxford, UCL DCAL},
+  url          = {https://sites.google.com/view/signgpt/home}
+}</code></pre>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Sign<span style="color:#818cf8">GPT</span></div>
+        <p class="footer-desc">
+          EPSRC Programme Grant 2025–2031<br />
+          Centre for Vision, Speech and Signal Processing<br />
+          University of Surrey, Guildford, GU2 7XH
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <div class="footer-links">
+          <a href="index.html">Overview</a>
+          <a href="research.html">Research</a>
+          <a href="team.html">Team</a>
+          <a href="publications.html">Publications</a>
+          <a href="events.html">Events</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-links">
+          <a href="mailto:r.bowden@surrey.ac.uk">r.bowden@surrey.ac.uk</a>
+          <a href="mailto:s.emery@surrey.ac.uk">s.emery@surrey.ac.uk</a>
+          <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener">Official Site ↗</a>
+          <a href="../index.html">← CogVis Lab</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025–2031 SignGPT Programme. Funded by UKRI EPSRC.</span>
+      <span class="footer-copy">University of Surrey</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

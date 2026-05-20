@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignGPT — Generative Predictive Transformers for Sign Language</title>
+  <meta name="description" content="SignGPT is an EPSRC Programme Grant developing the first AI system capable of unconstrained, bidirectional translation between British Sign Language and English." />
+  <meta property="og:title" content="SignGPT — EPSRC Programme Grant 2025–2031" />
+  <meta property="og:description" content="Building Generative Predictive Transformers for Sign Language. Led by the University of Surrey, University of Oxford, and UCL DCAL." />
+  <meta property="og:type" content="website" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* SignGPT programme page overrides */
+    .sgpt-hero {
+      background: linear-gradient(
+        160deg,
+        #0a0f1e 0%,
+        #0f172a 45%,
+        #0f172a 100%
+      );
+      color: #fff;
+      padding: 96px 0 80px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .sgpt-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+    .sgpt-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 55% at 50% 80%, rgba(79,70,229,.14) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .sgpt-hero-inner { position: relative; z-index: 1; }
+
+    .grant-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 18px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      border: 1.5px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.7);
+      margin-bottom: 28px;
+    }
+    .grant-pill-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #6366f1;
+      flex-shrink: 0;
+    }
+
+    .sgpt-title {
+      font-size: clamp(2.1rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .sgpt-subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 400;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 36px;
+      letter-spacing: -0.01em;
+    }
+
+    .pi-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px 28px;
+      margin-bottom: 8px;
+    }
+    .pi-name-link {
+      font-size: 0.975rem;
+      color: rgba(255,255,255,.82);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(255,255,255,.25);
+    }
+    .pi-name-link:hover { color: #fff; }
+    .pi-name-link sup { font-size: 0.65em; color: rgba(255,255,255,.45); }
+
+    .affil-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 4px 22px;
+      font-size: 0.83rem;
+      color: rgba(255,255,255,.38);
+      margin-bottom: 36px;
+    }
+    .affil-row sup { font-size: 0.65em; margin-right: 2px; }
+
+    .hero-btn-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .hbtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1.5px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      text-decoration: none !important;
+      transition: all .18s;
+    }
+    .hbtn:hover { background: rgba(255,255,255,.14); color: #fff; transform: translateY(-1px); }
+    .hbtn.primary { background: #fff; border-color: #fff; color: #0f172a; font-weight: 600; }
+    .hbtn.primary:hover { background: #e2e8f0; border-color: #e2e8f0; color: #0f172a; }
+
+    /* Stat strip */
+    .stat-strip {
+      display: flex;
+      border-top: 1px solid rgba(255,255,255,.08);
+      margin-top: 52px;
+      padding-top: 40px;
+      justify-content: center;
+      gap: 56px;
+      flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+    .stat-lbl {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,.35);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    /* Abstract section */
+    .abstract-text {
+      font-size: 1.025rem;
+      line-height: 1.85;
+      color: var(--gray-800);
+      max-width: 74ch;
+    }
+    .abstract-text + .abstract-text { margin-top: 1em; }
+
+    /* Partner row */
+    .partner-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+    .partner-chip {
+      padding: 6px 16px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      white-space: nowrap;
+    }
+
+    /* Inline note */
+    .tba-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      background: var(--gray-100);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+    }
+
+    /* ---- Pillar timeline ---- */
+    .pillar-timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .pillar-timeline::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 48px;
+      bottom: 48px;
+      width: 1px;
+      background: var(--border);
+    }
+    .pillar-tl-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 28px;
+      align-items: stretch;
+      padding: 0 0 0 0;
+      position: relative;
+    }
+    .pillar-tl-item + .pillar-tl-item {
+      border-top: 1px solid var(--border-soft);
+    }
+    .pillar-tl-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 0;
+      flex-shrink: 0;
+    }
+    .pillar-tl-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--black);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      transition: background var(--transition);
+    }
+    .pillar-tl-item:hover .pillar-tl-num {
+      background: var(--indigo);
+    }
+    .pillar-tl-body {
+      padding: 32px 0 32px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+    .pillar-tl-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--gray-400);
+    }
+    .pillar-tl-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--black);
+      line-height: 1.25;
+    }
+    .pillar-tl-desc {
+      font-size: 0.88rem;
+      color: var(--gray-600);
+      line-height: 1.72;
+      max-width: 68ch;
+    }
+    .pillar-tl-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 860px) {
+      .pillar-split { grid-template-columns: 1fr !important; gap: 32px !important; }
+      .pillar-split > div:first-child { position: static !important; }
+    }
+    @media (max-width: 580px) {
+      .pillar-tl-item { grid-template-columns: 36px 1fr; gap: 16px; }
+      .pillar-tl-num { width: 36px; height: 36px; font-size: 0.72rem; }
+      .pillar-timeline::before { left: 17px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav class="nav" role="navigation">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      Sign<span style="color:var(--indigo)">GPT</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="team.html">Team</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="../index.html" style="color:var(--gray-400); font-size:0.82rem;">← CogVis Lab</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<header class="sgpt-hero">
+  <div class="container sgpt-hero-inner">
+
+    <div class="grant-pill">
+      <span class="grant-pill-dot"></span>
+      EPSRC Programme Grant &nbsp;·&nbsp; 2025–2031
+    </div>
+
+    <h1 class="sgpt-title">SignGPT</h1>
+    <p class="sgpt-subtitle">
+      Building Generative Predictive Transformers for Sign Language
+    </p>
+
+    <div class="pi-row">
+      <span class="pi-name-link">Prof. Richard Bowden<sup>1</sup></span>
+      <span class="pi-name-link">Prof. Andrew Zisserman<sup>2</sup></span>
+      <span class="pi-name-link">Prof. Kearsy Cormier<sup>3</sup></span>
+      <span class="pi-name-link">Prof. Bencie Woll<sup>3</sup></span>
+    </div>
+    <div class="affil-row">
+      <span><sup>1</sup>CVSSP, University of Surrey</span>
+      <span><sup>2</sup>University of Oxford</span>
+      <span><sup>3</sup>UCL DCAL</span>
+    </div>
+
+    <div class="hero-btn-row">
+      <a href="research.html" class="hbtn primary">
+        <i class="fas fa-flask-vial"></i> Research
+      </a>
+      <a href="team.html" class="hbtn">
+        <i class="fas fa-users"></i> Team
+      </a>
+      <a href="publications.html" class="hbtn">
+        <i class="fas fa-file-lines"></i> Publications
+      </a>
+      <a href="events.html" class="hbtn">
+        <i class="fas fa-calendar-days"></i> Events
+      </a>
+      <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener" class="hbtn">
+        <i class="fas fa-up-right-from-square"></i> Official Site
+      </a>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat-item">
+        <div class="stat-num">6</div>
+        <div class="stat-lbl">Year Grant</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-lbl">Universities</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-lbl">Research Pillars</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">7+</div>
+        <div class="stat-lbl">Deaf Org. Partners</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">87K+</div>
+        <div class="stat-lbl">BSL Users in UK</div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ========== ABSTRACT ========== -->
+<section class="section" style="padding-top:68px; padding-bottom:68px; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:1fr 3fr; gap:56px; align-items:start;">
+      <div>
+        <span class="section-eyebrow">Programme Overview</span>
+        <h2 style="font-size:1.3rem; margin-top:8px; margin-bottom:0;">Abstract</h2>
+      </div>
+      <div>
+        <p class="abstract-text">
+          <strong>SignGPT</strong> is a six-year EPSRC Programme Grant developing an AI-powered translation
+          system capable of unconstrained, bidirectional translation between British Sign Language (BSL)
+          and English. The project unites world-leading expertise in computer vision
+          (<a href="https://www.surrey.ac.uk/centre-vision-speech-signal-processing" target="_blank" rel="noopener">CVSSP, University of Surrey</a>),
+          large-scale machine learning
+          (<a href="https://www.robots.ox.ac.uk/~vgg/" target="_blank" rel="noopener">VGG, University of Oxford</a>),
+          and BSL linguistics
+          (<a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener">DCAL, UCL</a>),
+          in close partnership with British Deaf organisations.
+        </p>
+        <p class="abstract-text" style="margin-top:1em;">
+          Unlike previous approaches constrained to predefined vocabularies or gloss-mediated pipelines,
+          SignGPT targets <em>full linguistic fluency</em> — handling the spatial grammar, non-manual
+          features (facial expression, mouthing, eyegaze), classifier predicates, and rich iconicity
+          of BSL in real-world, conversational settings. The centrepiece is a novel
+          <strong>generative predictive transformer architecture</strong> that jointly models visual sign
+          production and linguistic structure at scale, trained on a newly collected large-scale BSL corpus.
+          Community co-design and rigorous Deaf-user evaluation are embedded throughout.
+        </p>
+        <div style="margin-top:1.5rem; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+          <a href="research.html" class="btn btn-primary btn-sm">
+            <i class="fas fa-arrow-right"></i> Research Objectives
+          </a>
+          <span class="tba-note">
+            <i class="fas fa-clock"></i>
+            Code &amp; datasets: forthcoming
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RESEARCH PILLARS ========== -->
+<section class="section" style="background:var(--gray-100); border-bottom:1px solid var(--border);">
+  <div class="container">
+
+    <div class="pillar-split" style="display:grid; grid-template-columns:1fr 2fr; gap:64px; align-items:start;">
+
+      <!-- Sticky label column -->
+      <div style="position:sticky; top:84px;">
+        <span class="section-eyebrow">Programme Structure</span>
+        <h2 class="section-title" style="margin-top:8px;">Research Pillars</h2>
+        <p class="section-desc">
+          Four tightly integrated workstreams spanning visual computing, generative modelling,
+          linguistics, and community co-design.
+        </p>
+        <div style="margin-top:28px; display:flex; flex-direction:column; gap:10px;">
+          <a href="research.html" class="btn btn-primary btn-sm" style="justify-content:center;">
+            <i class="fas fa-arrow-right"></i> Full Research Details
+          </a>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span class="badge badge-indigo">Computer Vision</span>
+            <span class="badge">NLP</span>
+            <span class="badge">Linguistics</span>
+            <span class="badge badge-green">Co-Design</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline column -->
+      <div>
+        <div class="pillar-timeline">
+
+          <div class="pillar-tl-item reveal">
+            <div class="pillar-tl-left">
+              <div class="pillar-tl-num">P1</div>
+            </div>
+            <div class="pillar-tl-body">
+              <div class="pillar-tl-label">Pillar One</div>
+              <div class="pillar-tl-title">Visual Sign Understanding</div>
+              <p class="pillar-tl-desc">
+                Scalable video encoders capturing hand shape, movement, location, orientation,
+                and non-manual features — facial expression, eye gaze, mouthing — in continuous,
+                unconstrained BSL video. Includes large-scale pre-training on a new BSL corpus.
+              </p>
+              <div class="pillar-tl-footer">
+                <a href="research.html#pillar-1" class="btn btn-outline btn-xs">Read more →</a>
+                <span class="badge">Video Transformers</span>
+                <span class="badge">Self-Supervised Pre-Training</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pillar-tl-item reveal">
+            <div class="pillar-tl-left">
+              <div class="pillar-tl-num">P2</div>
+            </div>
+            <div class="pillar-tl-body">
+              <div class="pillar-tl-label">Pillar Two</div>
+              <div class="pillar-tl-title">Generative Sign Language Modelling</div>
+              <p class="pillar-tl-desc">
+                The first large-scale generative predictive transformer for BSL — a unified model
+                learning the joint distribution over visual tokens and linguistic structure,
+                enabling both recognition and production in a single architecture.
+              </p>
+              <div class="pillar-tl-footer">
+                <a href="research.html#pillar-2" class="btn btn-outline btn-xs">Read more →</a>
+                <span class="badge">Generative Transformers</span>
+                <span class="badge">VQ-VAE Tokenisation</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pillar-tl-item reveal">
+            <div class="pillar-tl-left">
+              <div class="pillar-tl-num">P3</div>
+            </div>
+            <div class="pillar-tl-body">
+              <div class="pillar-tl-label">Pillar Three</div>
+              <div class="pillar-tl-title">BSL Linguistics Integration</div>
+              <p class="pillar-tl-desc">
+                Grounding the transformer in rigorous BSL linguistic theory: spatial grammar,
+                classifier predicates, topic-comment structure, and discourse-level phenomena,
+                in close collaboration with UCL DCAL linguists.
+              </p>
+              <div class="pillar-tl-footer">
+                <a href="research.html#pillar-3" class="btn btn-outline btn-xs">Read more →</a>
+                <span class="badge">Spatial Grammar</span>
+                <span class="badge">Linguistic Evaluation</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pillar-tl-item reveal">
+            <div class="pillar-tl-left">
+              <div class="pillar-tl-num">P4</div>
+            </div>
+            <div class="pillar-tl-body">
+              <div class="pillar-tl-label">Pillar Four</div>
+              <div class="pillar-tl-title">Community Co-Design &amp; Evaluation</div>
+              <p class="pillar-tl-desc">
+                Co-designing datasets, benchmarks, and evaluation protocols with Deaf organisations —
+                BDA, RAD, BSLBT — to ensure cultural appropriateness, real-world validity,
+                and measurable accessibility impact across all programme outputs.
+              </p>
+              <div class="pillar-tl-footer">
+                <a href="research.html#pillar-4" class="btn btn-outline btn-xs">Read more →</a>
+                <span class="badge badge-green">BDA</span>
+                <span class="badge badge-green">RAD</span>
+                <span class="badge badge-green">BSLBT</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== NEWS / EVENTS ========== -->
+<section class="section" style="padding-top:68px; padding-bottom:68px; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:32px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <span class="section-eyebrow">Latest Updates</span>
+        <h2 class="section-title" style="margin-bottom:0; margin-top:6px;">News &amp; Events</h2>
+      </div>
+      <a href="events.html" class="btn btn-outline btn-sm">All events →</a>
+    </div>
+    <div class="news-list">
+      <div class="news-item reveal">
+        <div class="news-date">Dec 2025</div>
+        <p class="news-text">
+          <strong>AI for Sign Language Translation, Production &amp; Linguistics</strong> —
+          BMVA one-day meeting hosted by the British Machine Vision Association and the Society for
+          Pattern Recognition. Full event accessible in British Sign Language.
+          <a href="https://www.bmva.org/meetings/25-12-10-Sign.html" target="_blank" rel="noopener">Event details →</a>
+        </p>
+      </div>
+      <div class="news-item reveal">
+        <div class="news-date">Dec 2025</div>
+        <p class="news-text">
+          <strong>Deaf in AI &amp; Technology Workshop</strong> —
+          Hosted by the DCAL Research Centre at University College London, bringing together
+          researchers and Deaf community stakeholders to discuss AI accessibility challenges.
+          <a href="https://www.ucl.ac.uk/brain-sciences/deafness-cognition-and-language-research-centre-dcal/deaf-ai-and-technology-workshop" target="_blank" rel="noopener">Workshop archive →</a>
+        </p>
+      </div>
+      <div class="news-item reveal">
+        <div class="news-date">2025</div>
+        <p class="news-text">
+          <strong>SignGPT programme launched.</strong>
+          The EPSRC Programme Grant officially commenced, with all partner institutions beginning
+          recruitment and initial corpus collection. The
+          <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener">official project site</a>
+          is now live.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PARTNERS ========== -->
+<section class="section" style="padding-top:60px; padding-bottom:60px; background:var(--gray-50); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:28px;">
+      <span class="section-eyebrow">Collaboration</span>
+      <h2 class="section-title" style="font-size:1.3rem;">Partner Institutions</h2>
+    </div>
+    <div style="margin-bottom:20px;">
+      <span class="subsection-label" style="margin-top:0;">Academic</span>
+      <div class="partner-row">
+        <span class="partner-chip">University of Surrey (CVSSP)</span>
+        <span class="partner-chip">University of Oxford (VGG)</span>
+        <span class="partner-chip">UCL DCAL</span>
+        <span class="partner-chip">University of Hamburg</span>
+        <span class="partner-chip">University of Zurich</span>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <span class="subsection-label" style="margin-top:0;">Deaf Community Organisations</span>
+      <div class="partner-row">
+        <span class="partner-chip">British Deaf Association (BDA)</span>
+        <span class="partner-chip">Royal Association of the Deaf (RAD)</span>
+        <span class="partner-chip">BSL Broadcasting Trust (BSLBT) / LumoTV</span>
+      </div>
+    </div>
+    <div>
+      <span class="subsection-label" style="margin-top:0;">Industry</span>
+      <div class="partner-row">
+        <span class="partner-chip">Microsoft Munich</span>
+        <span class="partner-chip">BBC R&amp;D</span>
+      </div>
+    </div>
+    <p style="margin-top:24px; font-size:0.83rem; color:var(--gray-500);">
+      Funded by <strong>UKRI EPSRC</strong> as a Programme Grant. All partner institutions are currently recruiting.
+      Contact <a href="mailto:r.bowden@surrey.ac.uk">r.bowden@surrey.ac.uk</a> for enquiries.
+    </p>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Sign<span style="color:#818cf8">GPT</span></div>
+        <p class="footer-desc">
+          EPSRC Programme Grant 2025–2031<br />
+          Centre for Vision, Speech and Signal Processing<br />
+          University of Surrey, Guildford, GU2 7XH
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <div class="footer-links">
+          <a href="index.html">Overview</a>
+          <a href="research.html">Research</a>
+          <a href="team.html">Team</a>
+          <a href="publications.html">Publications</a>
+          <a href="events.html">Events</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-links">
+          <a href="mailto:r.bowden@surrey.ac.uk">r.bowden@surrey.ac.uk</a>
+          <a href="mailto:s.emery@surrey.ac.uk">s.emery@surrey.ac.uk</a>
+          <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener">Official Site ↗</a>
+          <a href="../index.html">← CogVis Lab</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025–2031 SignGPT Programme. Funded by UKRI EPSRC.</span>
+      <span class="footer-copy">University of Surrey</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

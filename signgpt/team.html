@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team — SignGPT</title>
+  <meta name="description" content="The SignGPT research team: Principal Investigators, research staff, PhD students, and advisory board." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .advisory-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .advisory-table thead {
+      background: var(--gray-50);
+    }
+    .advisory-table th {
+      padding: 10px 18px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.72rem;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .advisory-table td {
+      padding: 11px 18px;
+      border-bottom: 1px solid var(--border-soft);
+      color: var(--gray-700);
+      vertical-align: middle;
+    }
+    .advisory-table tr:last-child td { border-bottom: none; }
+    .advisory-table tr:hover td { background: var(--gray-50); }
+
+    .recruit-banner {
+      background: var(--indigo-faint);
+      border: 1.5px solid var(--indigo-border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .recruit-banner i { font-size: 1.4rem; color: var(--indigo); flex-shrink: 0; margin-top: 2px; }
+    .recruit-banner p { max-width: none; font-size: 0.9rem; line-height: 1.7; color: var(--indigo-dark); margin-bottom: 0; }
+    .recruit-banner p strong { color: var(--indigo-dark); }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<nav class="nav" role="navigation">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      Sign<span style="color:var(--indigo)">GPT</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="team.html" class="active">Team</a></li>
+      <li><a href="publications.html">Publications</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="../index.html" style="color:var(--gray-400); font-size:0.82rem;">← CogVis Lab</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ========== PAGE HEADER ========== -->
+<div class="page-header">
+  <div class="container page-header-inner">
+    <div class="page-header-eyebrow">SignGPT · EPSRC Programme Grant</div>
+    <h1>Team</h1>
+    <p>
+      Principal Investigators, research staff, and advisory board spanning the
+      University of Surrey, University of Oxford, and UCL DCAL.
+    </p>
+  </div>
+</div>
+
+<!-- ========== PRINCIPAL INVESTIGATORS ========== -->
+<section class="section" style="padding-bottom:48px; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:36px;">
+      <span class="section-eyebrow">Programme Leadership</span>
+      <h2 class="section-title">Principal Investigators</h2>
+    </div>
+
+    <!-- PI 1: Bowden -->
+    <div class="pi-wrap reveal">
+      <div class="pi-photo-wrap">
+        <div class="avatar-lg" style="background:#0f172a; font-size:1.8rem;">
+          RB
+        </div>
+        <div class="pi-social">
+          <a href="mailto:r.bowden@surrey.ac.uk" class="icon-btn" title="Email">
+            <i class="fas fa-envelope"></i>
+          </a>
+          <a href="https://scholar.google.com/citations?hl=en&user=mvvgDvcAAAAJ" target="_blank" rel="noopener" class="icon-btn" title="Google Scholar">
+            <i class="fas fa-graduation-cap"></i>
+          </a>
+          <a href="https://www.surrey.ac.uk/people/richard-bowden" target="_blank" rel="noopener" class="icon-btn" title="University Profile">
+            <i class="fas fa-globe"></i>
+          </a>
+        </div>
+      </div>
+      <div class="pi-info">
+        <h2 class="pi-name">Prof. Richard Bowden</h2>
+        <p class="pi-role">Lead Principal Investigator &nbsp;·&nbsp; CVSSP, University of Surrey</p>
+        <p class="pi-bio">
+          Richard Bowden is Professor of Computer Vision and Machine Learning at the Centre for
+          Vision, Speech and Signal Processing (CVSSP), University of Surrey, where he has worked
+          for over two decades on sign language recognition and production. He is a leading
+          authority on human motion analysis, gesture recognition, and vision-language modelling
+          for sign languages. His group has published extensively at top venues including CVPR,
+          ICCV, ECCV, NeurIPS, and ACL, and he leads the CogVis Laboratory.
+        </p>
+        <div class="interest-list">
+          <span class="interest-tag">Sign Language Recognition</span>
+          <span class="interest-tag">Sign Language Production</span>
+          <span class="interest-tag">Human Motion Analysis</span>
+          <span class="interest-tag">Video Understanding</span>
+          <span class="interest-tag">Vision–Language Models</span>
+        </div>
+        <div class="pi-links">
+          <a href="mailto:r.bowden@surrey.ac.uk" class="btn btn-outline btn-sm">
+            <i class="fas fa-envelope"></i> r.bowden@surrey.ac.uk
+          </a>
+          <a href="https://www.surrey.ac.uk/people/richard-bowden" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+            <i class="fas fa-up-right-from-square"></i> Surrey Profile
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PI 2: Zisserman -->
+    <div class="pi-wrap reveal">
+      <div class="pi-photo-wrap">
+        <div class="avatar-lg" style="background:#1e293b; font-size:1.8rem;">
+          AZ
+        </div>
+        <div class="pi-social">
+          <a href="https://www.robots.ox.ac.uk/~az/" target="_blank" rel="noopener" class="icon-btn" title="Homepage">
+            <i class="fas fa-globe"></i>
+          </a>
+          <a href="https://scholar.google.com/citations?user=UZ5wscMAAAAJ" target="_blank" rel="noopener" class="icon-btn" title="Google Scholar">
+            <i class="fas fa-graduation-cap"></i>
+          </a>
+        </div>
+      </div>
+      <div class="pi-info">
+        <h2 class="pi-name">Prof. Andrew Zisserman</h2>
+        <p class="pi-role">Principal Investigator &nbsp;·&nbsp; VGG, University of Oxford</p>
+        <p class="pi-bio">
+          Andrew Zisserman is Professor of Computer Vision Engineering at the University of Oxford,
+          where he leads the Visual Geometry Group (VGG). He is one of the most highly cited
+          researchers in computer vision, known for foundational contributions to visual recognition,
+          3D reconstruction, and large-scale video understanding. Within SignGPT he leads
+          the large-scale pre-training and model scaling workstreams.
+        </p>
+        <div class="interest-list">
+          <span class="interest-tag">Large-Scale Visual Pre-Training</span>
+          <span class="interest-tag">Video Understanding</span>
+          <span class="interest-tag">Visual Recognition</span>
+          <span class="interest-tag">Self-Supervised Learning</span>
+        </div>
+        <div class="pi-links">
+          <a href="https://www.robots.ox.ac.uk/~az/" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+            <i class="fas fa-up-right-from-square"></i> Oxford Profile
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PI 3: Cormier -->
+    <div class="pi-wrap reveal">
+      <div class="pi-photo-wrap">
+        <div class="avatar-lg" style="background:#312e81; font-size:1.8rem;">
+          KC
+        </div>
+        <div class="pi-social">
+          <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="icon-btn" title="DCAL">
+            <i class="fas fa-globe"></i>
+          </a>
+        </div>
+      </div>
+      <div class="pi-info">
+        <h2 class="pi-name">Prof. Kearsy Cormier</h2>
+        <p class="pi-role">Principal Investigator &nbsp;·&nbsp; DCAL, University College London</p>
+        <p class="pi-bio">
+          Kearsy Cormier is Professor of Sign Language Linguistics at the Deafness, Cognition and
+          Language Research Centre (DCAL), UCL. Her research focuses on the grammar of BSL, with
+          particular expertise in classifier predicates, discourse structure, and the cross-linguistic
+          study of sign languages. Within SignGPT she leads the Pillar 3 linguistics integration
+          workstream and co-leads dataset annotation.
+        </p>
+        <div class="interest-list">
+          <span class="interest-tag">BSL Grammar</span>
+          <span class="interest-tag">Classifier Predicates</span>
+          <span class="interest-tag">Discourse Structure</span>
+          <span class="interest-tag">Cross-Linguistic Sign Language Research</span>
+        </div>
+        <div class="pi-links">
+          <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+            <i class="fas fa-up-right-from-square"></i> UCL DCAL
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PI 4: Woll -->
+    <div class="pi-wrap reveal">
+      <div class="pi-photo-wrap">
+        <div class="avatar-lg" style="background:#334155; font-size:1.8rem;">
+          BW
+        </div>
+        <div class="pi-social">
+          <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="icon-btn" title="DCAL">
+            <i class="fas fa-globe"></i>
+          </a>
+        </div>
+      </div>
+      <div class="pi-info">
+        <h2 class="pi-name">Prof. Bencie Woll</h2>
+        <p class="pi-role">Principal Investigator &nbsp;·&nbsp; DCAL, University College London</p>
+        <p class="pi-bio">
+          Bencie Woll is Emeritus Professor of Sign Language and Deaf Studies at DCAL, UCL, and
+          one of the world's foremost authorities on BSL and Deaf communities. She has conducted
+          landmark longitudinal studies of BSL acquisition, change, and endangerment, and
+          advises government and public bodies on BSL policy. Within SignGPT she provides
+          linguistic and community oversight across all four pillars.
+        </p>
+        <div class="interest-list">
+          <span class="interest-tag">BSL Language Acquisition</span>
+          <span class="interest-tag">Language Documentation</span>
+          <span class="interest-tag">Deaf Community Studies</span>
+          <span class="interest-tag">BSL Policy</span>
+        </div>
+        <div class="pi-links">
+          <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+            <i class="fas fa-up-right-from-square"></i> UCL DCAL
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== PROGRAMME MANAGEMENT ========== -->
+<section class="section" style="padding-top:56px; padding-bottom:56px; background:var(--gray-50); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:28px;">
+      <span class="section-eyebrow">Programme Operations</span>
+      <h2 class="section-title" style="font-size:1.3rem;">Programme Management</h2>
+    </div>
+    <div class="people-grid" style="grid-template-columns:repeat(2, 1fr);">
+      <div class="person-card reveal">
+        <div class="avatar-md" style="background:#0f172a;">SE</div>
+        <div class="person-name">Dr. Steven Emery</div>
+        <div class="person-role">Programme Manager</div>
+        <p class="person-research">
+          Responsible for day-to-day coordination across all three partner institutions,
+          research governance, community partner liaison, and financial management.
+        </p>
+        <div class="person-links">
+          <a href="mailto:s.emery@surrey.ac.uk" class="icon-btn" title="Email">
+            <i class="fas fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+      <div class="person-card reveal" style="display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--gray-50);">
+        <div style="text-align:center; padding:20px;">
+          <i class="fas fa-user-plus" style="font-size:2rem; color:var(--gray-300); margin-bottom:12px; display:block;"></i>
+          <div class="person-name" style="color:var(--gray-400);">Positions Available</div>
+          <p style="font-size:0.82rem; color:var(--gray-400); margin-top:4px; max-width:none;">
+            Research and project management roles open at all partner sites.
+          </p>
+          <a href="mailto:r.bowden@surrey.ac.uk" class="btn btn-outline btn-xs" style="margin-top:12px;">
+            Enquire →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RESEARCH TEAM ========== -->
+<section class="section" style="padding-top:56px; padding-bottom:56px; border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:28px;">
+      <span class="section-eyebrow">Research Staff</span>
+      <h2 class="section-title" style="font-size:1.3rem;">Postdoctoral Researchers &amp; PhD Students</h2>
+      <p class="section-desc">Recruitment is ongoing across all partner institutions. Current CogVis Lab members working on sign language research are listed below.</p>
+    </div>
+
+    <span class="subsection-label">CVSSP, University of Surrey</span>
+    <div class="people-grid reveal">
+
+      <div class="person-card">
+        <div class="avatar-md" style="background:#334155;">EF</div>
+        <div class="person-name">Elliot Fish</div>
+        <div class="person-role">PhD Student</div>
+        <p class="person-research">
+          Hyperbolic geometry and contrastive learning for geometrically aware sign language
+          translation. NeurIPS 2025.
+        </p>
+        <div class="person-links">
+          <a href="../publications.html" class="icon-btn" title="Publications">
+            <i class="fas fa-file-lines"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="person-card">
+        <div class="avatar-md" style="background:#1e293b;">OS</div>
+        <div class="person-name">Ozge Mercanoglu Sincan</div>
+        <div class="person-role">Researcher</div>
+        <p class="person-research">
+          Gloss-free translation evaluation, sign language spotting, and multilingual
+          sign language understanding.
+        </p>
+        <div class="person-links">
+          <a href="../publications.html" class="icon-btn" title="Publications">
+            <i class="fas fa-file-lines"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="person-card">
+        <div class="avatar-md" style="background:#292524;">OC</div>
+        <div class="person-name">Oscar Cory</div>
+        <div class="person-role">Researcher</div>
+        <p class="person-research">
+          Agentic LLMs for linguistically-grounded sign language annotation and
+          dataset curation (SignAgent).
+        </p>
+        <div class="person-links">
+          <a href="../publications.html" class="icon-btn" title="Publications">
+            <i class="fas fa-file-lines"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="person-card">
+        <div class="avatar-md" style="background:#1c1917;">JL</div>
+        <div class="person-name">Juhee Low</div>
+        <div class="person-role">PhD Student</div>
+        <p class="person-research">
+          Sign language production via sparse keyframe learning and multi-modal motion
+          tokenisation (M3T, SignSparK).
+        </p>
+        <div class="person-links">
+          <a href="../publications.html" class="icon-btn" title="Publications">
+            <i class="fas fa-file-lines"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="person-card">
+        <div class="avatar-md" style="background:#27272a;">AS</div>
+        <div class="person-name">Andreas Symeonidis-Herzig</div>
+        <div class="person-role">PhD Student</div>
+        <p class="person-research">
+          Discrete multi-modal motion tokenisation and photorealistic avatar synthesis
+          for sign language production.
+        </p>
+        <div class="person-links">
+          <a href="../publications.html" class="icon-btn" title="Publications">
+            <i class="fas fa-file-lines"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="person-card" style="background:var(--gray-50);">
+        <div style="text-align:center; padding:16px 0;">
+          <i class="fas fa-user-plus" style="font-size:1.6rem; color:var(--gray-300); margin-bottom:10px; display:block;"></i>
+          <div class="person-name" style="color:var(--gray-400);">Positions Open</div>
+          <p style="font-size:0.8rem; color:var(--gray-400); margin-top:4px; max-width:none;">
+            PhD and postdoctoral positions available at CVSSP.
+          </p>
+          <a href="mailto:r.bowden@surrey.ac.uk" class="btn btn-outline btn-xs" style="margin-top:10px;">
+            Apply →
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <span class="subsection-label">University of Oxford &amp; UCL DCAL</span>
+    <div class="recruit-banner reveal">
+      <i class="fas fa-user-group"></i>
+      <p>
+        <strong>Recruiting now.</strong>
+        Postdoctoral and PhD positions are available at the University of Oxford (VGG) and
+        UCL DCAL as part of the SignGPT programme. Positions span computer vision,
+        machine learning, and sign language linguistics. Please contact
+        <a href="mailto:r.bowden@surrey.ac.uk"><strong>r.bowden@surrey.ac.uk</strong></a> or
+        visit the <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener"><strong>official project site</strong></a>
+        for current vacancies.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== ADVISORY BOARD ========== -->
+<section class="section" style="padding-top:56px; padding-bottom:56px; background:var(--gray-50); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:28px;">
+      <span class="section-eyebrow">External Oversight</span>
+      <h2 class="section-title" style="font-size:1.3rem;">Advisory Board</h2>
+      <p class="section-desc">
+        An independent Advisory Board comprising academics, industry experts, and Deaf community
+        representatives provides programme-level strategic guidance and external evaluation.
+      </p>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="advisory-table">
+        <thead>
+          <tr>
+            <th>Organisation</th>
+            <th>Sector</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>British Deaf Association (BDA)</strong></td>
+            <td><span class="badge badge-green">Community</span></td>
+            <td>Deaf community representation; co-design of evaluation criteria</td>
+          </tr>
+          <tr>
+            <td><strong>Royal Association of the Deaf (RAD)</strong></td>
+            <td><span class="badge badge-green">Community</span></td>
+            <td>Deaf community representation; user study recruitment</td>
+          </tr>
+          <tr>
+            <td><strong>BSLBT / LumoTV</strong></td>
+            <td><span class="badge badge-green">Media</span></td>
+            <td>BSL broadcast media access; production quality advisory</td>
+          </tr>
+          <tr>
+            <td><strong>BBC Research &amp; Development</strong></td>
+            <td><span class="badge">Industry</span></td>
+            <td>Accessibility technology deployment and broadcast use cases</td>
+          </tr>
+          <tr>
+            <td><strong>Microsoft Munich</strong></td>
+            <td><span class="badge">Industry</span></td>
+            <td>Large-scale model infrastructure and applied AI advisory</td>
+          </tr>
+          <tr>
+            <td><strong>University of Hamburg</strong></td>
+            <td><span class="badge badge-indigo">Academic</span></td>
+            <td>Sign language computational linguistics; multilingual evaluation</td>
+          </tr>
+          <tr>
+            <td><strong>University of Zurich</strong></td>
+            <td><span class="badge badge-indigo">Academic</span></td>
+            <td>Sign language technology; Swiss German Sign Language cross-lingual insights</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Sign<span style="color:#818cf8">GPT</span></div>
+        <p class="footer-desc">
+          EPSRC Programme Grant 2025–2031<br />
+          Centre for Vision, Speech and Signal Processing<br />
+          University of Surrey, Guildford, GU2 7XH
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigate</div>
+        <div class="footer-links">
+          <a href="index.html">Overview</a>
+          <a href="research.html">Research</a>
+          <a href="team.html">Team</a>
+          <a href="publications.html">Publications</a>
+          <a href="events.html">Events</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-links">
+          <a href="mailto:r.bowden@surrey.ac.uk">r.bowden@surrey.ac.uk</a>
+          <a href="mailto:s.emery@surrey.ac.uk">s.emery@surrey.ac.uk</a>
+          <a href="https://sites.google.com/view/signgpt/home" target="_blank" rel="noopener">Official Site ↗</a>
+          <a href="../index.html">← CogVis Lab</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025–2031 SignGPT Programme. Funded by UKRI EPSRC.</span>
+      <span class="footer-copy">University of Surrey</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>
