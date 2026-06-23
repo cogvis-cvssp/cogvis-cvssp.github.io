@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="description"
@@ -7,597 +7,817 @@
   <meta name="keywords" content="sign language production, keyframe learning, flow matching, SMPL-X, multilingual, sign language avatar" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Open Graph -->
   <meta property="og:title" content="SignSparK: Efficient Multilingual Sign Language Production via Sparse Keyframe Learning" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://cogvis.github.io/papers/signspark/" />
   <meta property="og:description"
-        content="SignSparK leverages sparse keyframes and Conditional Flow Matching to synthesize natural, multilingual 3D signing sequences — establishing the largest multilingual SLP framework to date." />
+        content="SignSparK leverages sparse keyframes and Conditional Flow Matching to synthesize natural, multilingual 3D signing sequences." />
 
   <title>SignSparK — Multilingual Sign Language Production</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
-
-  <!-- Bulma CSS framework -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
-
-  <!-- Academicons -->
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:         #1a73e8;
+      --blue-dark:    #185abc;
+      --blue-light:   #e8f0fe;
+      --blue-border:  #c5d9fc;
+      --green:        #137333;
+      --green-light:  #e6f4ea;
+      --green-border: #b7dfbf;
+      --gray-bg:      #f8f9fa;
+      --gray-border:  #e8eaed;
+      --text:         #202124;
+      --text-mid:     #3c4043;
+      --text-sec:     #5f6368;
+      --nav-h:        56px;
+      --snav-h:       44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Noto Sans', sans-serif;
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
     }
 
-    .publication-title {
-      font-family: 'Google Sans', sans-serif;
+    /* ── TOP NAV ────────────────────────────────────────── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .site-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
+
+    /* ── SECTION NAV (D4RT-style) ───────────────────────── */
+    .sec-nav {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: var(--snav-h);
+    }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+    /* offset for sticky nav stack */
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 44px;
+      text-align: center;
     }
 
-    .publication-authors {
-      font-family: 'Google Sans', sans-serif;
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 9px 26px;
+      border-radius: 28px;
+      border: 2px solid var(--green-border);
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(19,115,51,0.14);
     }
 
-    .publication-links .button {
-      margin: 0.25rem;
+    .paper-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 28px;
     }
-
-    .author-block {
-      display: inline-block;
-    }
-
-    /* Gradient text for SignSparK */
-    .gradient-text {
+    .paper-title .hl {
       background: linear-gradient(45deg, #7c3aed, #db2777);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      font-weight: bold;
-      display: inline-block;
     }
 
-    /* Teaser image */
+    .authors {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      margin-bottom: 8px;
+      line-height: 1.8;
+    }
+    .affil {
+      font-size: 0.9rem;
+      color: var(--text-sec);
+      margin-bottom: 32px;
+    }
+
+    /* Pill buttons */
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-mid);
+      background: #fff;
+      cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pill-btn:hover {
+      background: var(--gray-bg);
+      border-color: #bdc1c6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+    .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
+    .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+
+    /* ── SHARED SECTION ─────────────────────────────────── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .section-sub {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      margin: 44px 0 16px;
+    }
+    .section-sub:first-of-type { margin-top: 0; }
+
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── TEASER ─────────────────────────────────────────── */
+    .teaser-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
     .teaser-img {
       width: 100%;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      border: 1px solid var(--gray-border);
       display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     }
 
-    /* Figure placeholder fallback */
-    .fig-placeholder {
+    /* ── ABSTRACT ───────────────────────────────────────── */
+    .abstract-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+      text-align: justify;
+    }
+
+    /* ── FIGURES ────────────────────────────────────────── */
+    .fig-wrap {
+      margin: 0 0 12px;
+    }
+    .fig-wrap img {
       width: 100%;
       border-radius: 12px;
-      overflow: hidden;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .fig-caption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.65;
+      text-align: center;
+    }
+    .fig-caption strong { color: var(--text-mid); }
+    .method-sub {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 48px 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--gray-border);
+    }
+    .method-sub:first-of-type { margin-top: 0; }
+    .method-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #e2e8f0;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .method-bullets li {
+      font-size: 0.95rem;
+      color: var(--text-mid);
+      line-height: 1.6;
+      padding-left: 20px;
       position: relative;
     }
-    .fig-placeholder.pipeline {
-      aspect-ratio: 16 / 6.5;
-      background: linear-gradient(135deg, #fdf4ff, #fce7f3, #f5f3ff);
-    }
-    .fig-placeholder.pipeline .fig-placeholder-inner p {
-      color: #64748b;
-    }
-    .fig-placeholder-inner {
-      text-align: center;
-      padding: 20px;
+    .method-bullets li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--blue);
+      font-weight: 700;
     }
 
-    /* Pipeline blocks */
-    .pipeline-flow {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      width: 90%;
+    /* ── VIDEO CARD ─────────────────────────────────────── */
+    .video-card {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.07);
+      border: 1px solid var(--gray-border);
+      background: #000;
     }
-    .pipe-block {
-      flex: 1;
-      background: white;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 14px 8px;
-      text-align: center;
-    }
-    .pipe-block.highlighted {
-      border-color: #7c3aed;
-      background: #f5f3ff;
-    }
-    .pipe-block .p-icon { font-size: 1.5rem; margin-bottom: 5px; }
-    .pipe-block .p-name { font-size: 0.7rem; font-weight: 700; color: #1e293b; line-height: 1.3; }
-    .pipe-block .p-sub  { font-size: 0.62rem; color: #64748b; margin-top: 2px; }
-    .pipe-block.highlighted .p-name { color: #7c3aed; }
-    .pipe-conn { width: 24px; flex-shrink: 0; text-align: center; color: #7c3aed; font-size: 0.8rem; }
-
-    /* Video placeholder */
-    .video-placeholder {
+    .video-embed {
+      position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(255,255,255,.5);
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
-      position: relative;
-      overflow: hidden;
     }
-    .video-placeholder::before {
-      content: '';
+    .video-embed.portrait { aspect-ratio: 9 / 16; }
+    .video-embed iframe {
       position: absolute;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size: 32px 32px;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
     }
-    .video-ph-inner { text-align: center; position: relative; z-index: 1; }
-    .video-ph-inner .play-icon { font-size: 3rem; margin-bottom: 8px; opacity: .4; }
+    .video-caption {
+      background: var(--gray-bg);
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      text-align: center;
+      line-height: 1.5;
+      border-top: 1px solid var(--gray-border);
+    }
 
-    /* Results table */
+    /* 2-column Shorts grid */
+    .shorts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    /* ── TABLE ──────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
     .results-table {
-      font-size: 0.9rem;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      font-family: 'Roboto', sans-serif;
+      white-space: nowrap;
     }
     .results-table thead th {
-      background: #f8fafc;
-      font-size: 0.78rem;
-      font-weight: 700;
+      background: var(--gray-bg);
+      font-size: 0.75rem;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: #64748b;
+      color: var(--text-sec);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--gray-border);
+      text-align: center;
     }
+    .results-table thead th.left { text-align: left; }
+    .results-table tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--gray-border);
+      color: var(--text-mid);
+      text-align: center;
+    }
+    .results-table tbody td.left { text-align: left; }
+    .results-table tbody tr:last-child td { border-bottom: none; }
+    .results-table tbody tr:hover td { background: #fafafa; }
     .results-table tr.ours td {
-      background: #f5f3ff;
+      background: var(--blue-light);
+      color: var(--blue-dark);
       font-weight: 700;
-      color: #7c3aed;
     }
-    .results-table tr.ours td:first-child {
-      border-left: 3px solid #7c3aed;
+    .results-table tr.ours td.left { border-left: 3px solid var(--blue); }
+    .results-table tr.gt td { color: var(--text-sec); font-style: italic; }
+    .results-table tr.section-header td {
+      background: #f1f3f4;
+      color: var(--text-sec);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 7px 12px;
+      text-align: center;
     }
+    .results-table .group-header {
+      border-left: 1px solid var(--gray-border);
+      border-right: 1px solid var(--gray-border);
+    }
+    .table-caption {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+    .table-note { font-size: 0.9rem; color: var(--text-mid); margin-bottom: 14px; }
+    .drop-pct { color: #c0392b; font-size: 0.8rem; }
 
-    /* BibTeX block */
-    #BibTeX pre {
-      background: #0f172a;
-      color: #a5f3fc;
-      border-radius: 10px;
+    /* ── BIBTEX ─────────────────────────────────────────── */
+    .bibtex-pre {
+      background: #1a1a2e;
+      color: #8ab4f8;
+      border-radius: 12px;
       padding: 24px 28px;
-      font-size: 0.87rem;
+      font-size: 0.875rem;
       line-height: 1.75;
       overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
-
-    /* Section divider */
-    .section-divider {
-      border: none;
-      border-top: 1px solid #e2e8f0;
-      margin: 0;
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--text-sec);
+      cursor: pointer;
+      background: none;
+      border: 1px solid var(--gray-border);
+      padding: 6px 18px;
+      border-radius: 16px;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s;
     }
+    .copy-btn:hover { background: var(--gray-bg); }
 
-    /* Nav */
-    .navbar-item:hover {
-      background: transparent !important;
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .site-footer {
+      background: var(--gray-bg);
+      border-top: 1px solid var(--gray-border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
+      .pipe-conn { display: none; }
+      .pipeline-wrap { flex-wrap: wrap; gap: 8px; }
+      .shorts-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- ===================== NAVBAR ===================== -->
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="../../index.html" title="CogVis Lab Home">
-        <span class="icon"><i class="fas fa-home"></i></span>
-        <span style="margin-left:4px; font-size:0.85rem; font-family:'Google Sans',sans-serif; font-weight:600;">
-          CogVis Lab
-        </span>
-      </a>
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link" style="font-size:0.85rem;">More</a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="../../people.html">People</a>
-          <a class="navbar-item" href="../../projects.html">Projects</a>
-          <a class="navbar-item" href="../../index.html#publications">All Publications</a>
-        </div>
-      </div>
-    </div>
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../../people.html">People</a>
+    <a href="../../projects.html">Projects</a>
+    <a href="../../index.html#publications">Publications</a>
   </div>
 </nav>
 
-<!-- ===================== HERO / TITLE ===================== -->
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
+<!-- SECTION NAV (D4RT-style) -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#method">Method</a>
+  <a class="sec-link" href="#results">Results</a>
+  <a class="sec-link" href="#quantitative">Quantitative</a>
+  <a class="sec-link" href="#acknowledgements">Acknowledgements</a>
+  <a class="sec-link" href="#bibtex">BibTeX</a>
+</div>
 
-          <h1 class="title is-1 publication-title">
-            <span class="gradient-text">SignSparK</span>: Efficient Multilingual Sign Language<br />
-            Production via Sparse Keyframe Learning
-          </h1>
+<!-- HERO -->
+<div class="hero-wrap">
 
-          <div class="is-size-5 publication-authors" style="margin-top: 1rem;">
-            <span class="author-block">
-              Jianhe Low<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Alexandre Symeonidis-Herzig<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Maksym Ivashechkin<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Ozge Mercanoglu Sincan<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Richard Bowden<sup>1</sup>
-            </span>
-          </div>
+  <div class="conf-badge">
+    <i class="fas fa-award"></i>
+    ECCV 2026
+  </div>
 
-          <div class="is-size-5 publication-authors" style="margin-top: 0.5rem;">
-            <span class="author-block">
-              <sup>1</sup>CVSSP, University of Surrey, United Kingdom
-            </span>
-          </div>
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">SignSparK</span>: Efficient Multilingual Sign&nbsp;Language Production via Sparse Keyframe Learning
+  </h1>
 
-          <!-- Link buttons -->
-          <div class="column has-text-centered" style="margin-top: 1rem;">
-            <div class="publication-links">
+  <p class="authors">
+    Jianhe Low<sup>1</sup>,&thinsp;
+    Alexandre Symeonidis-Herzig<sup>1</sup>,&thinsp;
+    Maksym Ivashechkin<sup>1</sup>,<br />
+    Ozge Mercanoglu Sincan<sup>1</sup>,&thinsp;
+    Richard Bowden<sup>1</sup>
+  </p>
+  <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom</p>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                  <span>Paper</span>
-                </a>
-              </span>
+  <div class="btn-row">
+    <a href="#" class="pill-btn filled">
+      <i class="fas fa-file-pdf"></i> Paper
+    </a>
+    <a href="https://arxiv.org/pdf/2603.10446" class="pill-btn" target="_blank" rel="noopener">
+      <i class="ai ai-arxiv"></i> arXiv
+    </a>
+    <a href="https://github.com/JianHe0628/SignSparK" class="pill-btn" target="_blank" rel="noopener">
+      <i class="fab fa-github"></i> Code
+    </a>
+  </div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-arxiv"></i></span>
-                  <span>arXiv</span>
-                </a>
-              </span>
+</div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Code</span>
-                </a>
-              </span>
+<!-- TEASER -->
+<div class="teaser-wrap">
+  <img src="./assets/Teaser_Fig.jpg" alt="SignSparK teaser figure" class="teaser-img" />
+</div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-youtube"></i></span>
-                  <span>Video</span>
-                </a>
-              </span>
+<hr class="divider" />
 
-            </div>
-          </div>
-          <!-- / Link buttons -->
-
-        </div>
-      </div>
-    </div>
+<!-- ABSTRACT -->
+<section class="section alt" id="abstract">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-body">
+      Sign Language Production (SLP) faces a fundamental trade-off: direct text-to-pose models suffer
+      from regression-to-the-mean effects, while dictionary-retrieval methods produce disjointed
+      transitions. To resolve this, we propose a novel training paradigm that leverages
+      <strong>sparse keyframes</strong> to capture the underlying kinematic distribution of human
+      signing. By generating dense motion from discrete anchors, our approach mitigates
+      regression-to-the-mean while ensuring fluid articulation. To achieve this at scale, we introduce
+      <strong>FAST</strong>, an ultra-efficient sign segmentation model that automatically mines
+      precise temporal boundaries. We then present <strong>SignSparK</strong>, a
+      <em>Conditional Flow Matching (CFM)</em> framework that utilizes these temporal anchors to
+      synthesize 3D signing sequences. This keyframe-driven formulation also unlocks
+      <strong>Keyframe-to-Pose (KF2P)</strong> generation, making precise spatiotemporal editing of
+      signing sequences possible. Furthermore, SignSparK scales across <strong>four distinct sign
+      languages</strong>, constituting the largest multilingual SLP framework to date, and integrates
+      <strong>3D Gaussian Splatting</strong> for photorealistic rendering. Extensive evaluations
+      demonstrate that SignSparK achieves state-of-the-art across diverse SLP tasks and multilingual
+      benchmarks.
+    </p>
   </div>
 </section>
 
-<!-- ===================== TEASER ===================== -->
-<section class="section" style="padding-top: 0;">
-  <div class="container is-max-desktop">
-    <div class="hero-body" style="padding-top: 0;">
+<hr class="divider" />
 
-      <img src="./assets/Teaser_Fig.jpg" alt="SignSparK teaser figure" class="teaser-img" />
+<!-- METHOD -->
+<section class="section" id="method">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Method</h2>
 
+    <!-- FAST -->
+    <h3 class="method-sub">FAST — Fast And Accurate Sign segmenTation</h3>
+    <ul class="method-bullets">
+      <li>Transformer-based BIO-tagging model for per-frame sign segmentation</li>
+      <li>Encodes left &amp; right MANO hand features via parallel spatio-temporal streams, fused by a Two-Stream Mixer</li>
+      <li><strong>45× faster</strong> and <strong>32× more compact</strong> than prior skeleton-based segmentors</li>
+      <li>Keyframe selection policy extracts <em>onset → midpoint → offset</em> per sign for a sparse, semantically rich control signal</li>
+    </ul>
+    <div class="fig-wrap" style="max-width:65%; margin:0 auto;">
+      <img src="./assets/FAST_Overview.jpg" alt="FAST architecture overview" />
+    </div>
+    <p class="fig-caption">
+      <strong>Fig. 2</strong> — FAST architecture (left) and keyframe selection policy (right).
+    </p>
+
+    <!-- SignSparK -->
+    <h3 class="method-sub">SignSparK — Sparse Keyframe-conditioned Flow Matching</h3>
+    <ul class="method-bullets">
+      <li>Conditions a UNet on sparse keyframes + spoken text via Conditional Flow Matching (CFM)</li>
+      <li>Non-keyframe positions are replaced with interpolated Gaussian noise, forcing the model to infer natural inter-sign motion</li>
+      <li>Reconstruction regularization enables high-fidelity synthesis in <strong>&lt;10 sampling steps</strong></li>
+      <li>Classifier-free guidance unlocks both keyframe-conditioned and Text-to-Pose (T2P) inference</li>
+      <li>Scales across <strong>4 sign languages</strong> (DGS, BSL, ASL, GSL) — the largest multilingual SLP framework to date</li>
+    </ul>
+    <div class="fig-wrap">
+      <img src="./assets/ECCV_main.jpg" alt="SignSparK framework overview" />
+    </div>
+    <p class="fig-caption">
+      <strong>Fig. 3</strong> — SignSparK framework: 3D feature extraction → FAST keyframe selection → CFM synthesis → 3DGS rendering.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- RESULTS -->
+<section class="section alt" id="results">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Results</h2>
+
+    <!-- Main qualitative video — full width 16:9 -->
+    <h3 class="section-sub">SignSparK Qualitative Results</h3>
+    <div class="video-card">
+      <div class="video-embed">
+        <iframe
+          src="https://www.youtube.com/embed/QrSfz0kfL4s"
+          title="SignSparK qualitative results"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-caption">
+        Qualitative signing sequences generated by SignSparK across multiple sign languages.
+      </div>
     </div>
 
-    <!-- Abstract -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            Generating natural and linguistically accurate sign language avatars remains a formidable
-            challenge. Current Sign Language Production (SLP) frameworks face a stark trade-off: direct
-            text-to-pose models suffer from regression-to-the-mean effects, while dictionary-retrieval
-            methods produce robotic, disjointed transitions. To resolve this, we propose a novel training
-            paradigm that leverages <strong>sparse keyframes</strong> to capture the true underlying
-            kinematic distribution of human signing. By predicting dense motion from these discrete anchors,
-            our approach mitigates regression-to-the-mean while ensuring fluid articulation.
-          </p>
-          <p>
-            To realize this paradigm at scale, we first introduce <strong>FAST</strong>, an ultra-efficient
-            sign segmentation model that automatically mines precise temporal boundaries. We then present
-            <strong>SignSparK</strong>, a large-scale <em>Conditional Flow Matching (CFM)</em> framework
-            that utilizes these extracted anchors to synthesize 3D signing sequences in SMPL-X and MANO
-            spaces. This keyframe-driven formulation also uniquely unlocks
-            <strong>Keyframe-to-Pose (KF2P)</strong> generation, making precise spatiotemporal editing of
-            signing sequences possible. Furthermore, our adopted reconstruction-based CFM objective enables
-            high-fidelity synthesis in fewer than ten sampling steps; this allows SignSparK to scale across
-            <strong>four distinct sign languages</strong>, establishing the largest multilingual SLP
-            framework to date. Finally, by integrating <strong>3D Gaussian Splatting</strong> for
-            photorealistic rendering, we demonstrate through extensive evaluation that SignSparK establishes
-            a new state-of-the-art across diverse SLP tasks and multilingual benchmarks.
-          </p>
+    <!-- FAST + 3DGS side by side -->
+    <h3 class="section-sub">FAST Segmentation &amp; 3D Gaussian Splatting</h3>
+    <div class="shorts-grid">
+      <div class="video-card">
+        <div class="video-embed portrait">
+          <iframe
+            src="https://www.youtube.com/embed/y3iOOLFHDmI"
+            title="FAST sign segmentation qualitative results"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-caption">
+          <strong>FAST</strong> — sign segmentation on unseen sequences.
+        </div>
+      </div>
+      <div class="video-card">
+        <div class="video-embed portrait">
+          <iframe
+            src="https://www.youtube.com/embed/GiASqTC-0tw"
+            title="3D Gaussian Splatting photorealistic avatar renders"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-caption">
+          <strong>3D-GS</strong> — photorealistic avatar renders of SignSparK outputs.
         </div>
       </div>
     </div>
-    <!-- / Abstract -->
 
   </div>
 </section>
 
-<hr class="section-divider" />
+<hr class="divider" />
 
-<!-- ===================== METHOD ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Method</h2>
-        <div class="content has-text-justified">
-          <div class="hero-body" style="padding: 1rem 0;">
+<!-- QUANTITATIVE -->
+<section class="section" id="quantitative">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Quantitative Results</h2>
 
-            <div class="fig-placeholder pipeline">
-              <div class="pipeline-flow">
-                <div class="pipe-block">
-                  <div class="p-icon">📝</div>
-                  <div class="p-name">Text<br/>Input</div>
-                  <div class="p-sub">Gloss / Spoken<br/>Language</div>
-                </div>
-                <div class="pipe-conn"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="pipe-block highlighted">
-                  <div class="p-icon">⚡</div>
-                  <div class="p-name">FAST<br/>Segmentation</div>
-                  <div class="p-sub">Sparse Keyframe<br/>Extraction</div>
-                </div>
-                <div class="pipe-conn"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="pipe-block highlighted">
-                  <div class="p-icon">🌊</div>
-                  <div class="p-name">SignSparK<br/>CFM</div>
-                  <div class="p-sub">Conditional Flow<br/>Matching</div>
-                </div>
-                <div class="pipe-conn"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="pipe-block">
-                  <div class="p-icon">🧍</div>
-                  <div class="p-name">3D Signing<br/>Sequence</div>
-                  <div class="p-sub">SMPL-X / MANO<br/>+ 3D-GS Render</div>
-                </div>
-              </div>
-            </div>
-
-            <p style="font-size: 0.85em; margin-top: 1rem;">
-              SignSparK pipeline overview. <strong>FAST</strong> (highlighted) automatically mines temporal
-              boundaries from signing video to extract sparse keyframes. <strong>SignSparK</strong>
-              (highlighted) then uses a Conditional Flow Matching objective to synthesize dense 3D pose
-              sequences in SMPL-X and MANO spaces from these keyframe anchors. The keyframe-driven
-              formulation additionally enables KF2P spatiotemporal editing, and 3D Gaussian Splatting
-              produces photorealistic avatar renders.
-            </p>
-          </div>
-        </div>
-      </div>
+    <!-- Table 1: T2P -->
+    <h3 class="section-sub" style="text-align:left; margin-top:0; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Text-to-Pose (T2P) Comparison</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="3">Method</th>
+            <th colspan="4" class="group-header">How2Sign</th>
+            <th colspan="4" class="group-header">CSLDaily</th>
+            <th colspan="4" class="group-header">Phoenix-2014T</th>
+          </tr>
+          <tr>
+            <th colspan="2">DTW-PA-JPE ↓</th>
+            <th colspan="2">DTW-JPE ↓</th>
+            <th colspan="2">DTW-PA-JPE ↓</th>
+            <th colspan="2">DTW-JPE ↓</th>
+            <th colspan="2">DTW-PA-JPE ↓</th>
+            <th colspan="2">DTW-JPE ↓</th>
+          </tr>
+          <tr>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="13">Gloss-Free Text-to-Pose (GF-T2P)</td></tr>
+          <tr><td class="left">Prog. Trans.</td><td>14.15</td><td>11.57</td><td>14.74</td><td>30.17</td><td>15.98</td><td>12.91</td><td>16.30</td><td>32.63</td><td>13.67</td><td>11.95</td><td>15.01</td><td>31.77</td></tr>
+          <tr><td class="left">Text2Mesh</td><td>13.99</td><td>13.47</td><td>15.50</td><td>32.97</td><td>13.47</td><td>12.10</td><td>13.76</td><td>30.37</td><td>13.48</td><td>12.06</td><td>14.04</td><td>31.64</td></tr>
+          <tr><td class="left">T2S-GPT</td><td>11.48</td><td>6.39</td><td>12.65</td><td>18.44</td><td>11.94</td><td>5.93</td><td>12.32</td><td>15.43</td><td>10.38</td><td>6.47</td><td>11.65</td><td>19.09</td></tr>
+          <tr><td class="left">S-MotionGPT</td><td>11.23</td><td>4.39</td><td>12.41</td><td>13.74</td><td>10.81</td><td>3.78</td><td>11.58</td><td>11.31</td><td>9.45</td><td>3.41</td><td>10.42</td><td>9.08</td></tr>
+          <tr><td class="left">SOKE (no dict.)</td><td>7.91</td><td>3.10</td><td>—</td><td>—</td><td>7.58</td><td>2.17</td><td>—</td><td>—</td><td>6.16</td><td>1.85</td><td>—</td><td>—</td></tr>
+          <tr class="ours"><td class="left"><strong>SignSparK (no KF)</strong></td><td><strong>7.26</strong></td><td><strong>2.72</strong></td><td><strong>6.30</strong></td><td><strong>11.43</strong></td><td><strong>7.26</strong></td><td><strong>2.00</strong></td><td><strong>6.27</strong></td><td><strong>10.63</strong></td><td><strong>5.24</strong></td><td><strong>1.52</strong></td><td><strong>4.40</strong></td><td><strong>7.10</strong></td></tr>
+          <tr class="section-header"><td colspan="13">Sign Retrieval Text-to-Pose (SR-T2P)</td></tr>
+          <tr><td class="left">SOKE</td><td>6.82</td><td>2.35</td><td>7.75</td><td>10.08</td><td>6.24</td><td>1.71</td><td>7.38</td><td>9.68</td><td>4.77</td><td>1.38</td><td>6.04</td><td>7.72</td></tr>
+          <tr class="ours"><td class="left"><strong>SignSparK</strong></td><td>—</td><td>—</td><td>—</td><td>—</td><td><strong>4.87</strong></td><td><strong>1.37</strong></td><td><strong>4.89</strong></td><td><strong>6.56</strong></td><td><strong>3.68</strong></td><td><strong>1.18</strong></td><td><strong>3.51</strong></td><td><strong>4.82</strong></td></tr>
+        </tbody>
+      </table>
     </div>
+    <p class="table-caption">SignSparK consistently reduces body and hand Joint Position Error (JPE) across all datasets in both GF and SR regimes.</p>
+
+    <!-- Table 2: KF2P -->
+    <h3 class="section-sub" style="text-align:left; margin-top:40px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Keyframe-to-Pose (KF2P) Evaluation</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="3">Method</th>
+            <th colspan="5" class="group-header">How2Sign</th>
+            <th colspan="5" class="group-header">CSLDaily</th>
+            <th colspan="5" class="group-header">Phoenix-2014T</th>
+          </tr>
+          <tr>
+            <th colspan="2">DTW-PA-J ↓</th><th colspan="2">DTW-J ↓</th><th>B-T ↑ | Drop ↓</th>
+            <th colspan="2">DTW-PA-J ↓</th><th colspan="2">DTW-J ↓</th><th>B-T ↑ | Drop ↓</th>
+            <th colspan="2">DTW-PA-J ↓</th><th colspan="2">DTW-J ↓</th><th>B-T ↑ | Drop ↓</th>
+          </tr>
+          <tr>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th><th>BLEU-4</th>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th><th>BLEU-4</th>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th><th>BLEU-4</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="gt">
+            <td class="left"><em>GT</em></td>
+            <td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>3.37</td>
+            <td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>6.83</td>
+            <td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>14.77</td>
+          </tr>
+          <tr>
+            <td class="left">SLERP Baseline</td>
+            <td>4.18</td><td>0.98</td><td>4.36</td><td>3.76</td><td>2.78 <span class="drop-pct">↓18%</span></td>
+            <td>4.39</td><td>0.85</td><td>4.05</td><td>4.35</td><td>4.88 <span class="drop-pct">↓29%</span></td>
+            <td>4.10</td><td>0.89</td><td>3.71</td><td>4.12</td><td>9.18 <span class="drop-pct">↓38%</span></td>
+          </tr>
+          <tr class="ours">
+            <td class="left"><strong>SignSparK</strong></td>
+            <td><strong>2.11</strong></td><td><strong>0.86</strong></td><td><strong>1.68</strong></td><td><strong>2.80</strong></td><td><strong>2.99</strong> <span class="drop-pct">↓11%</span></td>
+            <td><strong>2.50</strong></td><td><strong>0.63</strong></td><td><strong>2.02</strong></td><td><strong>2.71</strong></td><td><strong>5.85</strong> <span class="drop-pct">↓14%</span></td>
+            <td><strong>2.39</strong></td><td><strong>0.71</strong></td><td><strong>1.92</strong></td><td><strong>2.25</strong></td><td><strong>11.70</strong> <span class="drop-pct">↓21%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">SignSparK outperforms SLERP interpolation on all metrics, with significantly smaller performance drops relative to GT.</p>
   </div>
 </section>
 
-<hr class="section-divider" />
+<hr class="divider" />
 
-<!-- ===================== RESULTS / VISUALISATIONS ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3 has-text-centered">Results</h2>
-        <div class="content has-text-justified">
-
-          <h3 class="title is-4 has-text-centered">Multilingual SLP Generation</h3>
-          <div class="content has-text-centered">
-            <div class="video-placeholder">
-              <div class="video-ph-inner">
-                <div class="play-icon"><i class="fa-solid fa-circle-play"></i></div>
-                <div>Multilingual generation results</div>
-              </div>
-            </div>
-          </div>
-
-          <h3 class="title is-4 has-text-centered">Keyframe-to-Pose (KF2P) Editing</h3>
-          <div class="content has-text-centered">
-            <div class="video-placeholder">
-              <div class="video-ph-inner">
-                <div class="play-icon"><i class="fa-solid fa-circle-play"></i></div>
-                <div>KF2P spatiotemporal editing demonstration</div>
-              </div>
-            </div>
-          </div>
-
-          <h3 class="title is-4 has-text-centered">3D Gaussian Splatting Rendering</h3>
-          <div class="content has-text-centered">
-            <div class="video-placeholder">
-              <div class="video-ph-inner">
-                <div class="play-icon"><i class="fa-solid fa-circle-play"></i></div>
-                <div>Photorealistic avatar rendering via 3D-GS</div>
-              </div>
-            </div>
-          </div>
-
-          <h3 class="title is-4 has-text-centered">Comparison with State-of-the-Art</h3>
-          <div class="content has-text-centered">
-            <div class="video-placeholder">
-              <div class="video-ph-inner">
-                <div class="play-icon"><i class="fa-solid fa-circle-play"></i></div>
-                <div>Qualitative comparison with baseline methods</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
+<!-- ACKNOWLEDGEMENTS -->
+<section class="section" id="acknowledgements">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Acknowledgements</h2>
+    <p style="font-size:0.92rem; color:var(--text-mid); line-height:1.8; text-align:justify;">
+      This work was supported by EPSRC grant APP24554 (SignGPT — EP/Z535370/1),
+      EPSRC grant APP78083 (UMCS — UKRI3927), and through funding from
+      <strong>Google.org</strong> via the AI for Global Goals scheme.
+      The authors acknowledge the use of <strong>Isambard-AI</strong> National AI Research Resource (AIRR),
+      funded by UK DSIT via UKRI and STFC [ST/AIRR/I-A-I/1023].
+      Jianhe Low additionally acknowledges a bursary from the
+      <strong>Rabin Ezra Scholarship Trust</strong>.
+      This work reflects only the authors' views; the funders are not responsible for any use
+      that may be made of the information it contains.
+    </p>
   </div>
 </section>
 
-<hr class="section-divider" />
+<hr class="divider" />
 
-<!-- ===================== QUANTITATIVE RESULTS ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Quantitative Results</h2>
-        <div class="content has-text-justified">
-
-          <p><strong>Sign Language Production on Phoenix-2014T.</strong>
-            SignSparK outperforms all baselines in both BLEU and FID metrics.</p>
-
-          <div style="overflow-x: auto;">
-            <table class="table is-fullwidth is-striped is-hoverable results-table">
-              <thead>
-                <tr>
-                  <th>Method</th>
-                  <th>Venue</th>
-                  <th>BLEU-4 ↑</th>
-                  <th>FID ↓</th>
-                  <th>Steps ↓</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Prog2Pose</td><td>CVPR 2021</td><td>2.58</td><td>18.4</td><td>—</td></tr>
-                <tr><td>SignDiff</td><td>ICCV 2023</td><td>3.12</td><td>14.7</td><td>100</td></tr>
-                <tr><td>T2M-GPT</td><td>CVPR 2023</td><td>3.45</td><td>12.1</td><td>—</td></tr>
-                <tr class="ours">
-                  <td><strong>SignSparK (Ours)</strong></td>
-                  <td>—</td>
-                  <td><strong>4.81</strong></td>
-                  <td><strong>7.3</strong></td>
-                  <td><strong>&lt;10</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p style="margin-top: 1.5rem;"><strong>Multilingual Benchmark.</strong>
-            SignSparK scales across four sign languages while maintaining state-of-the-art quality.</p>
-
-          <div style="overflow-x: auto;">
-            <table class="table is-fullwidth is-striped is-hoverable results-table">
-              <thead>
-                <tr>
-                  <th>Sign Language</th>
-                  <th>BLEU-4 ↑</th>
-                  <th>FID ↓</th>
-                  <th>MPJPE ↓</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>German SL (DGS)</td><td>4.81</td><td>7.3</td><td>28.4</td></tr>
-                <tr><td>British SL (BSL)</td><td>4.53</td><td>8.1</td><td>30.2</td></tr>
-                <tr><td>American SL (ASL)</td><td>4.62</td><td>7.9</td><td>29.7</td></tr>
-                <tr class="ours">
-                  <td><strong>Average</strong></td>
-                  <td><strong>4.65</strong></td>
-                  <td><strong>7.8</strong></td>
-                  <td><strong>29.4</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ===================== BIBTEX ===================== -->
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code id="bibtex-code">@article{signspark2025,
+<!-- BIBTEX -->
+<section class="section alt" id="bibtex">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-pre"><code id="bibtex-code">@inproceedings{signspark2026,
   title     = {SignSparK: Efficient Multilingual Sign Language
                Production via Sparse Keyframe Learning},
   author    = {Low, Jianhe and Symeonidis-Herzig, Alexandre and
                Ivashechkin, Maksym and Mercanoglu Sincan, Ozge and
                Bowden, Richard},
-  year      = {2025},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2026},
 }</code></pre>
-    <button class="button is-small is-light" id="copy-bibtex" style="margin-top: -0.5rem;">
-      <span class="icon is-small"><i class="fas fa-copy"></i></span>
-      <span>Copy</span>
+    <button class="copy-btn" id="copy-bibtex">
+      <i class="fas fa-copy"></i> Copy BibTeX
     </button>
   </div>
 </section>
 
-<!-- ===================== FOOTER ===================== -->
-<footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content" style="text-align: center;">
-          <p>
-            This website is licensed under a
-            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-              Creative Commons Attribution-ShareAlike 4.0 International License
-            </a>.
-          </p>
-          <p>
-            Page template adapted from
-            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
-            We thank the authors for sharing the template.
-            &nbsp;·&nbsp;
-            <a href="../../index.html">CogVis Lab</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-<!-- Start of Signapse Web Translation Plugin Script Tag  -->
-<script src="https://translations.signapsesolutions.com/beta/signapse-loader.umd.js" app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6" version="v2" id="signapse" position="bottom-right" disable-survey></script>
-<!-- End of Signapse Web Translation Plugin Script Tag -->
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;·&nbsp;
+    <a href="../../index.html">CogVis Lab</a>
+  </p>
+  <script src="https://translations.signapsesolutions.com/beta/signapse-loader.umd.js"
+          app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6"
+          version="v2" id="signapse" position="bottom-right" disable-survey></script>
 </footer>
 
 <script>
-  /* BibTeX copy button */
+  /* BibTeX copy */
   document.getElementById('copy-bibtex').addEventListener('click', function () {
-    var text = document.getElementById('bibtex-code').innerText;
-    navigator.clipboard.writeText(text).then(function () {
+    navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
       var btn = document.getElementById('copy-bibtex');
-      btn.querySelector('span:last-child').textContent = 'Copied!';
-      setTimeout(function () {
-        btn.querySelector('span:last-child').textContent = 'Copy';
-      }, 2000);
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy BibTeX'; }, 2000);
     });
   });
 
-  /* Navbar burger toggle */
-  document.addEventListener('DOMContentLoaded', function () {
-    var burger = document.querySelector('.navbar-burger');
-    var menu   = document.querySelector('.navbar-menu');
-    if (burger && menu) {
-      burger.addEventListener('click', function () {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
+  /* Section nav active highlight (IntersectionObserver) */
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var targets = ['abstract','method','results','quantitative','acknowledgements','bibtex'].map(function (id) {
+      return document.getElementById(id);
+    }).filter(Boolean);
+
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
       });
     }
-  });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    targets.forEach(function (t) { io.observe(t); });
+  })();
 </script>
+
 </body>
 </html>
