@@ -227,7 +227,57 @@
       border: 1px solid var(--gray-border);
       display: block;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
     }
+    .teaser-img:hover {
+      transform: scale(1.012);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+
+    /* ── LIGHTBOX ───────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      cursor: zoom-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+    }
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+      transform: scale(0.96);
+      transition: transform 0.22s ease;
+    }
+    .lightbox.open img { transform: scale(1); }
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      color: #fff;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
 
     /* ── ABSTRACT ───────────────────────────────────────── */
     .abstract-body {
@@ -247,6 +297,12 @@
       border: 1px solid var(--gray-border);
       display: block;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .fig-wrap img:hover {
+      transform: scale(1.015);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
     }
     .fig-caption {
       margin-top: 10px;
@@ -265,28 +321,76 @@
       border-bottom: 2px solid var(--gray-border);
     }
     .method-sub:first-of-type { margin-top: 0; }
-    .method-bullets {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 24px;
+    .method-sub .ac {
+      font-weight: 800;
+      color: var(--blue);
+    }
+    .feature-grid {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
+      margin: 0 0 8px;
     }
-    .method-bullets li {
-      font-size: 0.95rem;
-      color: var(--text-mid);
-      line-height: 1.6;
-      padding-left: 20px;
+    .feature-card {
       position: relative;
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
     }
-    .method-bullets li::before {
-      content: '—';
+    /* sliding accent bar on the left */
+    .feature-card::before {
+      content: '';
       position: absolute;
       left: 0;
-      color: var(--blue);
-      font-weight: 700;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--blue);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.22s ease;
     }
+    .feature-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 10px 26px rgba(26,115,232,0.12);
+      border-color: var(--blue-border);
+    }
+    .feature-card:hover::before { transform: scaleY(1); }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-card:hover .feature-icon {
+      background: var(--blue);
+      color: #fff;
+      transform: scale(1.06);
+    }
+    .feature-text { font-size: 0.88rem; color: var(--text-sec); line-height: 1.58; }
+    .feature-text strong {
+      display: block;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+    }
+    .feature-text .hl-num { color: var(--blue); font-weight: 700; }
 
     /* ── VIDEO CARD ─────────────────────────────────────── */
     .video-card {
@@ -296,54 +400,12 @@
       border: 1px solid var(--gray-border);
       background: #000;
     }
-    .video-embed {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      cursor: pointer;
-    }
-    .video-embed.portrait { aspect-ratio: 9 / 16; }
-    .video-embed iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
+    .native-video {
       display: block;
-    }
-    .video-embed::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-    }
-    /* Thumbnail overlay */
-    .video-thumb {
-      position: absolute;
-      inset: 0;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: opacity 0.2s;
+      height: auto;
+      background: #000;
     }
-    .video-play-btn {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.25);
-      transition: background 0.2s;
-    }
-    .video-play-btn svg {
-      width: 68px;
-      height: 68px;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-      transition: transform 0.2s;
-    }
-    .video-embed:hover .video-play-btn { background: rgba(0,0,0,0.15); }
-    .video-embed:hover .video-play-btn svg { transform: scale(1.08); }
     .video-caption {
       background: var(--gray-bg);
       padding: 10px 16px;
@@ -354,7 +416,23 @@
       border-top: 1px solid var(--gray-border);
     }
 
-    /* 2-column Shorts grid */
+    /* ── HERO VIDEO (centerpiece) ───────────────────────── */
+    .hero-video-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 8px 24px 8px;
+    }
+    .hero-video-card {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--gray-border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.13);
+      background: #000;
+      position: relative;
+    }
+    .hero-video-card video { display: block; width: 100%; height: auto; }
+
+    /* 2-column grid for square clips */
     .shorts-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -493,8 +571,8 @@
 <div class="sec-nav" id="sec-nav">
   <a class="sec-link" href="#abstract">Abstract</a>
   <a class="sec-link" href="#method">Method</a>
-  <a class="sec-link" href="#results">Results</a>
-  <a class="sec-link" href="#quantitative">Quantitative</a>
+  <a class="sec-link" href="#results">Qualitative Results</a>
+  <a class="sec-link" href="#quantitative">Quantitative Results</a>
   <a class="sec-link" href="#acknowledgements">Acknowledgements</a>
   <a class="sec-link" href="#bibtex">BibTeX</a>
 </div>
@@ -534,9 +612,23 @@
 
 </div>
 
+<!-- HERO VIDEO -->
+<div class="hero-video-wrap">
+  <div class="hero-video-card">
+    <video
+      src="./assets/signspark_qualitatives.mp4"
+      poster="./assets/signspark_qualitatives_poster.jpg"
+      autoplay muted loop playsinline preload="metadata">
+    </video>
+  </div>
+</div>
+
 <!-- TEASER -->
-<div class="teaser-wrap">
+<div class="teaser-wrap" style="padding-top:40px;">
   <img src="./assets/Teaser_Fig.jpg" alt="SignSparK teaser figure" class="teaser-img" />
+  <p class="fig-caption" style="margin-top:14px;">
+    <strong>Fig. 1</strong> — SignSparK generates fluent, multilingual 3D signing from text via sparse keyframe control.
+  </p>
 </div>
 
 <hr class="divider" />
@@ -574,29 +666,85 @@
     <h2 class="section-title">Method</h2>
 
     <!-- FAST -->
-    <h3 class="method-sub">FAST — Fast And Accurate Sign segmenTation</h3>
-    <ul class="method-bullets">
-      <li>Transformer-based BIO-tagging model for per-frame sign segmentation</li>
-      <li>Encodes left &amp; right MANO hand features via parallel spatio-temporal streams, fused by a Two-Stream Mixer</li>
-      <li><strong>45× faster</strong> and <strong>32× more compact</strong> than prior skeleton-based segmentors</li>
-      <li>Keyframe selection policy extracts <em>onset → midpoint → offset</em> per sign for a sparse, semantically rich control signal</li>
-    </ul>
-    <div class="fig-wrap" style="max-width:65%; margin:0 auto;">
-      <img src="./assets/FAST_Overview.jpg" alt="FAST architecture overview" />
+    <h3 class="method-sub"><span class="ac">F</span>ast and <span class="ac">A</span>ccurate <span class="ac">S</span>ign segmen<span class="ac">T</span>ation</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-stream"></i></div>
+        <div class="feature-text">
+          <strong>BIO-Tagging Segmentation</strong>
+          Transformer-based model produces per-frame sign boundaries across the full sequence.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-code-branch"></i></div>
+        <div class="feature-text">
+          <strong>Two-Stream Hand Encoder</strong>
+          Left &amp; right MANO features run through parallel spatio-temporal streams, fused by a Two-Stream Mixer.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+        <div class="feature-text">
+          <strong>Ultra-Efficient</strong>
+          <span class="hl-num">45×</span> faster and <span class="hl-num">32×</span> more compact than prior skeleton-based segmentors.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-clapperboard"></i></div>
+        <div class="feature-text">
+          <strong>Sparse Keyframe Policy</strong>
+          Extracts <em>onset → midpoint → offset</em> per sign for a sparse, semantically rich control signal.
+        </div>
+      </div>
+    </div>
+    <div class="fig-wrap">
+      <img src="./assets/FAST_Overview.png" alt="FAST architecture and keyframe selection policy" />
     </div>
     <p class="fig-caption">
-      <strong>Fig. 2</strong> — FAST architecture (left) and keyframe selection policy (right).
+      <strong>Fig. 2</strong> — <strong>(a)</strong> FAST model architecture: frozen WiLoR hand features pass through
+      parallel 1D-Conv streams, a Two-Stream Mixer, and a Transformer to predict per-frame BIO tags.
+      <strong>(b)</strong> Keyframe selection policy extracting onset → mid → offset per sign segment.
     </p>
 
     <!-- SignSparK -->
-    <h3 class="method-sub">SignSparK — Sparse Keyframe-conditioned Flow Matching</h3>
-    <ul class="method-bullets">
-      <li>Conditions a UNet on sparse keyframes + spoken text via Conditional Flow Matching (CFM)</li>
-      <li>Non-keyframe positions are replaced with interpolated Gaussian noise, forcing the model to infer natural inter-sign motion</li>
-      <li>Reconstruction regularization enables high-fidelity synthesis in <strong>&lt;10 sampling steps</strong></li>
-      <li>Classifier-free guidance unlocks both keyframe-conditioned and Text-to-Pose (T2P) inference</li>
-      <li>Scales across <strong>4 sign languages</strong> (DGS, BSL, ASL, GSL) — the largest multilingual SLP framework to date</li>
-    </ul>
+    <h3 class="method-sub"><span class="ac">Sign</span> Language Production with <span class="ac">Spar</span>se <span class="ac">K</span>eyframes</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-wave-square"></i></div>
+        <div class="feature-text">
+          <strong>Conditional Flow Matching</strong>
+          A UNet is conditioned on sparse keyframes and spoken text to synthesize dense 3D motion.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-random"></i></div>
+        <div class="feature-text">
+          <strong>Noise-Infilled Motion</strong>
+          Non-keyframe positions become interpolated Gaussian noise, forcing the model to infer natural inter-sign motion.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-gauge-high"></i></div>
+        <div class="feature-text">
+          <strong>Fewer than 10 Steps</strong>
+          Reconstruction regularization enables high-fidelity synthesis in <span class="hl-num">&lt;10</span> sampling steps.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-sliders"></i></div>
+        <div class="feature-text">
+          <strong>Classifier-Free Guidance</strong>
+          Unlocks both keyframe-conditioned and pure Text-to-Pose (T2P) inference from one model.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-language"></i></div>
+        <div class="feature-text">
+          <strong>Multilingual at Scale</strong>
+          Scales across <span class="hl-num">4</span> sign languages (DGS, BSL, ASL, GSL) — the largest multilingual SLP framework to date.
+        </div>
+      </div>
+    </div>
     <div class="fig-wrap">
       <img src="./assets/ECCV_main.jpg" alt="SignSparK framework overview" />
     </div>
@@ -611,51 +759,29 @@
 <!-- RESULTS -->
 <section class="section alt" id="results">
   <div class="section-inner scroll-target">
-    <h2 class="section-title">Results</h2>
+    <h2 class="section-title">Qualitative Results</h2>
 
-    <!-- Main qualitative video — full width 16:9 -->
-    <h3 class="section-sub">SignSparK Qualitative Results</h3>
-    <div class="video-card">
-      <div class="video-embed">
-        <iframe
-          src="https://www.youtube.com/embed/QrSfz0kfL4s?autoplay=1&mute=1&loop=1&controls=0&playlist=QrSfz0kfL4s&rel=0"
-          title="SignSparK qualitative results"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-      </div>
-      <div class="video-caption">
-        Qualitative signing sequences generated by SignSparK across multiple sign languages.
-      </div>
-    </div>
-
-    <!-- FAST + 3DGS side by side -->
+    <!-- FAST + 3DGS side by side (square clips) -->
     <h3 class="section-sub">FAST Segmentation &amp; 3D Gaussian Splatting</h3>
     <div class="shorts-grid">
       <div class="video-card">
-        <div class="video-embed portrait">
-          <iframe
-            src="https://www.youtube.com/embed/y3iOOLFHDmI?autoplay=1&mute=1&loop=1&controls=0&playlist=y3iOOLFHDmI&rel=0"
-            title="FAST sign segmentation qualitative results"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
-        </div>
+        <video
+          class="native-video"
+          src="./assets/fast_segmentation.mp4"
+          poster="./assets/fast_segmentation_poster.jpg"
+          autoplay muted loop playsinline preload="metadata"></video>
         <div class="video-caption">
-          <strong>FAST</strong> — sparse keyframe segmentation on DGS test sequences.
+          <strong>FAST</strong> — sparse keyframe segmentation on unseen sequences.
         </div>
       </div>
       <div class="video-card">
-        <div class="video-embed portrait">
-          <iframe
-            src="https://www.youtube.com/embed/GiASqTC-0tw?autoplay=1&mute=1&loop=1&controls=0&playlist=GiASqTC-0tw&rel=0"
-            title="3D Gaussian Splatting photorealistic avatar renders"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
-        </div>
+        <video
+          class="native-video"
+          src="./assets/gaussian_splatting.mp4"
+          poster="./assets/gaussian_splatting_poster.jpg"
+          autoplay muted loop playsinline preload="metadata"></video>
         <div class="video-caption">
-          <strong>3D-GS</strong> — photorealistic avatar renders of SignSparK outputs.
+          <strong>3D-GS</strong> — photorealistic renders via SignSplat &amp; HuGEDiff; any SMPL-based renderer is compatible.
         </div>
       </div>
     </div>
@@ -817,20 +943,37 @@
           version="v2" id="signapse" position="bottom-right" disable-survey></script>
 </footer>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Expanded figure" />
+</div>
+
 <script>
-  /* Click-to-load YouTube embeds */
-  document.querySelectorAll('.video-embed[data-vid]').forEach(function (wrap) {
-    wrap.addEventListener('click', function () {
-      var vid = wrap.dataset.vid;
-      var iframe = document.createElement('iframe');
-      iframe.src = 'https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0';
-      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-      iframe.allowFullscreen = true;
-      iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
-      wrap.innerHTML = '';
-      wrap.appendChild(iframe);
+  /* Figure lightbox (click to expand) */
+  (function () {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    var figs = document.querySelectorAll('.teaser-img, .fig-wrap img');
+    function open(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || 'Expanded figure';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    figs.forEach(function (img) {
+      img.addEventListener('click', function () { open(img.src, img.alt); });
     });
-  });
+    lb.addEventListener('click', close);
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('open')) close();
+    });
+  })();
 
   /* BibTeX copy */
   document.getElementById('copy-bibtex').addEventListener('click', function () {
