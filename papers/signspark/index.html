@@ -300,6 +300,7 @@
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
+      cursor: pointer;
     }
     .video-embed.portrait { aspect-ratio: 9 / 16; }
     .video-embed iframe {
@@ -310,6 +311,39 @@
       border: 0;
       display: block;
     }
+    .video-embed::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    /* Thumbnail overlay */
+    .video-thumb {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.2s;
+    }
+    .video-play-btn {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.25);
+      transition: background 0.2s;
+    }
+    .video-play-btn svg {
+      width: 68px;
+      height: 68px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+      transition: transform 0.2s;
+    }
+    .video-embed:hover .video-play-btn { background: rgba(0,0,0,0.15); }
+    .video-embed:hover .video-play-btn svg { transform: scale(1.08); }
     .video-caption {
       background: var(--gray-bg);
       padding: 10px 16px;
@@ -584,7 +618,7 @@
     <div class="video-card">
       <div class="video-embed">
         <iframe
-          src="https://www.youtube.com/embed/QrSfz0kfL4s"
+          src="https://www.youtube.com/embed/QrSfz0kfL4s?autoplay=1&mute=1&loop=1&controls=0&playlist=QrSfz0kfL4s&rel=0"
           title="SignSparK qualitative results"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
@@ -601,20 +635,20 @@
       <div class="video-card">
         <div class="video-embed portrait">
           <iframe
-            src="https://www.youtube.com/embed/y3iOOLFHDmI"
+            src="https://www.youtube.com/embed/y3iOOLFHDmI?autoplay=1&mute=1&loop=1&controls=0&playlist=y3iOOLFHDmI&rel=0"
             title="FAST sign segmentation qualitative results"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen>
           </iframe>
         </div>
         <div class="video-caption">
-          <strong>FAST</strong> — sign segmentation on unseen sequences.
+          <strong>FAST</strong> — sparse keyframe segmentation on DGS test sequences.
         </div>
       </div>
       <div class="video-card">
         <div class="video-embed portrait">
           <iframe
-            src="https://www.youtube.com/embed/GiASqTC-0tw"
+            src="https://www.youtube.com/embed/GiASqTC-0tw?autoplay=1&mute=1&loop=1&controls=0&playlist=GiASqTC-0tw&rel=0"
             title="3D Gaussian Splatting photorealistic avatar renders"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen>
@@ -784,6 +818,20 @@
 </footer>
 
 <script>
+  /* Click-to-load YouTube embeds */
+  document.querySelectorAll('.video-embed[data-vid]').forEach(function (wrap) {
+    wrap.addEventListener('click', function () {
+      var vid = wrap.dataset.vid;
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
+      wrap.innerHTML = '';
+      wrap.appendChild(iframe);
+    });
+  });
+
   /* BibTeX copy */
   document.getElementById('copy-bibtex').addEventListener('click', function () {
     navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
