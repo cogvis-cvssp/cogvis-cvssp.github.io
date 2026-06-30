@@ -229,12 +229,12 @@
     .bench-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-border); color: var(--text-mid); vertical-align: top; }
     .bench-table tbody tr:last-child td { border-bottom: none; }
 
-    /* Win-rate colour coding (Table 5) */
-    td.win-dark  { background: #c6efce !important; color: #1a5c2d; font-weight: 700; }
-    td.win-mid   { background: #ddebf7 !important; color: #1e3a8a; }
-    td.win-light { background: #ffeb9c !important; color: #7d5a00; }
-    td.win-bad   { background: #ffc7ce !important; color: #9c0006; font-style: italic; }
-    td.win-target { box-shadow: inset 0 0 0 2px #1e40af; }
+    /* Win-rate colour coding (Table 5) — matches LaTeX green!28/14/10 and red!12 */
+    td.win-dark  { background: #B8DBB8 !important; color: #1a4d1a; font-weight: 700; } /* green!28 */
+    td.win-mid   { background: #DBEDDB !important; color: #1a4d1a; }                   /* green!14 */
+    td.win-light { background: #E6F2E6 !important; color: #2d5a2d; }                   /* green!10 */
+    td.win-bad   { background: #FFE0E0 !important; color: #BF1A1A; font-style: italic; } /* red!12, Rcol */
+    td.win-target {}
     .win-table .section-header td { text-align: left; }
 
     /* Directional predictions table (Table 6) */
@@ -717,10 +717,10 @@
     <p class="table-note" style="margin-bottom:16px;">
       Per-dimension win rates on <span class="hl-num" style="color:var(--blue);font-weight:700;">n&thinsp;=&thinsp;180</span> synthetic BSL corpus corruptions (uncorrupted BT2 &ge;2.5), conditioned on which classifier fires. Columns measure overall score plus per-dimension scores; rows are corruption type. <strong>Bordered cells</strong> mark the overall score and the matched target dimension for each corruption.
       <br><span style="font-size:0.78rem; color:var(--text-sec); margin-top:4px; display:inline-block;">
-        <span style="display:inline-block;width:10px;height:10px;background:#c6efce;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>&ge;80% &nbsp;
-        <span style="display:inline-block;width:10px;height:10px;background:#ddebf7;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>65–79% &nbsp;
-        <span style="display:inline-block;width:10px;height:10px;background:#ffeb9c;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>55–64% &nbsp;
-        <span style="display:inline-block;width:10px;height:10px;background:#ffc7ce;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span><em>wrong-way</em>
+        <span style="display:inline-block;width:10px;height:10px;background:#B8DBB8;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>&ge;80% &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#DBEDDB;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>65–79% &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#E6F2E6;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>55–64% &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#FFE0E0;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span><em>wrong-way</em>
       </span>
     </p>
     <div class="table-wrap">

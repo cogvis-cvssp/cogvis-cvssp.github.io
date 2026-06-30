@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description"
+        content="SignRefine: Adapting Foundational Video Models for Sign Language Generation." />
+  <meta name="keywords" content="sign language generation, video diffusion, keypoint conditioning, sign language production, NVSign dataset" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="SignRefine: Adapting Foundational Video Models for Sign Language Generation" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cogvis.github.io/papers/signrefine/" />
+  <meta property="og:description"
+        content="SignRefine produces comprehensible signing from 2D keypoint conditioning, using local adapters with spatial grounding on a pretrained video diffusion transformer." />
+
+  <title>SignRefine — Sign Language Video Generation</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:         #1a73e8;
+      --blue-dark:    #185abc;
+      --blue-light:   #e8f0fe;
+      --blue-border:  #c5d9fc;
+      --green:        #137333;
+      --green-light:  #e6f4ea;
+      --green-border: #b7dfbf;
+      --gray-bg:      #f8f9fa;
+      --gray-border:  #e8eaed;
+      --text:         #202124;
+      --text-mid:     #3c4043;
+      --text-sec:     #5f6368;
+      --nav-h:        56px;
+      --snav-h:       44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP NAV ────────────────────────────────────────── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .site-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
+
+    /* ── SECTION NAV ────────────────────────────────────── */
+    .sec-nav {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: var(--snav-h);
+    }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 44px;
+      text-align: center;
+    }
+
+    .paper-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+    .paper-title .hl {
+      background: linear-gradient(45deg, #7c3aed, #db2777);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .authors {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      margin-bottom: 8px;
+      line-height: 1.8;
+    }
+    .affil {
+      font-size: 0.9rem;
+      color: var(--text-sec);
+      margin-bottom: 32px;
+    }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-mid);
+      background: #fff;
+      cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pill-btn:hover {
+      background: var(--gray-bg);
+      border-color: #bdc1c6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+    .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
+    .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+
+    /* ── SHARED SECTION ─────────────────────────────────── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── TEASER ─────────────────────────────────────────── */
+    .teaser-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+    .teaser-img {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .teaser-img:hover {
+      transform: scale(1.012);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+
+    /* ── LIGHTBOX ───────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      cursor: zoom-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+    }
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+      transform: scale(0.96);
+      transition: transform 0.22s ease;
+    }
+    .lightbox.open img { transform: scale(1); }
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      color: #fff;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── ABSTRACT ───────────────────────────────────────── */
+    .abstract-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+      text-align: justify;
+    }
+
+    /* ── FEATURE CARDS ──────────────────────────────────── */
+    .feature-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0 0 8px;
+    }
+    .feature-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--blue);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.22s ease;
+    }
+    .feature-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 10px 26px rgba(26,115,232,0.12);
+      border-color: var(--blue-border);
+    }
+    .feature-card:hover::before { transform: scaleY(1); }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-card:hover .feature-icon {
+      background: var(--blue);
+      color: #fff;
+      transform: scale(1.06);
+    }
+    .feature-text { font-size: 0.88rem; color: var(--text-sec); line-height: 1.58; }
+    .feature-text strong {
+      display: block;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+    }
+    .feature-text .hl-num { color: var(--blue); font-weight: 700; }
+
+    /* ── BIBTEX ─────────────────────────────────────────── */
+    .bibtex-pre {
+      background: #1a1a2e;
+      color: #8ab4f8;
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-size: 0.875rem;
+      line-height: 1.75;
+      overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--text-sec);
+      cursor: pointer;
+      background: none;
+      border: 1px solid var(--gray-border);
+      padding: 6px 18px;
+      border-radius: 16px;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: var(--gray-bg); }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .site-footer {
+      background: var(--gray-bg);
+      border-top: 1px solid var(--gray-border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../../people.html">People</a>
+    <a href="../../projects.html">Projects</a>
+    <a href="../../index.html#publications">Publications</a>
+  </div>
+</nav>
+
+<!-- SECTION NAV -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#method">Method</a>
+  <a class="sec-link" href="#bibtex">BibTeX</a>
+</div>
+
+<!-- HERO -->
+<div class="hero-wrap">
+
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">SignRefine</span>: Adapting Foundational Video Models for Sign&nbsp;Language Generation
+  </h1>
+
+  <p class="authors">
+    Anton Pelykh<sup>1</sup>,&thinsp;
+    Ozge Mercanoglu Sincan<sup>1</sup>,&thinsp;
+    Edward Fish<sup>1</sup>,&thinsp;
+    Richard Bowden<sup>1</sup>
+  </p>
+  <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom</p>
+
+  <div class="btn-row">
+    <a href="#" class="pill-btn filled">
+      <i class="fas fa-file-pdf"></i> Paper
+    </a>
+    <a href="#" class="pill-btn" target="_blank" rel="noopener">
+      <i class="ai ai-arxiv"></i> arXiv
+    </a>
+    <a href="#" class="pill-btn" target="_blank" rel="noopener">
+      <i class="fab fa-github"></i> Code
+    </a>
+  </div>
+
+</div>
+
+<!-- TEASER -->
+<div class="teaser-wrap">
+  <img src="./assets/signrefine.jpg" alt="SignRefine teaser figure" class="teaser-img" />
+</div>
+
+<hr class="divider" />
+
+<!-- ABSTRACT -->
+<section class="section alt" id="abstract">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-body">
+      Sign language video generation demands precise hand and facial articulation, yet modern video
+      diffusion models, trained predominantly on spoken-language video, produce artifacts that render
+      signing unintelligible. We propose <strong>SignRefine</strong>, a sign language video generation
+      model that produces comprehensible signing from <strong>2D keypoint conditioning alone</strong>,
+      generalizing across appearances and visual conditions. Our approach builds on a pretrained video
+      diffusion transformer and introduces <strong>local adapters with spatial grounding</strong> to
+      selectively refine hand and face regions, steering the strong base model's prior toward accurate
+      articulation. To enable this work and support broader sign language research, we present
+      <strong>NVSign</strong>, a large-scale dataset of video content natively produced in sign
+      language, offering diverse signer appearances, environments, and natural conversational settings.
+      Trained on this data, our model shows up to <strong>30% improvement</strong> in hand pose
+      precision metrics over the strongest baseline and is preferred by sign language users for visual
+      quality and comprehensibility in more than <strong>80% of comparisons</strong>.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- METHOD -->
+<section class="section" id="method">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Method</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-film"></i></div>
+        <div class="feature-text">
+          <strong>Pretrained Video Diffusion Transformer</strong>
+          SignRefine adapts a strong video diffusion transformer pretrained on spoken-language video,
+          preserving its general visual prior while steering it toward accurate sign articulation.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-hand-sparkles"></i></div>
+        <div class="feature-text">
+          <strong>Local Adapters with Spatial Grounding</strong>
+          Lightweight adapters selectively refine hand and face regions, focusing model capacity
+          on the articulation that determines sign comprehensibility.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-key"></i></div>
+        <div class="feature-text">
+          <strong>2D Keypoint Conditioning</strong>
+          Signing is generated from 2D keypoints alone — no 3D body models or proprietary rigs —
+          while generalizing across signer appearances and visual conditions.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-database"></i></div>
+        <div class="feature-text">
+          <strong>NVSign Dataset</strong>
+          A large-scale dataset of video natively produced in sign language, covering diverse
+          signer appearances, environments, and natural conversational settings to support
+          both SignRefine and broader sign language research.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- BIBTEX -->
+<section class="section alt" id="bibtex">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-pre"><code id="bibtex-code">@article{sahin2026signrefine,
+  title   = {SignRefine: Adapting Foundational Video Models
+             for Sign Language Generation},
+  author  = {Pelykh, Anton and Sincan, Ozge Mercanoglu and
+             Fish, Edward and Bowden, Richard},
+  journal = {arXiv preprint},
+  year    = {2026},
+}</code></pre>
+    <button class="copy-btn" id="copy-bibtex">
+      <i class="fas fa-copy"></i> Copy BibTeX
+    </button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;·&nbsp;
+    <a href="../../index.html">CogVis Lab</a>
+  </p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Expanded figure" />
+</div>
+
+<script>
+  (function () {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    var figs = document.querySelectorAll('.teaser-img');
+    function open(src, alt) {
+      lbImg.src = src; lbImg.alt = alt || '';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() { lb.classList.remove('open'); document.body.style.overflow = ''; }
+    figs.forEach(function (img) { img.addEventListener('click', function () { open(img.src, img.alt); }); });
+    lb.addEventListener('click', close);
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
+
+  document.getElementById('copy-bibtex').addEventListener('click', function () {
+    navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
+      var btn = document.getElementById('copy-bibtex');
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy BibTeX'; }, 2000);
+    });
+  });
+
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var ids = ['abstract', 'method', 'bibtex'];
+    var targets = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    targets.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>
