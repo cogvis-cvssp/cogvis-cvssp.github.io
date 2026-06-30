@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="description"
         content="SignRefine: Adapting Foundational Video Models for Sign Language Generation." />
-  <meta name="keywords" content="sign language generation, video diffusion, keypoint conditioning, sign language production, SignNTV dataset" />
+  <meta name="keywords" content="sign language generation, video diffusion, keypoint conditioning, sign language production, NVSign dataset" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta property="og:title" content="SignRefine: Adapting Foundational Video Models for Sign Language Generation" />
@@ -469,7 +469,7 @@
       diffusion transformer and introduces <strong>local adapters with spatial grounding</strong> to
       selectively refine hand and face regions, steering the strong base model's prior toward accurate
       articulation. To enable this work and support broader sign language research, we present
-      <strong>SignNTV</strong>, the first large-scale dataset of television content natively produced in sign
+      <strong>NVSign</strong>, the first large-scale dataset of television content natively produced in sign
       language, offering diverse signer appearances, dynamic visual environments, and natural conversational settings.
       Trained on this data, our model shows up to <strong>30% improvement</strong> in hand pose
       precision metrics over the strongest baseline and is preferred by sign language users for visual
@@ -502,15 +502,15 @@
       <div class="feature-card">
         <div class="feature-icon"><i class="fas fa-tv"></i></div>
         <div class="feature-text">
-          <strong>SignNTV — First Large-Scale Natively Signed Dataset</strong>
-          Introduction of SignNTV, the first large-scale, multi-modal natively signed broadcast television dataset with <span class="hl-num">2,184</span> unique signers, <span class="hl-num">80.5</span> hours of video, and dynamic multi-party conversational scenes absent from all prior corpora.
+          <strong>NVSign — First Large-Scale Natively Signed Dataset</strong>
+          Introduction of NVSign, the first large-scale, multi-modal natively signed broadcast television dataset with <span class="hl-num">2,184</span> unique signers, <span class="hl-num">80.5</span> hours of video, and dynamic multi-party conversational scenes absent from all prior corpora.
         </div>
       </div>
       <div class="feature-card">
         <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
         <div class="feature-text">
           <strong>Rigorous Quantitative and Perceptual Evaluation</strong>
-          Through evaluation on SignNTV and Phoenix14T test sets, and a user study with 15 BSL users of varying proficiency, our approach achieves up to <span class="hl-num">30%</span> improvement in hand pose precision (MPJPE) and is preferred in over <span class="hl-num">80%</span> of pairwise comparisons over all baselines.
+          Through evaluation on NVSign and Phoenix14T test sets, and a user study with 15 BSL users of varying proficiency, our approach achieves up to <span class="hl-num">30%</span> improvement in hand pose precision (MPJPE) and is preferred in over <span class="hl-num">80%</span> of pairwise comparisons over all baselines.
         </div>
       </div>
     </div>
@@ -565,9 +565,9 @@
 <!-- DATASET -->
 <section class="section" id="dataset">
   <div class="section-inner scroll-target">
-    <h2 class="section-title">SignNTV Dataset</h2>
+    <h2 class="section-title">NVSign Dataset</h2>
     <p class="abstract-body" style="margin-bottom:28px;">
-      <strong>SignNTV</strong> is the first large-scale dataset of broadcast-quality television content natively produced in sign language, created by Deaf producers and actors. Unlike existing datasets that rely on interpreter signing in fixed studio settings, SignNTV captures sign language in its most authentic form — with dynamic camera angles, diverse environments, and natural multi-party conversational scenes that push the field beyond isolated sentence translation.
+      <strong>NVSign</strong> is the first large-scale dataset of broadcast-quality television content natively produced in sign language, created by Deaf producers and actors. Unlike existing datasets that rely on interpreter signing in fixed studio settings, NVSign captures sign language in its most authentic form — with dynamic camera angles, diverse environments, and natural multi-party conversational scenes that push the field beyond isolated sentence translation.
     </p>
     <div class="feature-grid">
       <div class="feature-card">
@@ -611,7 +611,7 @@
 
     <h3 style="font-size:1.1rem; font-weight:600; color:var(--text); margin-bottom:16px;">Quantitative Comparison</h3>
     <p class="abstract-body" style="margin-bottom:24px;">
-      Evaluation on the SignNTV appearance-independent test set and Phoenix14T test set using MPJPE (keypoint accuracy, lower is better), LPIPS (perceptual quality, lower is better), and SSIM (higher is better) on regional crops of face, right hand, and left hand. Our model consistently achieves the strongest performance across all three anatomical regions, with particularly pronounced gains on hand regions.
+      Evaluation on the NVSign appearance-independent test set and Phoenix14T test set using MPJPE (keypoint accuracy, lower is better), LPIPS (perceptual quality, lower is better), and SSIM (higher is better) on regional crops of face, right hand, and left hand. Our model consistently achieves the strongest performance across all three anatomical regions, with particularly pronounced gains on hand regions.
     </p>
 
     <div style="overflow-x:auto; margin-bottom:32px;">
@@ -635,7 +635,7 @@
             <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">SSIM↑</th>
           </tr>
           <tr style="background:var(--gray-bg);">
-            <td colspan="10" style="padding:6px 12px; font-size:0.8rem; color:var(--text-sec); font-style:italic; text-align:left;">SignNTV Dataset</td>
+            <td colspan="10" style="padding:6px 12px; font-size:0.8rem; color:var(--text-sec); font-style:italic; text-align:left;">NVSign Dataset</td>
           </tr>
         </thead>
         <tbody>
