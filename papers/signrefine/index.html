@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="description"
         content="SignRefine: Adapting Foundational Video Models for Sign Language Generation." />
-  <meta name="keywords" content="sign language generation, video diffusion, keypoint conditioning, sign language production, NVSign dataset" />
+  <meta name="keywords" content="sign language generation, video diffusion, keypoint conditioning, sign language production, SignNTV dataset" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta property="og:title" content="SignRefine: Adapting Foundational Video Models for Sign Language Generation" />
@@ -408,7 +408,10 @@
 <!-- SECTION NAV -->
 <div class="sec-nav" id="sec-nav">
   <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#contributions">Contributions</a>
   <a class="sec-link" href="#method">Method</a>
+  <a class="sec-link" href="#dataset">Dataset</a>
+  <a class="sec-link" href="#results">Results</a>
   <a class="sec-link" href="#bibtex">BibTeX</a>
 </div>
 
@@ -466,8 +469,8 @@
       diffusion transformer and introduces <strong>local adapters with spatial grounding</strong> to
       selectively refine hand and face regions, steering the strong base model's prior toward accurate
       articulation. To enable this work and support broader sign language research, we present
-      <strong>NVSign</strong>, a large-scale dataset of video content natively produced in sign
-      language, offering diverse signer appearances, environments, and natural conversational settings.
+      <strong>SignNTV</strong>, the first large-scale dataset of television content natively produced in sign
+      language, offering diverse signer appearances, dynamic visual environments, and natural conversational settings.
       Trained on this data, our model shows up to <strong>30% improvement</strong> in hand pose
       precision metrics over the strongest baseline and is preferred by sign language users for visual
       quality and comprehensibility in more than <strong>80% of comparisons</strong>.
@@ -477,42 +480,262 @@
 
 <hr class="divider" />
 
+<!-- CONTRIBUTIONS -->
+<section class="section" id="contributions">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Contributions</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-circle-nodes"></i></div>
+        <div class="feature-text">
+          <strong>Generalizable Pose-to-Video Generation</strong>
+          The first generalizable pose-to-video generation approach designed to improve the comprehensibility of generated sign language content across diverse signer appearances, scales, and visual conditions.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-sliders"></i></div>
+        <div class="feature-text">
+          <strong>Local Adapters with Spatial Grounding for DiT Backbones</strong>
+          A novel conditioning scheme for DiT-based human video models using local adapters with spatial grounding, enabling targeted refinement of hand and face areas without degrading the quality and generalizability of the frozen backbone.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-tv"></i></div>
+        <div class="feature-text">
+          <strong>SignNTV — First Large-Scale Natively Signed Dataset</strong>
+          Introduction of SignNTV, the first large-scale, multi-modal natively signed broadcast television dataset with <span class="hl-num">2,184</span> unique signers, <span class="hl-num">80.5</span> hours of video, and dynamic multi-party conversational scenes absent from all prior corpora.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+        <div class="feature-text">
+          <strong>Rigorous Quantitative and Perceptual Evaluation</strong>
+          Through evaluation on SignNTV and Phoenix14T test sets, and a user study with 15 BSL users of varying proficiency, our approach achieves up to <span class="hl-num">30%</span> improvement in hand pose precision (MPJPE) and is preferred in over <span class="hl-num">80%</span> of pairwise comparisons over all baselines.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
 <!-- METHOD -->
-<section class="section" id="method">
+<section class="section alt" id="method">
   <div class="section-inner scroll-target">
     <h2 class="section-title">Method</h2>
+    <p style="font-size:0.97rem; color:var(--text-sec); text-align:center; margin-bottom:28px; line-height:1.7;">
+      Given a reference image defining signer appearance and a full-body keypoint sequence, SignRefine generates a video depicting faithful hand articulations and facial expressions.
+      The system is built on <strong>Wan2.1-1.3B-Fun-Control</strong>, a pretrained video DiT, kept frozen while trainable local adapters steer it toward precise articulation.
+    </p>
     <div class="feature-grid">
       <div class="feature-card">
         <div class="feature-icon"><i class="fas fa-film"></i></div>
         <div class="feature-text">
-          <strong>Pretrained Video Diffusion Transformer</strong>
-          SignRefine adapts a strong video diffusion transformer pretrained on spoken-language video,
-          preserving its general visual prior while steering it toward accurate sign articulation.
+          <strong>Frozen DiT Backbone</strong>
+          Wan2.1-1.3B-Fun-Control conditions on full-body skeleton sequences using a T5 text encoder, CLIP image encoder for reference appearance, and a 3D VAE for latent video encoding. The backbone remains frozen during training, preserving generalizable visual priors while adapters steer toward accurate sign articulation.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-crop-simple"></i></div>
+        <div class="feature-text">
+          <strong>Regional Conditions with Spatial Grounding (§4.1)</strong>
+          Face, left hand, and right hand are processed by three independent ResNet-style condition encoders on <span class="hl-num">256×256</span> regional crops, downsampled to a <span class="hl-num">16×16</span> feature grid. Absolute normalized coordinate maps (CoordConv) are appended to each crop, embedding crop-to-frame geometry directly into regional features to resolve spatial ambiguity.
         </div>
       </div>
       <div class="feature-card">
         <div class="feature-icon"><i class="fas fa-hand-sparkles"></i></div>
         <div class="feature-text">
-          <strong>Local Adapters with Spatial Grounding</strong>
-          Lightweight adapters selectively refine hand and face regions, focusing model capacity
-          on the articulation that determines sign comprehensibility.
+          <strong>Localized Feature Injection with Sink Tokens (§4.2)</strong>
+          Motion vectors are injected via masked cross-attention into selected DiT blocks. A trainable sink token absorbs background queries, preventing adapter features from bleeding into unrelated regions. Face adapter injects at blocks {0, 6, 12, 18, 24}; hand adapter at {2, 8, 14, 20, 26}, distributing conditioning across the 30-block network.
         </div>
       </div>
       <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-key"></i></div>
+        <div class="feature-icon"><i class="fas fa-weight-scale"></i></div>
         <div class="feature-text">
-          <strong>2D Keypoint Conditioning</strong>
-          Signing is generated from 2D keypoints alone — no 3D body models or proprietary rigs —
-          while generalizing across signer appearances and visual conditions.
+          <strong>Spatially Weighted Adapter Training (§4.3)</strong>
+          MSE loss with non-uniform spatial weighting: hand and face regions weighted <span class="hl-num">10×</span> over background (<em>w<sub>h</sub> = w<sub>f</sub> = 10, w<sub>b</sub> = 1</em>), concentrating gradient signal on articulation regions critical for sign comprehension. Trained on ~40K clips for 30K iterations on 4 NVIDIA GH200 GPUs in bfloat16 precision.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- DATASET -->
+<section class="section" id="dataset">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">SignNTV Dataset</h2>
+    <p class="abstract-body" style="margin-bottom:28px;">
+      <strong>SignNTV</strong> is the first large-scale dataset of broadcast-quality television content natively produced in sign language, created by Deaf producers and actors. Unlike existing datasets that rely on interpreter signing in fixed studio settings, SignNTV captures sign language in its most authentic form — with dynamic camera angles, diverse environments, and natural multi-party conversational scenes that push the field beyond isolated sentence translation.
+    </p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-users"></i></div>
+        <div class="feature-text">
+          <strong>Scale &amp; Diversity</strong>
+          <span class="hl-num">2,184</span> unique signers · <span class="hl-num">80.5</span> hours of high-resolution video · <span class="hl-num">48,972</span> scenes · <span class="hl-num">317</span> episodes across <span class="hl-num">114</span> distinct shows · British Sign Language (BSL)
         </div>
       </div>
       <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-database"></i></div>
+        <div class="feature-icon"><i class="fas fa-comments"></i></div>
         <div class="feature-text">
-          <strong>NVSign Dataset</strong>
-          A large-scale dataset of video natively produced in sign language, covering diverse
-          signer appearances, environments, and natural conversational settings to support
-          both SignRefine and broader sign language research.
+          <strong>Conversational Scenes</strong>
+          Approximately <span class="hl-num">40%</span> of the dataset features two or more participants in natural conversational settings — the only large-scale sign language corpus with this property — enabling study of multi-signer dynamics, turn-taking, backchanneling, and non-manual discourse markers.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-camera"></i></div>
+        <div class="feature-text">
+          <strong>Dynamic Cameras &amp; Native Signing</strong>
+          Features moving and switching camera angles rather than fixed studio viewpoints. Content signed natively by Deaf performers eliminates structural biases from spoken-language interpretation and captures expressive, unrestricted natural signing.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-tags"></i></div>
+        <div class="feature-text">
+          <strong>Multi-Modal Annotations</strong>
+          Time-aligned English transcripts, dominant topic clusters, per-signer activity scores, extracted 2D full-body keypoints (RTMPose-X), depth maps, SMPL body, MANO hand, and FLAME face parameters. Three data partitions for nuanced model evaluation.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- RESULTS -->
+<section class="section alt" id="results">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Results</h2>
+
+    <h3 style="font-size:1.1rem; font-weight:600; color:var(--text); margin-bottom:16px;">Quantitative Comparison</h3>
+    <p class="abstract-body" style="margin-bottom:24px;">
+      Evaluation on the SignNTV appearance-independent test set and Phoenix14T test set using MPJPE (keypoint accuracy, lower is better), LPIPS (perceptual quality, lower is better), and SSIM (higher is better) on regional crops of face, right hand, and left hand. Our model consistently achieves the strongest performance across all three anatomical regions, with particularly pronounced gains on hand regions.
+    </p>
+
+    <div style="overflow-x:auto; margin-bottom:32px;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.875rem; text-align:center;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--gray-border);">
+            <th style="text-align:left; padding:10px 12px; color:var(--text-sec); font-weight:600;" rowspan="2">Method</th>
+            <th style="padding:10px 12px; color:var(--text-sec); font-weight:600;" colspan="3">Face</th>
+            <th style="padding:10px 12px; color:var(--text-sec); font-weight:600;" colspan="3">Right Hand</th>
+            <th style="padding:10px 12px; color:var(--text-sec); font-weight:600;" colspan="3">Left Hand</th>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">MPJPE↓</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">LPIPS↓</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">SSIM↑</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">MPJPE↓</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">LPIPS↓</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">SSIM↑</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">MPJPE↓</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">LPIPS↓</th>
+            <th style="padding:6px 8px; color:var(--text-sec); font-weight:500; font-size:0.8rem;">SSIM↑</th>
+          </tr>
+          <tr style="background:var(--gray-bg);">
+            <td colspan="10" style="padding:6px 12px; font-size:0.8rem; color:var(--text-sec); font-style:italic; text-align:left;">SignNTV Dataset</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid);">SignGAN</td>
+            <td style="padding:9px 8px;">10.424</td><td>0.564</td><td>0.302</td>
+            <td style="padding:9px 8px;">24.774</td><td>0.627</td><td>0.388</td>
+            <td style="padding:9px 8px;">21.852</td><td>0.620</td><td>0.384</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid);">SignViP</td>
+            <td style="padding:9px 8px;">10.576</td><td>0.534</td><td>0.356</td>
+            <td style="padding:9px 8px;">23.957</td><td>0.581</td><td>0.428</td>
+            <td style="padding:9px 8px;">24.283</td><td>0.588</td><td>0.424</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid);">Wan-VACE</td>
+            <td style="padding:9px 8px;">4.067</td><td>0.422</td><td>0.367</td>
+            <td style="padding:9px 8px;">15.904</td><td>0.525</td><td>0.380</td>
+            <td style="padding:9px 8px;">15.431</td><td>0.503</td><td>0.407</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid); text-decoration:underline;">Wan-FC</td>
+            <td style="padding:9px 8px; text-decoration:underline;">1.835</td><td style="text-decoration:underline;">0.197</td><td style="text-decoration:underline;">0.713</td>
+            <td style="padding:9px 8px; text-decoration:underline;">9.565</td><td style="text-decoration:underline;">0.364</td><td style="text-decoration:underline;">0.583</td>
+            <td style="padding:9px 8px; text-decoration:underline;">9.341</td><td style="text-decoration:underline;">0.349</td><td style="text-decoration:underline;">0.597</td>
+          </tr>
+          <tr style="border-bottom:2px solid var(--gray-border); background:var(--blue-light);">
+            <td style="text-align:left; padding:9px 12px; font-weight:700; color:var(--blue);">Ours</td>
+            <td style="padding:9px 8px; font-weight:700; color:var(--blue);">1.770</td>
+            <td style="font-weight:700; color:var(--blue);">0.194</td>
+            <td style="font-weight:700; color:var(--blue);">0.714</td>
+            <td style="padding:9px 8px; font-weight:700; color:var(--blue);">6.602</td>
+            <td style="font-weight:700; color:var(--blue);">0.330</td>
+            <td style="font-weight:700; color:var(--blue);">0.629</td>
+            <td style="padding:9px 8px; font-weight:700; color:var(--blue);">6.638</td>
+            <td style="font-weight:700; color:var(--blue);">0.321</td>
+            <td style="font-weight:700; color:var(--blue);">0.640</td>
+          </tr>
+          <tr style="background:var(--gray-bg);">
+            <td colspan="10" style="padding:6px 12px; font-size:0.8rem; color:var(--text-sec); font-style:italic; text-align:left;">Phoenix14T Dataset</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid);">SignGAN</td>
+            <td style="padding:9px 8px;">5.457</td><td>0.585</td><td>0.343</td>
+            <td style="padding:9px 8px;">28.507</td><td>0.707</td><td>0.469</td>
+            <td style="padding:9px 8px;">25.373</td><td>0.657</td><td>0.470</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid);">SignViP</td>
+            <td style="padding:9px 8px;">7.194</td><td>0.456</td><td>0.276</td>
+            <td style="padding:9px 8px;">10.345</td><td>0.534</td><td>0.425</td>
+            <td style="padding:9px 8px;">14.405</td><td>0.566</td><td>0.376</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid);">Wan-VACE</td>
+            <td style="padding:9px 8px;">2.162</td><td>0.383</td><td>0.413</td>
+            <td style="padding:9px 8px;">11.717</td><td>0.551</td><td>0.367</td>
+            <td style="padding:9px 8px;">13.214</td><td>0.546</td><td>0.299</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-border);">
+            <td style="text-align:left; padding:9px 12px; color:var(--text-mid); text-decoration:underline;">Wan-FC</td>
+            <td style="padding:9px 8px; text-decoration:underline;">1.151</td><td style="text-decoration:underline;">0.223</td><td style="text-decoration:underline;">0.688</td>
+            <td style="padding:9px 8px; text-decoration:underline;">5.754</td><td style="text-decoration:underline;">0.402</td><td style="text-decoration:underline;">0.629</td>
+            <td style="padding:9px 8px; text-decoration:underline;">5.719</td><td style="text-decoration:underline;">0.374</td><td style="text-decoration:underline;">0.642</td>
+          </tr>
+          <tr style="background:var(--blue-light);">
+            <td style="text-align:left; padding:9px 12px; font-weight:700; color:var(--blue);">Ours</td>
+            <td style="padding:9px 8px; font-weight:700; color:var(--blue);">1.018</td>
+            <td style="font-weight:700; color:var(--blue);">0.217</td>
+            <td style="font-weight:700; color:var(--blue);">0.699</td>
+            <td style="padding:9px 8px; font-weight:700; color:var(--blue);">5.467</td>
+            <td style="font-weight:700; color:var(--blue);">0.397</td>
+            <td style="font-weight:700; color:var(--blue);">0.633</td>
+            <td style="padding:9px 8px; font-weight:700; color:var(--blue);">5.490</td>
+            <td style="font-weight:700; color:var(--blue);">0.370</td>
+            <td style="font-weight:700; color:var(--blue);">0.646</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.78rem; color:var(--text-sec); margin-top:8px; text-align:center;">Table 2: Best results in <strong>bold</strong>, second-best <span style="text-decoration:underline;">underlined</span>. MPJPE and LPIPS: lower is better; SSIM: higher is better.</p>
+    </div>
+
+    <h3 style="font-size:1.1rem; font-weight:600; color:var(--text); margin-bottom:16px;">User Study</h3>
+    <p class="abstract-body" style="margin-bottom:24px;">
+      A perceptual study with 15 BSL users of varying proficiency (basic to advanced) evaluated naturalness, visual quality, and semantic fidelity. Participants completed 17 questions (Visual Ranking and Text Reference Ranking). Our model achieves the lowest mean rank overall (<span class="hl-num">1.22</span> vs. 1.89 for the next-best Wan-FC) and is preferred head-to-head over every baseline — in more than <span class="hl-num">83%</span> of pairwise comparisons, with near-unanimous dominance over SignGAN and SignViP.
+    </p>
+    <div class="feature-grid" style="gap:10px;">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:var(--blue-light); color:var(--blue);"><i class="fas fa-trophy"></i></div>
+        <div class="feature-text">
+          <strong>Overall Mean Rank (lower is better)</strong>
+          Ours <span class="hl-num">1.22</span> &nbsp;·&nbsp; Wan-FC 1.89 &nbsp;·&nbsp; Wan-VACE 2.46 &nbsp;·&nbsp; SignViP 3.56 &nbsp;·&nbsp; SignGAN 3.41
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:var(--blue-light); color:var(--blue);"><i class="fas fa-arrows-left-right"></i></div>
+        <div class="feature-text">
+          <strong>Head-to-Head Win Rates (Ours vs. each baseline)</strong>
+          vs. SignGAN <span class="hl-num">99%</span> &nbsp;·&nbsp; vs. SignViP <span class="hl-num">97%</span> &nbsp;·&nbsp; vs. Wan-VACE <span class="hl-num">91%</span> &nbsp;·&nbsp; vs. Wan-FC <span class="hl-num">83%</span>
         </div>
       </div>
     </div>
@@ -525,13 +748,13 @@
 <section class="section alt" id="bibtex">
   <div class="section-inner scroll-target">
     <h2 class="section-title">BibTeX</h2>
-    <pre class="bibtex-pre"><code id="bibtex-code">@article{sahin2026signrefine,
-  title   = {SignRefine: Adapting Foundational Video Models
-             for Sign Language Generation},
-  author  = {Pelykh, Anton and Sincan, Ozge Mercanoglu and
-             Fish, Edward and Bowden, Richard},
-  journal = {arXiv preprint},
-  year    = {2026},
+    <pre class="bibtex-pre"><code id="bibtex-code">@inproceedings{pelykh2026signrefine,
+  title     = {SignRefine: Adapting Foundational Video Models
+               for Sign Language Generation},
+  author    = {Pelykh, Anton and Sincan, Ozge Mercanoglu and
+               Fish, Edward and Bowden, Richard},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2026},
 }</code></pre>
     <button class="copy-btn" id="copy-bibtex">
       <i class="fas fa-copy"></i> Copy BibTeX
@@ -586,7 +809,7 @@
 
   (function () {
     var links = document.querySelectorAll('.sec-link');
-    var ids = ['abstract', 'method', 'bibtex'];
+    var ids = ['abstract', 'contributions', 'method', 'dataset', 'results', 'bibtex'];
     var targets = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
     var active = null;
     function setActive(id) {
