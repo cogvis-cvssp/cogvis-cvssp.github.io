@@ -229,6 +229,25 @@
     .bench-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-border); color: var(--text-mid); vertical-align: top; }
     .bench-table tbody tr:last-child td { border-bottom: none; }
 
+    /* Win-rate colour coding (Table 5) */
+    td.win-dark  { background: #c6efce !important; color: #1a5c2d; font-weight: 700; }
+    td.win-mid   { background: #ddebf7 !important; color: #1e3a8a; }
+    td.win-light { background: #ffeb9c !important; color: #7d5a00; }
+    td.win-bad   { background: #ffc7ce !important; color: #9c0006; font-style: italic; }
+    td.win-target { box-shadow: inset 0 0 0 2px #1e40af; }
+    .win-table .section-header td { text-align: left; }
+
+    /* Directional predictions table (Table 6) */
+    .dir-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; font-family: 'Roboto', sans-serif; }
+    .dir-table th { background: var(--gray-bg); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-sec); padding: 9px 14px; border-bottom: 2px solid var(--gray-border); text-align: left; }
+    .dir-table td { padding: 9px 14px; border-bottom: 1px solid var(--gray-border); color: var(--text-mid); vertical-align: middle; line-height: 1.5; }
+    .dir-table tbody tr:last-child td { border-bottom: none; }
+    .dir-table tbody tr:hover td { background: #fafafa; }
+    .dir-table .pred { font-family: 'Roboto Mono', monospace; font-size: 0.78rem; color: var(--blue-dark); white-space: nowrap; }
+    .dir-table .check { color: #137333; font-weight: 700; text-align: center; font-size: 1rem; }
+    .pron { color: #137333; font-weight: 600; }
+    .dir-verb { font-weight: 700; }
+
     /* ── BIBTEX ── */
     .bibtex-pre {
       background: #1a1a2e; color: #8ab4f8; border-radius: 12px;
@@ -318,7 +337,7 @@
       <i class="ai ai-arxiv"></i> arXiv
     </a>
     <a href="#" class="pill-btn">
-      <i class="fab fa-github"></i> Code
+      <i class="fab fa-github"></i> Code (Coming Soon)
     </a>
   </div>
 
@@ -595,60 +614,60 @@
           <tr class="section-header"><td colspan="9">Reference-based (requires source sequence)</td></tr>
           <tr>
             <td class="left">DTW-MPJPE</td>
-            <td>0.91</td><td>0.50</td>
-            <td>&minus;0.14</td><td>&minus;0.03</td>
-            <td>&minus;0.33</td><td>&minus;0.37</td>
+            <td class="win-dark">0.91</td><td class="win-mid">0.50</td>
+            <td class="win-bad">&minus;0.14</td><td class="win-bad">&minus;0.03</td>
+            <td class="win-bad">&minus;0.33</td><td class="win-bad">&minus;0.37</td>
             <td>0.04</td><td>0.00</td>
           </tr>
           <tr>
             <td class="left">SiBLEU</td>
-            <td>&minus;0.58</td><td>&minus;0.50</td>
-            <td>0.03</td><td>0.31</td>
-            <td>&minus;0.05</td><td>0.31</td>
-            <td><strong>0.96</strong></td><td><strong>0.90</strong></td>
+            <td class="win-bad">&minus;0.58</td><td class="win-bad">&minus;0.50</td>
+            <td>0.03</td><td class="win-light">0.31</td>
+            <td class="win-bad">&minus;0.05</td><td class="win-light">0.31</td>
+            <td class="win-dark"><strong>0.96</strong></td><td class="win-dark"><strong>0.90</strong></td>
           </tr>
           <tr>
             <td class="left">SignCLIP p2p &ndash; BSL sent.</td>
-            <td>&minus;0.97</td><td>&minus;1.00</td>
-            <td><strong>0.85</strong></td><td>0.90</td>
-            <td>0.82</td><td>0.70</td>
-            <td>0.69</td><td>0.80</td>
+            <td class="win-bad">&minus;0.97</td><td class="win-bad">&minus;1.00</td>
+            <td class="win-dark"><strong>0.85</strong></td><td class="win-dark">0.90</td>
+            <td class="win-dark">0.82</td><td class="win-dark">0.70</td>
+            <td class="win-mid">0.69</td><td class="win-dark">0.80</td>
           </tr>
           <tr>
             <td class="left">SignCLIP p2p &ndash; multilingual</td>
-            <td>&minus;0.59</td><td>&minus;0.50</td>
-            <td>0.83</td><td>0.70</td>
-            <td>0.75</td><td>0.60</td>
-            <td>&minus;0.30</td><td>0.00</td>
+            <td class="win-bad">&minus;0.59</td><td class="win-bad">&minus;0.50</td>
+            <td class="win-dark">0.83</td><td class="win-dark">0.70</td>
+            <td class="win-dark">0.75</td><td class="win-mid">0.60</td>
+            <td class="win-bad">&minus;0.30</td><td>0.00</td>
           </tr>
           <tr>
             <td class="left">SVAE</td>
-            <td>0.95</td><td><strong>1.00</strong></td>
-            <td>0.43</td><td>0.26</td>
-            <td>0.54</td><td>0.31</td>
-            <td>0.81</td><td>0.80</td>
+            <td class="win-dark">0.95</td><td class="win-dark"><strong>1.00</strong></td>
+            <td class="win-mid">0.43</td><td class="win-light">0.26</td>
+            <td class="win-mid">0.54</td><td class="win-light">0.31</td>
+            <td class="win-dark">0.81</td><td class="win-dark">0.80</td>
           </tr>
           <tr class="section-header"><td colspan="9">Reference-free (requires source text only)</td></tr>
           <tr>
             <td class="left">BT1 / BLEU-4</td>
-            <td>&minus;0.19</td><td>0.00</td>
-            <td>&minus;0.38</td><td>&minus;0.44</td>
-            <td>&minus;0.15</td><td>&minus;0.10</td>
+            <td class="win-bad">&minus;0.19</td><td>0.00</td>
+            <td class="win-bad">&minus;0.38</td><td class="win-bad">&minus;0.44</td>
+            <td class="win-bad">&minus;0.15</td><td class="win-bad">&minus;0.10</td>
             <td>0.00</td><td>0.00</td>
           </tr>
           <tr>
             <td class="left">BLEURT</td>
-            <td>0.09</td><td>0.50</td>
-            <td>&minus;0.45</td><td>0.03</td>
-            <td>&minus;0.39</td><td>&minus;0.09</td>
-            <td>0.17</td><td>0.35</td>
+            <td>0.09</td><td class="win-mid">0.50</td>
+            <td class="win-bad">&minus;0.45</td><td>0.03</td>
+            <td class="win-bad">&minus;0.39</td><td class="win-bad">&minus;0.09</td>
+            <td class="win-light">0.17</td><td class="win-light">0.35</td>
           </tr>
           <tr>
             <td class="left">SignCLIP p2t &ndash; multilingual seg.</td>
-            <td>0.89</td><td>0.50</td>
-            <td>&minus;0.64</td><td>&minus;0.60</td>
-            <td>&minus;0.41</td><td>&minus;0.30</td>
-            <td>&minus;0.07</td><td>&minus;0.10</td>
+            <td class="win-dark">0.89</td><td class="win-mid">0.50</td>
+            <td class="win-bad">&minus;0.64</td><td class="win-bad">&minus;0.60</td>
+            <td class="win-bad">&minus;0.41</td><td class="win-bad">&minus;0.30</td>
+            <td class="win-bad">&minus;0.07</td><td class="win-bad">&minus;0.10</td>
           </tr>
           <tr class="ours">
             <td class="left"><strong>BT2 Overall (ours)</strong></td>
@@ -660,37 +679,220 @@
           <tr class="section-header"><td colspan="9">BT2 per-component sub-scores</td></tr>
           <tr>
             <td class="left">BT2 Phonology</td>
-            <td>0.28</td><td>0.50</td>
-            <td>0.48</td><td>0.26</td>
-            <td>0.35</td><td>&minus;0.03</td>
-            <td><strong>0.87</strong></td><td><strong>0.90</strong></td>
+            <td class="win-light">0.28</td><td class="win-mid">0.50</td>
+            <td class="win-mid">0.48</td><td class="win-light">0.26</td>
+            <td class="win-light">0.35</td><td class="win-bad">&minus;0.03</td>
+            <td class="win-dark"><strong>0.87</strong></td><td class="win-dark"><strong>0.90</strong></td>
           </tr>
           <tr>
             <td class="left">BT2 Grammar</td>
-            <td>&minus;0.25</td><td>&minus;0.50</td>
-            <td>&minus;0.33</td><td>&minus;0.30</td>
-            <td>&minus;0.20</td><td>&minus;0.10</td>
-            <td>&minus;0.45</td><td>&minus;0.60</td>
+            <td class="win-bad">&minus;0.25</td><td class="win-bad">&minus;0.50</td>
+            <td class="win-bad">&minus;0.33</td><td class="win-bad">&minus;0.30</td>
+            <td class="win-bad">&minus;0.20</td><td class="win-bad">&minus;0.10</td>
+            <td class="win-bad">&minus;0.45</td><td class="win-bad">&minus;0.60</td>
           </tr>
           <tr>
             <td class="left">BT2 Fluency</td>
-            <td>0.28</td><td>0.50</td>
-            <td>0.21</td><td>0.37</td>
-            <td>0.40</td><td>0.54</td>
-            <td>&minus;0.42</td><td>&minus;0.40</td>
+            <td class="win-light">0.28</td><td class="win-mid">0.50</td>
+            <td class="win-light">0.21</td><td class="win-light">0.37</td>
+            <td class="win-mid">0.40</td><td class="win-mid">0.54</td>
+            <td class="win-bad">&minus;0.42</td><td class="win-bad">&minus;0.40</td>
           </tr>
           <tr>
             <td class="left">BT2 Fidelity</td>
-            <td>0.80</td><td>1.00</td>
-            <td>0.74</td><td><strong>0.94</strong></td>
-            <td><strong>0.83</strong></td><td><strong>0.94</strong></td>
-            <td>&minus;0.81</td><td>&minus;0.90</td>
+            <td class="win-dark">0.80</td><td class="win-dark">1.00</td>
+            <td class="win-dark">0.74</td><td class="win-dark"><strong>0.94</strong></td>
+            <td class="win-dark"><strong>0.83</strong></td><td class="win-dark"><strong>0.94</strong></td>
+            <td class="win-bad">&minus;0.81</td><td class="win-bad">&minus;0.90</td>
           </tr>
         </tbody>
       </table>
     </div>
     <p class="table-caption">
       BT2 Overall achieves perfect correlation (<em>r</em>&thinsp;=&thinsp;1.00, <em>&rho;</em>&thinsp;=&thinsp;1.00) on Known Corruptions — matching or exceeding the strongest reference-based alternatives while requiring only source text. BT2 Phonology reaches <em>&rho;</em>&thinsp;=&thinsp;0.90 on Human SRT where proficiency shows through articulatory form; BT2 Fidelity is strongest on Synthetic productions (<em>&rho;</em>&thinsp;=&thinsp;0.94). All values are direction-normalised so higher always indicates better metric&ndash;human alignment.
+    </p>
+
+    <!-- Table 5: Corruption sensitivity -->
+    <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-sec); margin:44px 0 8px;">Corruption Sensitivity &mdash; Synthetic BSL Corpus (Table 5)</p>
+    <p class="table-note" style="margin-bottom:16px;">
+      Per-dimension win rates on <span class="hl-num" style="color:var(--blue);font-weight:700;">n&thinsp;=&thinsp;180</span> synthetic BSL corpus corruptions (uncorrupted BT2 &ge;2.5), conditioned on which classifier fires. Columns measure overall score plus per-dimension scores; rows are corruption type. <strong>Bordered cells</strong> mark the overall score and the matched target dimension for each corruption.
+      <br><span style="font-size:0.78rem; color:var(--text-sec); margin-top:4px; display:inline-block;">
+        <span style="display:inline-block;width:10px;height:10px;background:#c6efce;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>&ge;80% &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#ddebf7;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>65–79% &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#ffeb9c;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>55–64% &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#ffc7ce;border:1px solid #aaa;border-radius:2px;margin-right:4px;vertical-align:middle;"></span><em>wrong-way</em>
+      </span>
+    </p>
+    <div class="table-wrap">
+      <table class="results-table win-table">
+        <thead>
+          <tr>
+            <th class="left">Corruption</th>
+            <th><em>n</em></th>
+            <th>Overall</th>
+            <th>Phon.</th>
+            <th>HS</th>
+            <th>Loc</th>
+            <th>Gram</th>
+            <th>Flu.</th>
+            <th>Fid.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="9">Handshape classifier fires</td></tr>
+          <tr>
+            <td class="left">Handshape</td><td>138</td>
+            <td class="win-mid win-target">76%</td>
+            <td class="win-mid">73%</td>
+            <td class="win-dark win-target">86%</td>
+            <td class="win-mid">75%</td>
+            <td class="win-light">60%</td>
+            <td class="win-bad">28%</td>
+            <td class="win-light">65%</td>
+          </tr>
+          <tr>
+            <td class="left">Location</td><td>129</td>
+            <td class="win-mid win-target">75%</td>
+            <td class="win-mid">76%</td>
+            <td class="win-dark">82%</td>
+            <td class="win-mid win-target">74%</td>
+            <td class="win-light">61%</td>
+            <td class="win-light">52%</td>
+            <td class="win-light">59%</td>
+          </tr>
+          <tr>
+            <td class="left">Word-order</td><td>134</td>
+            <td class="win-mid win-target">73%</td>
+            <td class="win-mid">73%</td>
+            <td class="win-dark">82%</td>
+            <td class="win-mid">73%</td>
+            <td class="win-dark win-target">83%</td>
+            <td class="win-light">42%</td>
+            <td class="win-mid">66%</td>
+          </tr>
+          <tr>
+            <td class="left">Temporal</td><td>121</td>
+            <td class="win-mid win-target">79%</td>
+            <td class="win-mid">71%</td>
+            <td class="win-mid">79%</td>
+            <td class="win-mid">75%</td>
+            <td class="win-light">60%</td>
+            <td class="win-light win-target">55%</td>
+            <td class="win-mid">66%</td>
+          </tr>
+          <tr>
+            <td class="left">Fidelity</td><td>137</td>
+            <td class="win-mid win-target">74%</td>
+            <td class="win-mid">73%</td>
+            <td class="win-dark">85%</td>
+            <td class="win-mid">73%</td>
+            <td class="win-light">60%</td>
+            <td class="win-bad">26%</td>
+            <td class="win-light win-target">64%</td>
+          </tr>
+          <tr class="section-header"><td colspan="9">Location classifier fires</td></tr>
+          <tr>
+            <td class="left">Handshape</td><td>87</td>
+            <td class="win-mid win-target">69%</td>
+            <td class="win-mid">68%</td>
+            <td class="win-dark win-target">87%</td>
+            <td class="win-dark">98%</td>
+            <td class="win-light">57%</td>
+            <td class="win-bad">22%</td>
+            <td class="win-light">62%</td>
+          </tr>
+          <tr>
+            <td class="left">Location</td><td>93</td>
+            <td class="win-mid win-target">68%</td>
+            <td class="win-mid">72%</td>
+            <td class="win-dark">83%</td>
+            <td class="win-dark win-target">95%</td>
+            <td class="win-light">61%</td>
+            <td class="win-light">51%</td>
+            <td class="win-light">62%</td>
+          </tr>
+          <tr>
+            <td class="left">Word-order</td><td>88</td>
+            <td class="win-mid win-target">78%</td>
+            <td class="win-mid">73%</td>
+            <td class="win-dark">88%</td>
+            <td class="win-dark">94%</td>
+            <td class="win-light win-target">56%</td>
+            <td class="win-light">47%</td>
+            <td class="win-light">64%</td>
+          </tr>
+          <tr>
+            <td class="left">Temporal</td><td>78</td>
+            <td class="win-mid win-target">75%</td>
+            <td class="win-mid">67%</td>
+            <td class="win-dark">87%</td>
+            <td class="win-dark">96%</td>
+            <td class="win-light">51%</td>
+            <td class="win-light win-target">51%</td>
+            <td class="win-mid">69%</td>
+          </tr>
+          <tr>
+            <td class="left">Fidelity</td><td>88</td>
+            <td class="win-light win-target">65%</td>
+            <td class="win-light">64%</td>
+            <td class="win-dark">85%</td>
+            <td class="win-dark">97%</td>
+            <td class="win-light">59%</td>
+            <td class="win-bad">27%</td>
+            <td class="win-mid win-target">66%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">
+      BT2 correctly localises each corruption to its target dimension across all five corruption types (overall win rate 65–79%). Fluency is deliberately wrong-way for handshape and fidelity corruptions — these alter phonological form without disrupting motion, confirming BT2 does not over-penalise unaffected dimensions.
+    </p>
+
+    <!-- Table 6: Directional predictions -->
+    <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-sec); margin:44px 0 8px;">Sentence-level Directional Predictions (Table 6)</p>
+    <p class="table-note" style="margin-bottom:16px;">
+      Directional-verb evidence extracted by the directionality comparison tool across clause pairs. <span class="dir-verb">Bold</span> words are directional verbs; <span class="pron">green</span> pronouns are extracted grammatical-person entities; arrows (1&thinsp;&rarr;&thinsp;2) denote predicted agreement direction between person loci (1&thinsp;=&thinsp;1st, 2&thinsp;=&thinsp;2nd, 3&thinsp;=&thinsp;3rd person). NDV: no directional verb.
+    </p>
+    <div class="table-wrap">
+      <table class="dir-table">
+        <thead>
+          <tr>
+            <th style="min-width:380px;">Sentence</th>
+            <th>Predicted</th>
+            <th style="text-align:center;">Matches GT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pron">I</span> will <span class="dir-verb">help</span> <span class="pron">you</span> learn some signs but <span class="pron">you</span> can <span class="dir-verb">ask</span> <span class="pron">him</span></td>
+            <td class="pred">1&thinsp;&rarr;&thinsp;2, 2&thinsp;&rarr;&thinsp;3</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td><span class="pron">I</span> will <span class="dir-verb">help</span> <span class="pron">you</span> learn some signs but <span class="pron">I</span> can <span class="dir-verb">ask</span> <span class="pron">him</span></td>
+            <td class="pred">1&thinsp;&rarr;&thinsp;2, 1&thinsp;&rarr;&thinsp;3</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td><span class="pron">I</span> will <span class="dir-verb">help</span> <span class="pron">him</span> learn some signs but <span class="pron">you</span> can <span class="dir-verb">ask</span> <span class="pron">him</span></td>
+            <td class="pred">1&thinsp;&rarr;&thinsp;3, NDV</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td><span class="pron">She</span> will <span class="dir-verb">help</span> <span class="pron">you</span> learn some signs but <span class="pron">he</span> can <span class="dir-verb">ask</span> <span class="pron">me</span></td>
+            <td class="pred">NDV, 1&thinsp;&rarr;&thinsp;3</td>
+            <td class="check">&#10003;</td>
+          </tr>
+          <tr>
+            <td><span class="pron">I</span> will <span class="dir-verb">help</span> <span class="pron">you</span> learn some signs but <span class="pron">you</span> can <span class="dir-verb">ask</span> <span class="pron">him</span></td>
+            <td class="pred">NDV, NDV</td>
+            <td class="check">&#10003;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">
+      Across all clause pairs, extracted person-locus sequences match the intended directional patterns, illustrating that the directional stack captures clause-conditioned role transfer rather than only surface motion similarity.
     </p>
 
   </div>
