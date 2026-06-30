@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="description"
@@ -7,7 +7,6 @@
   <meta name="keywords" content="sign language translation, cross-lingual transfer, motion knowledge, attention fusion, How2Sign, Phoenix14T, CSL-Daily, MeineDGS, WLASL" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Open Graph -->
   <meta property="og:title" content="SIGNET: Motion-Level Knowledge Transfer for Cross-Language Sign Language Translation" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://cogvis.github.io/papers/signet/" />
@@ -16,588 +15,769 @@
 
   <title>SIGNET — Cross-Language Sign Language Translation</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
-
-  <!-- Bulma CSS framework -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
-
-  <!-- Academicons -->
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:         #1a73e8;
+      --blue-dark:    #185abc;
+      --blue-light:   #e8f0fe;
+      --blue-border:  #c5d9fc;
+      --green:        #137333;
+      --green-light:  #e6f4ea;
+      --green-border: #b7dfbf;
+      --gray-bg:      #f8f9fa;
+      --gray-border:  #e8eaed;
+      --text:         #202124;
+      --text-mid:     #3c4043;
+      --text-sec:     #5f6368;
+      --nav-h:        56px;
+      --snav-h:       44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Noto Sans', sans-serif;
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
     }
 
-    .publication-title {
-      font-family: 'Google Sans', sans-serif;
+    /* ── TOP NAV ────────────────────────────────────────── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .site-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
+
+    /* ── SECTION NAV ────────────────────────────────────── */
+    .sec-nav {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: var(--snav-h);
+    }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 44px;
+      text-align: center;
     }
 
-    .publication-authors {
-      font-family: 'Google Sans', sans-serif;
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 9px 26px;
+      border-radius: 28px;
+      border: 2px solid var(--green-border);
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(19,115,51,0.14);
     }
 
-    .publication-links .button {
-      margin: 0.25rem;
+    .paper-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 28px;
     }
-
-    .author-block {
-      display: inline-block;
-    }
-
-    /* Gradient text for SIGNET */
-    .gradient-text {
+    .paper-title .hl {
       background: linear-gradient(45deg, #0ea5e9, #10b981);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      font-weight: bold;
-      display: inline-block;
     }
 
-    /* Teaser image */
+    .authors {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      margin-bottom: 8px;
+      line-height: 1.8;
+    }
+    .affil {
+      font-size: 0.9rem;
+      color: var(--text-sec);
+      margin-bottom: 32px;
+    }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-mid);
+      background: #fff;
+      cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pill-btn:hover {
+      background: var(--gray-bg);
+      border-color: #bdc1c6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+    .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
+    .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+
+    /* ── SHARED SECTION ─────────────────────────────────── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── TEASER ─────────────────────────────────────────── */
+    .teaser-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
     .teaser-img {
       width: 100%;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      border: 1px solid var(--gray-border);
       display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .teaser-img:hover {
+      transform: scale(1.012);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
     }
 
-    /* Figure placeholder fallback */
-    .fig-placeholder {
-      width: 100%;
-      border-radius: 12px;
-      overflow: hidden;
+    /* ── LIGHTBOX ───────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.9);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #e2e8f0;
-      position: relative;
+      padding: 32px;
+      cursor: zoom-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
     }
-    .fig-placeholder.pipeline {
-      aspect-ratio: 16 / 6.5;
-      background: linear-gradient(135deg, #ecfdf5, #e0f2fe, #f0fdf4);
-    }
-    .fig-placeholder-inner {
-      text-align: center;
-      padding: 20px;
-    }
-
-    /* Pipeline blocks */
-    .pipeline-flow {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      width: 90%;
-    }
-    .pipe-block {
-      flex: 1;
-      background: white;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 14px 8px;
-      text-align: center;
-    }
-    .pipe-block.highlighted {
-      border-color: #0ea5e9;
-      background: #e0f2fe;
-    }
-    .pipe-block .p-icon { font-size: 1.5rem; margin-bottom: 5px; }
-    .pipe-block .p-name { font-size: 0.7rem; font-weight: 700; color: #1e293b; line-height: 1.3; }
-    .pipe-block .p-sub  { font-size: 0.62rem; color: #64748b; margin-top: 2px; }
-    .pipe-block.highlighted .p-name { color: #0369a1; }
-    .pipe-conn { width: 24px; flex-shrink: 0; text-align: center; color: #0ea5e9; font-size: 0.8rem; }
-
-    /* Video placeholder */
-    .video-placeholder {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
       border-radius: 8px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+      transform: scale(0.96);
+      transition: transform 0.22s ease;
+    }
+    .lightbox.open img { transform: scale(1); }
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      color: #fff;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: rgba(255,255,255,.5);
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
-      position: relative;
-      overflow: hidden;
+      transition: background 0.15s ease;
     }
-    .video-placeholder::before {
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── ABSTRACT ───────────────────────────────────────── */
+    .abstract-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+      text-align: justify;
+    }
+    .abstract-body + .abstract-body { margin-top: 14px; }
+
+    /* ── FEATURE CARDS ──────────────────────────────────── */
+    .feature-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0 0 8px;
+    }
+    .feature-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .feature-card::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size: 32px 32px;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--blue);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.22s ease;
     }
-    .video-ph-inner { text-align: center; position: relative; z-index: 1; }
-    .video-ph-inner .play-icon { font-size: 3rem; margin-bottom: 8px; opacity: .4; }
+    .feature-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 10px 26px rgba(26,115,232,0.12);
+      border-color: var(--blue-border);
+    }
+    .feature-card:hover::before { transform: scaleY(1); }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-card:hover .feature-icon {
+      background: var(--blue);
+      color: #fff;
+      transform: scale(1.06);
+    }
+    .feature-text { font-size: 0.88rem; color: var(--text-sec); line-height: 1.58; }
+    .feature-text strong {
+      display: block;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+    }
+    .feature-text .hl-num { color: var(--blue); font-weight: 700; }
 
-    /* Results table */
+    /* ── TABLE ──────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 32px; }
     .results-table {
-      font-size: 0.9rem;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      font-family: 'Roboto', sans-serif;
+      white-space: nowrap;
     }
     .results-table thead th {
-      background: #f8fafc;
-      font-size: 0.78rem;
-      font-weight: 700;
+      background: var(--gray-bg);
+      font-size: 0.75rem;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: #64748b;
+      color: var(--text-sec);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--gray-border);
+      text-align: center;
     }
+    .results-table thead th.left { text-align: left; }
+    .results-table tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--gray-border);
+      color: var(--text-mid);
+      text-align: center;
+    }
+    .results-table tbody td.left { text-align: left; }
+    .results-table tbody tr:last-child td { border-bottom: none; }
+    .results-table tbody tr:hover td { background: #fafafa; }
     .results-table tr.ours td {
-      background: #e0f2fe;
+      background: var(--blue-light);
+      color: var(--blue-dark);
       font-weight: 700;
-      color: #0369a1;
     }
-    .results-table tr.ours td:first-child {
-      border-left: 3px solid #0ea5e9;
+    .results-table tr.ours td.left { border-left: 3px solid var(--blue); }
+    .results-table .group-header {
+      border-left: 1px solid var(--gray-border);
+      border-right: 1px solid var(--gray-border);
     }
+    .table-caption {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      margin-top: 10px;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    .table-label {
+      text-align: left;
+      font-size: 1rem;
+      color: var(--text-sec);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 40px 0 12px;
+    }
+    .table-label:first-of-type { margin-top: 0; }
 
-    /* BibTeX block */
-    #BibTeX pre {
-      background: #0f172a;
-      color: #a5f3fc;
-      border-radius: 10px;
+    /* ── BIBTEX ─────────────────────────────────────────── */
+    .bibtex-pre {
+      background: #1a1a2e;
+      color: #8ab4f8;
+      border-radius: 12px;
       padding: 24px 28px;
-      font-size: 0.87rem;
+      font-size: 0.875rem;
       line-height: 1.75;
       overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
-
-    /* Section divider */
-    .section-divider {
-      border: none;
-      border-top: 1px solid #e2e8f0;
-      margin: 0;
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--text-sec);
+      cursor: pointer;
+      background: none;
+      border: 1px solid var(--gray-border);
+      padding: 6px 18px;
+      border-radius: 16px;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s;
     }
+    .copy-btn:hover { background: var(--gray-bg); }
 
-    /* Nav */
-    .navbar-item:hover {
-      background: transparent !important;
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .site-footer {
+      background: var(--gray-bg);
+      border-top: 1px solid var(--gray-border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
     }
   </style>
 </head>
 <body>
 
-<!-- ===================== NAVBAR ===================== -->
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="../../index.html" title="CogVis Lab Home">
-        <span class="icon"><i class="fas fa-home"></i></span>
-        <span style="margin-left:4px; font-size:0.85rem; font-family:'Google Sans',sans-serif; font-weight:600;">
-          CogVis Lab
-        </span>
-      </a>
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link" style="font-size:0.85rem;">More</a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="../../people.html">People</a>
-          <a class="navbar-item" href="../../projects.html">Projects</a>
-          <a class="navbar-item" href="../../index.html#publications">All Publications</a>
-        </div>
-      </div>
-    </div>
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../../people.html">People</a>
+    <a href="../../projects.html">Projects</a>
+    <a href="../../index.html#publications">Publications</a>
   </div>
 </nav>
 
-<!-- ===================== HERO / TITLE ===================== -->
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
+<!-- SECTION NAV -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#method">Method</a>
+  <a class="sec-link" href="#quantitative">Quantitative Results</a>
+  <a class="sec-link" href="#bibtex">BibTeX</a>
+</div>
 
-          <h1 class="title is-1 publication-title">
-            <span class="gradient-text">SIGNET</span>: Motion-Level Knowledge Transfer for<br />
-            Cross-Language Sign Language Translation
-          </h1>
+<!-- HERO -->
+<div class="hero-wrap">
 
-          <div class="is-size-5 publication-authors" style="margin-top: 1rem;">
-            <span class="author-block">
-              Sobhan Asasi<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Ozge Mercanoglu Sincan<sup>1</sup>,
-            </span>
-            <span class="author-block">
-              Richard Bowden<sup>1</sup>
-            </span>
-          </div>
+  <div class="conf-badge">
+    <i class="fas fa-award"></i>
+    ECCV 2026
+  </div>
 
-          <div class="is-size-5 publication-authors" style="margin-top: 0.5rem;">
-            <span class="author-block">
-              <sup>1</sup>CVSSP, University of Surrey, United Kingdom
-            </span>
-          </div>
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">SIGNET</span>: Motion-Level Knowledge Transfer for Cross-Language Sign&nbsp;Language Translation
+  </h1>
 
-          <!-- Link buttons -->
-          <div class="column has-text-centered" style="margin-top: 1rem;">
-            <div class="publication-links">
+  <p class="authors">
+    Sobhan Asasi<sup>1</sup>,&thinsp;
+    Ozge Mercanoglu Sincan<sup>1</sup>,&thinsp;
+    Richard Bowden<sup>1</sup>
+  </p>
+  <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom</p>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                  <span>Paper</span>
-                </a>
-              </span>
+  <div class="btn-row">
+    <a href="#" class="pill-btn filled">
+      <i class="fas fa-file-pdf"></i> Paper
+    </a>
+    <a href="#" class="pill-btn" target="_blank" rel="noopener">
+      <i class="ai ai-arxiv"></i> arXiv
+    </a>
+    <a href="#" class="pill-btn" target="_blank" rel="noopener">
+      <i class="fab fa-github"></i> Code
+    </a>
+  </div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-arxiv"></i></span>
-                  <span>arXiv</span>
-                </a>
-              </span>
+</div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Code</span>
-                </a>
-              </span>
+<!-- TEASER -->
+<div class="teaser-wrap">
+  <img src="./assets/signet.png" alt="SIGNET teaser figure" class="teaser-img" />
+</div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-youtube"></i></span>
-                  <span>Video</span>
-                </a>
-              </span>
+<hr class="divider" />
 
-            </div>
-          </div>
-          <!-- / Link buttons -->
+<!-- ABSTRACT -->
+<section class="section alt" id="abstract">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-body">
+      Sign language translation (SLT) remains challenging due to its high spatio-temporal
+      complexity, long sequences, and the need to model multiple articulators without relying
+      on gloss annotations. Existing approaches are typically tailored to individual datasets
+      or languages and struggle to scale, while overlooking the relationships between sign
+      languages that could inform more effective cross-lingual transfer.
+    </p>
+    <p class="abstract-body" style="margin-top:14px;">
+      We present <strong>SIGNET</strong>, a framework that enables <em>motion-level knowledge
+      transfer</em> for cross-language sign language translation. Our key insight is that,
+      although sign languages differ in grammar and lexicon, pretrained models capture
+      motion-level visual patterns that can be reused across datasets and languages. SIGNET
+      integrates multiple pretrained sign language backbones through an
+      <strong>attention-based, hand-prior aggregation mechanism</strong> that guides a gated
+      fusion network in dynamically selecting the most relevant experts. Comprehensive
+      experiments on four benchmarks (<strong>How2Sign</strong>, <strong>Phoenix14T</strong>,
+      <strong>CSL-Daily</strong>, and <strong>MeineDGS</strong>) demonstrate state-of-the-art
+      translation performance, and SIGNET also surpasses prior methods on
+      <strong>WLASL</strong> for sign language recognition.
+    </p>
+  </div>
+</section>
 
+<hr class="divider" />
+
+<!-- METHOD -->
+<section class="section" id="method">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Method</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
+        <div class="feature-text">
+          <strong>Multi-Backbone Expert Pool</strong>
+          SIGNET integrates multiple pretrained sign language backbones, each capturing
+          motion-level visual patterns from different languages and datasets.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-hand-sparkles"></i></div>
+        <div class="feature-text">
+          <strong>Attention-Based Hand-Prior Aggregation</strong>
+          A hand-prior attention mechanism guides a gated fusion network to dynamically
+          weight expert contributions, prioritising the most articulation-relevant features.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-language"></i></div>
+        <div class="feature-text">
+          <strong>Cross-Language Transfer</strong>
+          Motion-level knowledge transfers across sign languages — including to
+          <strong>MeineDGS</strong>, a language unseen during pretraining — enabling
+          generalisation without language-specific retraining.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-align-left"></i></div>
+        <div class="feature-text">
+          <strong>Gloss-Free Translation</strong>
+          SIGNET produces spoken-language text directly from sign video without any
+          intermediate gloss annotations, scaling to <span class="hl-num">4</span> SLT
+          benchmarks and <span class="hl-num">1</span> recognition benchmark.
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== TEASER ===================== -->
-<section class="section" style="padding-top: 0;">
-  <div class="container is-max-desktop">
-    <div class="hero-body" style="padding-top: 0;">
+<hr class="divider" />
 
-      <img src="./assets/signet.png" alt="SIGNET teaser figure" class="teaser-img" />
+<!-- QUANTITATIVE RESULTS -->
+<section class="section alt" id="quantitative">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Quantitative Results</h2>
 
+    <p class="table-label">Phoenix14T &amp; CSL-Daily — SLT (gloss-free)</p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="2">Method</th>
+            <th colspan="3" class="group-header">Phoenix14T</th>
+            <th colspan="3" class="group-header">CSL-Daily</th>
+          </tr>
+          <tr>
+            <th>B-1 ↑</th><th>B-4 ↑</th><th>R ↑</th>
+            <th>B-1 ↑</th><th>B-4 ↑</th><th>R ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">GFSLT-VLP</td><td>43.71</td><td>21.44</td><td>42.49</td><td>39.37</td><td>11.00</td><td>36.44</td></tr>
+          <tr><td class="left">FLa-LLM</td><td>46.29</td><td>23.09</td><td>45.27</td><td>37.13</td><td>14.20</td><td>37.25</td></tr>
+          <tr><td class="left">Sign2GPT</td><td>49.54</td><td>22.52</td><td>48.90</td><td>41.75</td><td>15.40</td><td>42.36</td></tr>
+          <tr><td class="left">MMSL</td><td>48.92</td><td>25.73</td><td>47.97</td><td>39.55</td><td>15.75</td><td>39.91</td></tr>
+          <tr><td class="left">BeyondGloss</td><td>52.38</td><td>25.49</td><td>52.89</td><td>53.12</td><td>21.53</td><td>53.46</td></tr>
+          <tr><td class="left">PGG-SLT</td><td>54.02</td><td>27.32</td><td>52.56</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td class="left">Uni-Sign</td><td>—</td><td>—</td><td>—</td><td>55.89</td><td>27.42</td><td>57.95</td></tr>
+          <tr class="ours">
+            <td class="left"><strong>SIGNET (Ours)</strong></td>
+            <td><strong>54.10</strong></td><td><strong>27.82</strong></td><td><strong>53.05</strong></td>
+            <td><strong>56.77</strong></td><td><strong>28.51</strong></td><td><strong>58.66</strong></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Abstract -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            Sign language translation (SLT) remains challenging due to its high spatio-temporal
-            complexity, long sequences, and the need to model multiple articulators without relying
-            on gloss annotations. Existing approaches are typically tailored to individual datasets
-            or languages and struggle to scale, while overlooking the relationships between sign
-            languages that could inform more effective cross-lingual transfer.
-          </p>
-          <p>
-            We present <strong>SIGNET</strong>, a framework that enables <em>motion-level knowledge
-            transfer</em> for cross-language sign language translation. Our key insight is that,
-            although sign languages differ in grammar and lexicon, pretrained models capture
-            motion-level visual patterns that can be reused across datasets and languages. SIGNET
-            integrates multiple pretrained sign language backbones through an
-            <strong>attention-based, hand-prior aggregation mechanism</strong> that guides a gated
-            fusion network in dynamically selecting the most relevant experts. Comprehensive
-            experiments on four benchmarks (<strong>How2Sign</strong>, <strong>Phoenix14T</strong>,
-            <strong>CSL-Daily</strong>, and <strong>MeineDGS</strong>) demonstrate state-of-the-art
-            translation performance, and SIGNET also surpasses prior methods on
-            <strong>WLASL</strong> for sign language recognition.
-          </p>
-        </div>
-      </div>
+    <p class="table-label">How2Sign — SLT (gloss-free)</p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Method</th>
+            <th>B-1 ↑</th><th>B-4 ↑</th><th>R ↑</th><th>BLEURT ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">Uni-Sign</td><td>40.8</td><td>15.1</td><td>35.4</td><td>—</td></tr>
+          <tr><td class="left">Geo-Sign</td><td>40.8</td><td>15.1</td><td>35.4</td><td>—</td></tr>
+          <tr><td class="left">SSVP-SLT-LSP †</td><td>43.2</td><td>15.5</td><td>38.4</td><td>49.6</td></tr>
+          <tr class="ours">
+            <td class="left"><strong>SIGNET (Ours)</strong></td>
+            <td><strong>41.1</strong></td><td><strong>15.4</strong></td><td><strong>36.4</strong></td><td><strong>49.5</strong></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <!-- / Abstract -->
+    <p class="table-caption">† Pre-trained on YT-ASL and How2Sign; requires 64 A100 GPUs for two weeks. SIGNET achieves comparable performance at a fraction of the compute.</p>
+
+    <p class="table-label">MeineDGS — SLT (zero-shot cross-lingual)</p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Method</th>
+            <th>B-1 ↑</th><th>B-4 ↑</th><th>R ↑</th><th>BLEURT ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">Spotter+GPT</td><td>14.82</td><td>0.64</td><td>—</td><td>21.62</td></tr>
+          <tr><td class="left">Spotter+Transformer</td><td>19.50</td><td>1.68</td><td>—</td><td>19.61</td></tr>
+          <tr><td class="left">Geo-Sign</td><td>16.65</td><td>1.55</td><td>—</td><td>29.72</td></tr>
+          <tr class="ours">
+            <td class="left"><strong>SIGNET (Ours)</strong></td>
+            <td><strong>24.20</strong></td><td><strong>2.75</strong></td><td><strong>13.6</strong></td><td><strong>33.58</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">DGS was not seen during pretraining, demonstrating cross-lingual transfer to an unseen sign language.</p>
+
+    <p class="table-label">WLASL — Sign Language Recognition</p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="2">Method</th>
+            <th colspan="2" class="group-header">WLASL100</th>
+            <th colspan="2" class="group-header">WLASL2000</th>
+          </tr>
+          <tr>
+            <th>P-I ↑</th><th>P-C ↑</th>
+            <th>P-I ↑</th><th>P-C ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">NLA-SLR</td><td>91.47</td><td>92.17</td><td>61.05</td><td>58.05</td></tr>
+          <tr><td class="left">SignRep</td><td>—</td><td>—</td><td>—</td><td>58.89</td></tr>
+          <tr><td class="left">Uni-Sign</td><td>92.25</td><td>92.67</td><td>63.52</td><td>61.32</td></tr>
+          <tr><td class="left">Geo-Sign</td><td>—</td><td>—</td><td>63.64</td><td>61.80</td></tr>
+          <tr class="ours">
+            <td class="left"><strong>SIGNET (Ours)</strong></td>
+            <td><strong>93.26</strong></td><td><strong>93.47</strong></td>
+            <td><strong>64.87</strong></td><td><strong>62.07</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">Per-instance (P-I) and per-class (P-C) Top-1 accuracy on WLASL100 and WLASL2000.</p>
 
   </div>
 </section>
 
-<hr class="section-divider" />
+<hr class="divider" />
 
-<!-- ===================== METHOD ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Method</h2>
-        <div class="content has-text-justified">
-          <div class="hero-body" style="padding: 1rem 0;">
-
-            <div class="fig-placeholder pipeline">
-              <div class="pipeline-flow">
-                <div class="pipe-block">
-                  <div class="p-icon">🎥</div>
-                  <div class="p-name">Sign Video<br/>Input</div>
-                  <div class="p-sub">Multi-language<br/>Signing</div>
-                </div>
-                <div class="pipe-conn"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="pipe-block highlighted">
-                  <div class="p-icon">🧩</div>
-                  <div class="p-name">Pretrained<br/>Backbones</div>
-                  <div class="p-sub">Motion-Level<br/>Feature Experts</div>
-                </div>
-                <div class="pipe-conn"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="pipe-block highlighted">
-                  <div class="p-icon">🤲</div>
-                  <div class="p-name">Hand-Prior<br/>Aggregation</div>
-                  <div class="p-sub">Attention-Based<br/>Gated Fusion</div>
-                </div>
-                <div class="pipe-conn"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="pipe-block">
-                  <div class="p-icon">📝</div>
-                  <div class="p-name">Spoken Language<br/>Translation</div>
-                  <div class="p-sub">Gloss-Free<br/>SLT Output</div>
-                </div>
-              </div>
-            </div>
-
-            <p style="font-size: 0.85em; margin-top: 1rem;">
-              SIGNET architecture overview. Sign video is processed by multiple pretrained sign
-              language backbones (highlighted), each capturing motion-level visual patterns from
-              different languages. The <strong>attention-based hand-prior aggregation</strong>
-              (highlighted) mechanism dynamically weights expert contributions via a gated fusion
-              network, producing gloss-free spoken language translations that generalise across
-              four sign language benchmarks.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ===================== QUANTITATIVE RESULTS ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Quantitative Results</h2>
-        <div class="content has-text-justified">
-
-          <!-- Table 1: Phoenix14T & CSL-Daily -->
-          <p><strong>SLT on Phoenix14T and CSL-Daily (test set, gloss-free methods).</strong>
-            BLEU-1 (B-1), BLEU-4 (B-4), and ROUGE-L (R) are reported.</p>
-
-          <div style="overflow-x: auto;">
-            <table class="table is-fullwidth is-striped is-hoverable results-table">
-              <thead>
-                <tr>
-                  <th rowspan="2">Method</th>
-                  <th colspan="3" style="text-align:center; border-bottom: 1px solid #e2e8f0;">Phoenix14T</th>
-                  <th colspan="3" style="text-align:center; border-bottom: 1px solid #e2e8f0;">CSL-Daily</th>
-                </tr>
-                <tr>
-                  <th>B-1 ↑</th><th>B-4 ↑</th><th>R ↑</th>
-                  <th>B-1 ↑</th><th>B-4 ↑</th><th>R ↑</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>GFSLT-VLP</td><td>43.71</td><td>21.44</td><td>42.49</td><td>39.37</td><td>11.00</td><td>36.44</td></tr>
-                <tr><td>FLa-LLM</td><td>46.29</td><td>23.09</td><td>45.27</td><td>37.13</td><td>14.20</td><td>37.25</td></tr>
-                <tr><td>Sign2GPT</td><td>49.54</td><td>22.52</td><td>48.90</td><td>41.75</td><td>15.40</td><td>42.36</td></tr>
-                <tr><td>MMSL</td><td>48.92</td><td>25.73</td><td>47.97</td><td>39.55</td><td>15.75</td><td>39.91</td></tr>
-                <tr><td>BeyondGloss</td><td>52.38</td><td>25.49</td><td>52.89</td><td>53.12</td><td>21.53</td><td>53.46</td></tr>
-                <tr><td>PGG-SLT</td><td>54.02</td><td>27.32</td><td>52.56</td><td>—</td><td>—</td><td>—</td></tr>
-                <tr><td>Uni-Sign</td><td>—</td><td>—</td><td>—</td><td>55.89</td><td>27.42</td><td>57.95</td></tr>
-                <tr class="ours">
-                  <td><strong>SIGNET (Ours)</strong></td>
-                  <td><strong>54.10</strong></td><td><strong>27.82</strong></td><td><strong>53.05</strong></td>
-                  <td><strong>56.77</strong></td><td><strong>28.51</strong></td><td><strong>58.66</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Table 2: How2Sign -->
-          <p style="margin-top: 1.5rem;"><strong>SLT on How2Sign (test set, gloss-free methods).</strong>
-            SIGNET achieves state-of-the-art pose-based performance, comparable to the much costlier SSVP-SLT-LSP which requires 64 A100 GPUs for two weeks.</p>
-
-          <div style="overflow-x: auto;">
-            <table class="table is-fullwidth is-striped is-hoverable results-table">
-              <thead>
-                <tr>
-                  <th>Method</th>
-                  <th>B-1 ↑</th>
-                  <th>B-4 ↑</th>
-                  <th>R ↑</th>
-                  <th>BLEURT ↑</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Uni-Sign</td><td>40.8</td><td>15.1</td><td>35.4</td><td>—</td></tr>
-                <tr><td>Geo-Sign</td><td>40.8</td><td>15.1</td><td>35.4</td><td>—</td></tr>
-                <tr><td>SSVP-SLT-LSP†</td><td>43.2</td><td>15.5</td><td>38.4</td><td>49.6</td></tr>
-                <tr class="ours">
-                  <td><strong>SIGNET (Ours)</strong></td>
-                  <td><strong>41.1</strong></td>
-                  <td><strong>15.4</strong></td>
-                  <td><strong>36.4</strong></td>
-                  <td><strong>49.5</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p style="font-size: 0.82em; color: #64748b; margin-top: 0.5rem;">† Pre-trained on YT-ASL and How2Sign; requires 64 A100 GPUs.</p>
-
-          <!-- Table 3: MeineDGS -->
-          <p style="margin-top: 1.5rem;"><strong>SLT on MeineDGS (test set, gloss-free methods).</strong>
-            DGS was not seen during pretraining, demonstrating cross-lingual transfer to an unseen sign language.</p>
-
-          <div style="overflow-x: auto;">
-            <table class="table is-fullwidth is-striped is-hoverable results-table">
-              <thead>
-                <tr>
-                  <th>Method</th>
-                  <th>B-1 ↑</th>
-                  <th>B-4 ↑</th>
-                  <th>R ↑</th>
-                  <th>BLEURT ↑</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Spotter+GPT</td><td>14.82</td><td>0.64</td><td>—</td><td>21.62</td></tr>
-                <tr><td>Spotter+Transformer</td><td>19.50</td><td>1.68</td><td>—</td><td>19.61</td></tr>
-                <tr><td>Geo-Sign</td><td>16.65</td><td>1.55</td><td>—</td><td>29.72</td></tr>
-                <tr class="ours">
-                  <td><strong>SIGNET (Ours)</strong></td>
-                  <td><strong>24.20</strong></td>
-                  <td><strong>2.75</strong></td>
-                  <td><strong>13.6</strong></td>
-                  <td><strong>33.58</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Table 4: WLASL -->
-          <p style="margin-top: 1.5rem;"><strong>Sign Language Recognition on WLASL.</strong>
-            Per-instance (P-I) and per-class (P-C) Top-1 accuracy on WLASL100 and WLASL2000.</p>
-
-          <div style="overflow-x: auto;">
-            <table class="table is-fullwidth is-striped is-hoverable results-table">
-              <thead>
-                <tr>
-                  <th rowspan="2">Method</th>
-                  <th colspan="2" style="text-align:center; border-bottom: 1px solid #e2e8f0;">WLASL100</th>
-                  <th colspan="2" style="text-align:center; border-bottom: 1px solid #e2e8f0;">WLASL2000</th>
-                </tr>
-                <tr>
-                  <th>P-I ↑</th><th>P-C ↑</th>
-                  <th>P-I ↑</th><th>P-C ↑</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>NLA-SLR</td><td>91.47</td><td>92.17</td><td>61.05</td><td>58.05</td></tr>
-                <tr><td>SignRep</td><td>—</td><td>—</td><td>—</td><td>58.89</td></tr>
-                <tr><td>Uni-Sign</td><td>92.25</td><td>92.67</td><td>63.52</td><td>61.32</td></tr>
-                <tr><td>Geo-Sign</td><td>—</td><td>—</td><td>63.64</td><td>61.80</td></tr>
-                <tr class="ours">
-                  <td><strong>SIGNET (Ours)</strong></td>
-                  <td><strong>93.26</strong></td><td><strong>93.47</strong></td>
-                  <td><strong>64.87</strong></td><td><strong>62.07</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ===================== BIBTEX ===================== -->
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code id="bibtex-code">@article{signet2025,
-  title     = {SIGNET: Motion-Level Knowledge Transfer for
-               Cross-Language Sign Language Translation},
-  author    = {Asasi, Sobhan and Mercanoglu Sincan, Ozge and Bowden, Richard},
-  year      = {2025},
+<!-- BIBTEX -->
+<section class="section" id="bibtex">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-pre"><code id="bibtex-code">@article{asasi2026signet,
+  title   = {SIGNET: Motion-Level Knowledge Transfer for
+             Cross-Language Sign Language Translation},
+  author  = {Asasi, Sobhan and Mercanoglu Sincan, Ozge and Bowden, Richard},
+  journal = {arXiv preprint},
+  year    = {2026},
 }</code></pre>
-    <button class="button is-small is-light" id="copy-bibtex" style="margin-top: -0.5rem;">
-      <span class="icon is-small"><i class="fas fa-copy"></i></span>
-      <span>Copy</span>
+    <button class="copy-btn" id="copy-bibtex">
+      <i class="fas fa-copy"></i> Copy BibTeX
     </button>
   </div>
 </section>
 
-<!-- ===================== FOOTER ===================== -->
-<footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content" style="text-align: center;">
-          <p>
-            This website is licensed under a
-            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-              Creative Commons Attribution-ShareAlike 4.0 International License
-            </a>.
-          </p>
-          <p>
-            Page template adapted from
-            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
-            We thank the authors for sharing the template.
-            &nbsp;·&nbsp;
-            <a href="../../index.html">CogVis Lab</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-<!-- Start of Signapse Web Translation Plugin Script Tag  -->
-<script src="https://translations.signapsesolutions.com/beta/signapse-loader.umd.js" app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6" version="v2" id="signapse" position="bottom-right" disable-survey></script>
-<!-- End of Signapse Web Translation Plugin Script Tag -->
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;·&nbsp;
+    <a href="../../index.html">CogVis Lab</a>
+  </p>
 </footer>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Expanded figure" />
+</div>
+
 <script>
-  /* BibTeX copy button */
+  (function () {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    var figs = document.querySelectorAll('.teaser-img');
+    function open(src, alt) {
+      lbImg.src = src; lbImg.alt = alt || '';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() { lb.classList.remove('open'); document.body.style.overflow = ''; }
+    figs.forEach(function (img) { img.addEventListener('click', function () { open(img.src, img.alt); }); });
+    lb.addEventListener('click', close);
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
+
   document.getElementById('copy-bibtex').addEventListener('click', function () {
-    var text = document.getElementById('bibtex-code').innerText;
-    navigator.clipboard.writeText(text).then(function () {
+    navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
       var btn = document.getElementById('copy-bibtex');
-      btn.querySelector('span:last-child').textContent = 'Copied!';
-      setTimeout(function () {
-        btn.querySelector('span:last-child').textContent = 'Copy';
-      }, 2000);
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy BibTeX'; }, 2000);
     });
   });
 
-  /* Navbar burger toggle */
-  document.addEventListener('DOMContentLoaded', function () {
-    var burger = document.querySelector('.navbar-burger');
-    var menu   = document.querySelector('.navbar-menu');
-    if (burger && menu) {
-      burger.addEventListener('click', function () {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
-      });
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var ids = ['abstract', 'method', 'quantitative', 'bibtex'];
+    var targets = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
     }
-  });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    targets.forEach(function (t) { io.observe(t); });
+  })();
 </script>
+
 </body>
 </html>
