@@ -1,631 +1,815 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="description"
-        content="BackTranslation2.0: A Linguistically Motivated Metric to Assess Sign Language Production." />
+  <meta name="description" content="BackTranslation2.0: A Linguistically Motivated Metric to Assess Sign Language Production." />
   <meta name="keywords" content="sign language production, evaluation metric, backtranslation, agentic framework, LLM, BSL, grammatical correctness, phonological accuracy, motion fluency" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Open Graph -->
   <meta property="og:title" content="BackTranslation2.0: A Linguistically Motivated Metric to Assess Sign Language Production" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://cogvis.github.io/papers/bt2/" />
-  <meta property="og:description"
-        content="BackTranslation2.0 is a linguistically grounded agentic evaluation metric for text-to-sign translation, assessing four dimensions aligned with human rater judgements." />
-
+  <meta property="og:url" content="https://cogvis-cvssp.github.io/BackTranslation2/" />
+  <meta property="og:description" content="BackTranslation2.0 is a linguistically grounded agentic evaluation metric for text-to-sign translation, assessing four dimensions aligned with human rater judgements." />
   <title>BackTranslation2.0 — Linguistically Motivated SLP Evaluation</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
-
-  <!-- Bulma CSS framework -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
-
-  <!-- Academicons -->
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #1a73e8;
+      --blue-dark:   #1557b0;
+      --blue-light:  #e8f0fe;
+      --blue-border: #c5d9fc;
+      --green:       #137333;
+      --green-light: #e6f4ea;
+      --green-border:#b7dfbf;
+      --gray-bg:     #f8f9fa;
+      --gray-border: #e8eaed;
+      --text:        #202124;
+      --text-mid:    #3c4043;
+      --text-sec:    #5f6368;
+      --nav-h:       56px;
+      --snav-h:      44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Noto Sans', sans-serif;
-    }
-
-    .publication-title {
-      font-family: 'Google Sans', sans-serif;
-    }
-
-    .publication-authors {
-      font-family: 'Google Sans', sans-serif;
-    }
-
-    .publication-links .button {
-      margin: 0.25rem;
-    }
-
-    .author-block {
-      display: inline-block;
-    }
-
-    /* Gradient text for BT2 */
-    .gradient-text {
-      background: linear-gradient(45deg, #1e40af, #0891b2);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: bold;
-      display: inline-block;
-    }
-
-    /* Teaser image */
-    .teaser-img {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      display: block;
-    }
-
-    /* Dimension cards */
-    .dimension-card {
-      background: white;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.25rem 1rem;
-      height: 100%;
-      transition: border-color 0.2s;
-    }
-    .dimension-card:hover {
-      border-color: #0891b2;
-    }
-    .dimension-card.highlighted {
-      border-color: #1e40af;
-      background: #eff6ff;
-    }
-    .dimension-icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    .dimension-title {
-      font-family: 'Google Sans', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      color: #1e40af;
-      margin-bottom: 0.4rem;
-    }
-    .dimension-desc {
-      font-size: 0.85rem;
-      color: #475569;
-      line-height: 1.5;
-    }
-
-    /* Pipeline phases */
-    .phase-box {
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 1rem 1.25rem;
-      background: #f8fafc;
-      margin-bottom: 1rem;
-    }
-    .phase-box.phase-1 {
-      border-left: 4px solid #1e40af;
-    }
-    .phase-box.phase-2 {
-      border-left: 4px solid #0891b2;
-    }
-    .phase-box.phase-3 {
-      border-left: 4px solid #0e7490;
-    }
-    .phase-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #64748b;
-      margin-bottom: 0.35rem;
-    }
-    .phase-title {
-      font-family: 'Google Sans', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: #1e293b;
-      margin-bottom: 0.4rem;
-    }
-    .phase-tools {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin-top: 0.5rem;
-    }
-    .phase-tool-tag {
-      font-size: 0.72rem;
-      background: white;
-      border: 1px solid #cbd5e1;
-      border-radius: 20px;
-      padding: 2px 10px;
-      color: #334155;
-    }
-
-    /* Contribution items */
-    .contribution-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-    }
-    .contribution-num {
-      flex-shrink: 0;
-      width: 2rem;
-      height: 2rem;
-      background: linear-gradient(135deg, #1e40af, #0891b2);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
-    .contribution-text {
-      font-size: 0.95rem;
-      color: #334155;
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
       line-height: 1.6;
-      padding-top: 0.2rem;
-    }
-    .contribution-text strong {
-      color: #1e40af;
     }
 
-    /* BibTeX block */
-    #BibTeX pre {
-      background: #0f172a;
-      color: #a5f3fc;
-      border-radius: 10px;
-      padding: 24px 28px;
-      font-size: 0.87rem;
-      line-height: 1.75;
-      overflow-x: auto;
+    /* ── TOP NAV ── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px; height: var(--nav-h);
+      display: flex; align-items: center; gap: 6px;
     }
-
-    /* Section divider */
-    .section-divider {
-      border: none;
-      border-top: 1px solid #e2e8f0;
-      margin: 0;
+    .site-nav a {
+      text-decoration: none; color: var(--text-mid); font-size: 0.875rem;
+      font-weight: 500; padding: 6px 10px; border-radius: 4px;
+      transition: background 0.15s; white-space: nowrap;
     }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
 
-    /* Venue badge */
-    .venue-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #1e40af, #0891b2);
-      color: white;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 3px 14px;
-      border-radius: 20px;
-      margin-top: 0.75rem;
-      letter-spacing: 0.04em;
+    /* ── SECTION NAV ── */
+    .sec-nav {
+      position: sticky; top: var(--nav-h); z-index: 90;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex; justify-content: center; padding: 0 16px;
+      overflow-x: auto; scrollbar-width: none; height: var(--snav-h);
     }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none; color: var(--text-sec); font-size: 0.85rem; font-weight: 500;
+      padding: 0 18px; height: 100%; display: flex; align-items: center;
+      border-bottom: 2px solid transparent; white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
 
-    /* Nav */
-    .navbar-item:hover {
-      background: transparent !important;
+    /* ── HERO ── */
+    .hero-wrap {
+      max-width: 900px; margin: 0 auto;
+      padding: 64px 24px 44px; text-align: center;
+    }
+    .conf-badge {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--green-light); color: var(--green);
+      font-size: 1rem; font-weight: 700; padding: 9px 26px;
+      border-radius: 28px; border: 2px solid var(--green-border);
+      margin-bottom: 28px; letter-spacing: 0.08em; text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(19,115,51,0.14);
+    }
+    .paper-title {
+      font-size: 2.5rem; font-weight: 700; line-height: 1.22;
+      color: var(--text); margin-bottom: 28px;
+    }
+    .paper-title .hl {
+      background: linear-gradient(45deg, #1e40af, #0891b2);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .authors { font-size: 1.05rem; color: var(--text-mid); margin-bottom: 8px; line-height: 1.8; }
+    .affil   { font-size: 0.9rem; color: var(--text-sec); margin-bottom: 32px; }
+
+    /* Pill buttons */
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 24px; border-radius: 24px; font-size: 0.9rem; font-weight: 500;
+      text-decoration: none; border: 1.5px solid var(--gray-border);
+      color: var(--text-mid); background: #fff; cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pill-btn:hover { background: var(--gray-bg); border-color: #bdc1c6; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+    .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
+    .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+
+    /* ── SECTIONS ── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+    .section-title { font-size: 1.75rem; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 32px; }
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── TEASER ── */
+    .teaser-wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 60px; }
+    .teaser-img {
+      width: 100%; border-radius: 14px; border: 1px solid var(--gray-border);
+      display: block; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in; transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .teaser-img:hover { transform: scale(1.012); box-shadow: 0 12px 36px rgba(0,0,0,0.16); }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.9);
+      display: flex; align-items: center; justify-content: center; padding: 32px;
+      cursor: zoom-out; opacity: 0; visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+    }
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img {
+      max-width: 95vw; max-height: 92vh; border-radius: 8px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+      transform: scale(0.96); transition: transform 0.22s ease;
+    }
+    .lightbox.open img { transform: scale(1); }
+    .lightbox-close {
+      position: absolute; top: 22px; right: 28px; color: #fff; font-size: 1.6rem;
+      background: rgba(255,255,255,0.12); border: none; width: 44px; height: 44px;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: background 0.15s ease;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── ABSTRACT ── */
+    .abstract-body { font-size: 1rem; line-height: 1.85; color: var(--text-mid); text-align: justify; }
+
+    /* ── FEATURE CARDS ── */
+    .feature-grid   { display: flex; flex-direction: column; gap: 12px; margin: 0 0 8px; }
+    .feature-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 8px; }
+    .feature-card {
+      position: relative; background: #fff; border: 1px solid var(--gray-border);
+      border-radius: 16px; padding: 18px 24px; display: flex; gap: 18px;
+      align-items: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: var(--blue); transform: scaleY(0); transform-origin: center;
+      transition: transform 0.22s ease;
+    }
+    .feature-card:hover { transform: translateX(4px); box-shadow: 0 10px 26px rgba(26,115,232,0.12); border-color: var(--blue-border); }
+    .feature-card:hover::before { transform: scaleY(1); }
+    .feature-icon {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 11px;
+      background: var(--blue-light); color: var(--blue);
+      display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-card:hover .feature-icon { background: var(--blue); color: #fff; transform: scale(1.06); }
+    .feature-text { font-size: 0.88rem; color: var(--text-sec); line-height: 1.58; }
+    .feature-text strong { display: block; color: var(--text); font-weight: 600; font-size: 0.97rem; margin-bottom: 4px; }
+    .feature-text .hl-num { color: var(--blue); font-weight: 700; }
+
+    /* ── PHASE HEADERS ── */
+    .phase-header {
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      margin: 44px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--gray-border);
+    }
+    .phase-header:first-of-type { margin-top: 0; }
+    .phase-header .ph-num { font-weight: 800; color: var(--blue); }
+
+    /* ── TABLES ── */
+    .table-wrap { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .results-table {
+      width: 100%; border-collapse: collapse; font-size: 0.82rem;
+      font-family: 'Roboto', sans-serif; white-space: nowrap;
+    }
+    .results-table thead th {
+      background: var(--gray-bg); font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--text-sec); padding: 9px 10px;
+      border-bottom: 2px solid var(--gray-border); text-align: center;
+    }
+    .results-table thead th.left { text-align: left; }
+    .results-table tbody td { padding: 8px 10px; border-bottom: 1px solid var(--gray-border); color: var(--text-mid); text-align: center; }
+    .results-table tbody td.left { text-align: left; }
+    .results-table tbody tr:last-child td { border-bottom: none; }
+    .results-table tbody tr:hover td { background: #fafafa; }
+    .results-table tr.ours td { background: var(--blue-light); color: var(--blue-dark); font-weight: 700; }
+    .results-table tr.ours td.left { border-left: 3px solid var(--blue); }
+    .results-table tr.section-header td {
+      background: #f1f3f4; color: var(--text-sec); font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em; padding: 7px 10px; text-align: left;
+    }
+    .table-caption { font-size: 0.82rem; color: var(--text-sec); margin-top: 10px; line-height: 1.6; }
+    .table-note { font-size: 0.9rem; color: var(--text-mid); margin-bottom: 20px; line-height: 1.7; }
+
+    .bench-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; font-family: 'Roboto', sans-serif; }
+    .bench-table th { background: var(--gray-bg); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-sec); padding: 10px 14px; border-bottom: 2px solid var(--gray-border); text-align: left; }
+    .bench-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-border); color: var(--text-mid); vertical-align: top; }
+    .bench-table tbody tr:last-child td { border-bottom: none; }
+
+    /* ── BIBTEX ── */
+    .bibtex-pre {
+      background: #1a1a2e; color: #8ab4f8; border-radius: 12px;
+      padding: 24px 28px; font-size: 0.875rem; line-height: 1.75; overflow-x: auto;
+      font-family: 'Roboto Mono', monospace; box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 12px;
+      font-size: 0.8rem; color: var(--text-sec); cursor: pointer; background: none;
+      border: 1px solid var(--gray-border); padding: 6px 18px; border-radius: 16px;
+      font-family: 'Google Sans', sans-serif; transition: background 0.15s;
+    }
+    .copy-btn:hover { background: var(--gray-bg); }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      background: var(--gray-bg); border-top: 1px solid var(--gray-border);
+      padding: 36px 24px; text-align: center; font-size: 0.85rem;
+      color: var(--text-sec); line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
+      .feature-grid-2 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- ===================== NAVBAR ===================== -->
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="../index.html" title="CogVis Lab Home">
-        <span class="icon"><i class="fas fa-home"></i></span>
-        <span style="margin-left:4px; font-size:0.85rem; font-family:'Google Sans',sans-serif; font-weight:600;">
-          CogVis Lab
-        </span>
-      </a>
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link" style="font-size:0.85rem;">More</a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="../people.html">People</a>
-          <a class="navbar-item" href="../projects.html">Projects</a>
-          <a class="navbar-item" href="../index.html#publications">All Publications</a>
-        </div>
-      </div>
-    </div>
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../people.html">People</a>
+    <a href="../projects.html">Projects</a>
+    <a href="../index.html#publications">Publications</a>
   </div>
 </nav>
 
-<!-- ===================== HERO / TITLE ===================== -->
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
+<!-- SECTION NAV -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#method">Method</a>
+  <a class="sec-link" href="#dimensions">Dimensions</a>
+  <a class="sec-link" href="#results">Results</a>
+  <a class="sec-link" href="#acknowledgements">Acknowledgements</a>
+  <a class="sec-link" href="#bibtex">BibTeX</a>
+</div>
 
-          <h1 class="title is-1 publication-title">
-            <span class="gradient-text">BackTranslation2.0</span><br />
-            A Linguistically Motivated Metric to Assess<br />Sign Language Production
-          </h1>
+<!-- HERO -->
+<div class="hero-wrap">
 
-          <div class="has-text-centered">
-            <span class="venue-badge">ECCV 2026</span>
-          </div>
+  <div class="conf-badge">
+    <i class="fas fa-award"></i>
+    ECCV 2026
+  </div>
 
-          <div class="is-size-5 publication-authors" style="margin-top: 1.25rem;">
-            <span class="author-block">Oliver Cory<sup>1</sup>,</span>
-            <span class="author-block">Maksym Ivashechkin<sup>1</sup>,</span>
-            <span class="author-block">Oline Ranum<sup>1</sup>,</span>
-            <span class="author-block">Jianhe Low<sup>1</sup>,</span>
-            <span class="author-block">Edward Fish<sup>1</sup>,</span>
-            <span class="author-block">Anton Pelykh<sup>1</sup>,</span>
-            <span class="author-block">Karahan Sahin<sup>1</sup>,</span>
-            <span class="author-block">Ozge Mercanoglu Sincan<sup>1</sup>,</span>
-            <span class="author-block">Richard Bowden<sup>1</sup></span>
-          </div>
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">BackTranslation2.0</span>: A Linguistically Motivated&nbsp;Metric to Assess Sign&nbsp;Language Production
+  </h1>
 
-          <div class="is-size-5 publication-authors" style="margin-top: 0.5rem;">
-            <span class="author-block">
-              <sup>1</sup>CVSSP, University of Surrey, United Kingdom
-            </span>
-          </div>
+  <p class="authors">
+    Oliver Cory<sup>1</sup>,&thinsp;
+    Maksym Ivashechkin<sup>1</sup>,&thinsp;
+    Karahan Sahin<sup>1</sup>,&thinsp;
+    Oline Ranum<sup>1</sup>,&thinsp;
+    Jianhe Low<sup>1</sup>,<br />
+    Edward Fish<sup>1</sup>,&thinsp;
+    Anton Pelykh<sup>1</sup>,&thinsp;
+    Ozge Mercanoglu Sincan<sup>1</sup>,&thinsp;
+    Richard Bowden<sup>1</sup>
+  </p>
+  <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom</p>
 
-          <!-- Link buttons -->
-          <div class="column has-text-centered" style="margin-top: 1rem;">
-            <div class="publication-links">
+  <div class="btn-row">
+    <a href="#" class="pill-btn filled" target="_blank" rel="noopener">
+      <i class="fas fa-file-pdf"></i> Paper
+    </a>
+    <a href="https://arxiv.org/pdf/2606.28673" class="pill-btn" target="_blank" rel="noopener">
+      <i class="ai ai-arxiv"></i> arXiv
+    </a>
+    <a href="#" class="pill-btn">
+      <i class="fab fa-github"></i> Code
+    </a>
+  </div>
 
-              <span class="link-block">
-                <a href="assets/BackTranslation2_0___ECCV_2026_Submission.pdf"
-                   class="external-link button is-normal is-rounded is-dark" target="_blank">
-                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                  <span>Paper</span>
-                </a>
-              </span>
+</div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-arxiv"></i></span>
-                  <span>arXiv</span>
-                </a>
-              </span>
+<!-- TEASER -->
+<div class="teaser-wrap">
+  <img src="assets/compressed_FINAL_FIG_DIAG-1.png"
+       alt="BackTranslation2.0 pipeline overview" class="teaser-img" />
+  <p style="font-size:0.85rem; color:var(--text-sec); text-align:center; margin-top:14px; line-height:1.65;">
+    <strong>Fig. 1</strong> — Overview of the BT2 pipeline. Given a source sentence and generated sign output, multi-modal extraction produces a structured sample for segment- and sequence-level analysis. Phase&nbsp;1 base tools extract lexical, spatial, phonological, motion, and visual evidence stored in a shared memory trace. Phase&nbsp;2 comparison tools cross-reference this evidence against linguistic expectations to produce grounded judgements. Deterministic aggregation yields per-dimension scores and an overall understandability score, and a final LLM stage writes a grounded natural-language assessment.
+  </p>
+</div>
 
-              <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Code</span>
-                </a>
-              </span>
+<hr class="divider" />
 
-            </div>
-          </div>
-          <!-- / Link buttons -->
-
-        </div>
-      </div>
-    </div>
+<!-- ABSTRACT -->
+<section class="section alt" id="abstract">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-body">
+      Sign Languages (SLs) are the primary means of communication for millions of deaf individuals, yet existing evaluation metrics for generated SL remain simplistic and poorly aligned with human judgements. We introduce <strong>BackTranslation2.0</strong>, a linguistically grounded evaluation metric for text-to-sign translation that moves beyond naïve backtranslation. Our approach adopts an agentic framework in which a deterministic pipeline orchestrates a suite of specialised tools to assess four scoring dimensions — <em>grammatical correctness</em>, <em>phonological accuracy</em>, <em>motion fluency</em>, and <em>generation fidelity</em> — aligned with human rater assessments. Tool outputs are not treated independently: a set of LLM-based cross-referential comparison modules evaluates consistency across tools and checks outputs against linguistic expectations, enabling structured reasoning over grammatical, phonological, and motion-level evidence. Final dimension scores are computed through deterministic weighted formulas over validated tool outputs. To validate BackTranslation2.0, we introduce and evaluate on a British Sign Language (BSL) dataset annotated by native Deaf raters across the same quality dimensions, benchmarking against six baseline metrics. Our method demonstrates strong correlation with human judgements across all dimensions, providing a more comprehensive, interpretable, and linguistically principled evaluation framework for sign language production systems.
+    </p>
   </div>
 </section>
 
-<!-- ===================== TEASER ===================== -->
-<section class="section" style="padding-top: 0;">
-  <div class="container is-max-desktop">
-    <div class="hero-body" style="padding-top: 0;">
+<hr class="divider" />
 
-      <img src="assets/compressed_FINAL_FIG_DIAG-1.png"
-           alt="BackTranslation2.0 pipeline overview"
-           class="teaser-img" />
+<!-- METHOD -->
+<section class="section" id="method">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Method</h2>
 
-      <p style="font-size: 0.85em; color: #64748b; text-align: center; margin-top: 0.75rem;">
-        <strong>Overview of the BackTranslation2.0 (BT2) pipeline.</strong>
-        Given a source sentence and generated sign output, multi-modal extraction produces a structured sample for
-        segment- and sequence-level analysis. Phase 1 base tools extract lexical, spatial, phonological, motion, and
-        visual evidence stored in a shared memory trace. Phase 2 comparison tools cross-reference this evidence against
-        linguistic expectations to produce grounded judgements. Deterministic aggregation yields per-dimension scores and
-        an overall understandability score, and a final LLM stage writes a grounded natural-language assessment.
-      </p>
-
-    </div>
-
-    <!-- Abstract -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            Sign Languages (SLs) are the primary means of communication for millions of Deaf individuals,
-            yet existing evaluation metrics for generated SL remain simplistic and poorly aligned with human
-            judgements. We introduce <strong>BackTranslation2.0</strong>, a linguistically grounded evaluation
-            metric for text-to-sign translation that moves beyond naïve backtranslation. Our approach adopts
-            an agentic framework in which a deterministic pipeline orchestrates a suite of specialised tools
-            to assess four scoring dimensions — <em>grammatical correctness</em>, <em>phonological accuracy</em>,
-            <em>motion fluency</em>, and <em>generation fidelity</em> — aligned with human rater assessments.
-          </p>
-          <p>
-            Tool outputs are not treated independently: a set of LLM-based cross-referential comparison modules
-            evaluates consistency across tools and checks outputs against linguistic expectations, enabling
-            structured reasoning over grammatical, phonological, and motion-level evidence. Final dimension scores
-            are computed through deterministic weighted formulas over validated tool outputs. To validate
-            BackTranslation2.0, we introduce and evaluate on a British Sign Language (BSL) dataset annotated by
-            native Deaf raters across the same quality dimensions, benchmarking against six baseline metrics.
-            Our method demonstrates strong correlation with human judgements across all dimensions, providing a
-            more comprehensive, interpretable, and linguistically principled evaluation framework for sign
-            language production systems.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!-- / Abstract -->
-
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ===================== CONTRIBUTIONS ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Contributions</h2>
-        <div class="content has-text-left" style="margin-top: 1rem;">
-
-          <div class="contribution-item">
-            <div class="contribution-num">1</div>
-            <div class="contribution-text">
-              We present <strong>BackTranslation2.0</strong>, a comprehensive linguistically motivated metric
-              for evaluating text-to-sign translation that is superior to naïve backtranslation.
-            </div>
-          </div>
-
-          <div class="contribution-item">
-            <div class="contribution-num">2</div>
-            <div class="contribution-text">
-              We propose an <strong>agentic evaluation framework</strong> that integrates specialised tools
-              with cross-referential LLM-based reasoning for structured, interpretable assessment.
-            </div>
-          </div>
-
-          <div class="contribution-item">
-            <div class="contribution-num">3</div>
-            <div class="contribution-text">
-              We introduce a <strong>specialised BSL evaluation dataset</strong> annotated by native Deaf
-              raters across multiple quality dimensions.
-            </div>
-          </div>
-
-          <div class="contribution-item">
-            <div class="contribution-num">4</div>
-            <div class="contribution-text">
-              We <strong>benchmark BackTranslation2.0 against six baseline metrics</strong>, demonstrating
-              strong correlation with human judgement across all dimensions and providing a more interpretable
-              and linguistically grounded evaluation paradigm for sign language production systems.
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ===================== METHOD ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Method</h2>
-        <div class="content has-text-justified">
-          <p>
-            BackTranslation2.0 (BT2) is a deterministic agentic framework for linguistically grounded
-            evaluation of text-to-sign translation. Rather than relying on a single end-to-end metric,
-            BT2 runs a fixed two-phase pipeline of specialised tools that assess grammatical correctness,
-            phonological accuracy, motion fluency, and generation fidelity.
-          </p>
-
-          <div class="phase-box phase-1" style="margin-top: 1.5rem;">
-            <div class="phase-label">Phase 1</div>
-            <div class="phase-title">Base Evidence Extraction</div>
-            <p style="font-size: 0.88rem; color: #475569; margin-bottom: 0.5rem;">
-              Multi-modal feature extraction produces a structured sample at segment and sequence level.
-              Specialised tools extract lexical, spatial, phonological, motion, and visual evidence, stored
-              in a shared Tool-Output Memory.
-            </p>
-            <div class="phase-tools">
-              <span class="phase-tool-tag">Lexical Structure</span>
-              <span class="phase-tool-tag">Spatial Grammar</span>
-              <span class="phase-tool-tag">Phonological Form</span>
-              <span class="phase-tool-tag">Motion Fluency Scorer</span>
-              <span class="phase-tool-tag">Visual Quality Scorer</span>
-            </div>
-          </div>
-
-          <div class="phase-box phase-2">
-            <div class="phase-label">Phase 2</div>
-            <div class="phase-title">Cross-Reference Comparison</div>
-            <p style="font-size: 0.88rem; color: #475569; margin-bottom: 0.5rem;">
-              LLM-based modules evaluate consistency across Phase 1 tool outputs and check them against
-              linguistic expectations, enabling structured reasoning over grammatical, phonological, and
-              motion-level evidence. An audit trail supports deterministic scoring and grounded reasoning.
-            </p>
-            <div class="phase-tools">
-              <span class="phase-tool-tag">Spot-Gloss Comparison</span>
-              <span class="phase-tool-tag">Manual Features Comparison</span>
-              <span class="phase-tool-tag">Non-Manual Features Comparison</span>
-              <span class="phase-tool-tag">Directionality Comparison</span>
-            </div>
-          </div>
-
-          <div class="phase-box phase-3">
-            <div class="phase-label">Output</div>
-            <div class="phase-title">Deterministic Dimension Scoring &amp; Final Grounded Assessment</div>
-            <p style="font-size: 0.88rem; color: #475569; margin-bottom: 0.5rem;">
-              Final dimension scores are computed via deterministic weighted formulas over validated tool outputs.
-              A final LLM stage receives the shared trace and deterministic scores to produce an auditable
-              natural-language assessment.
-            </p>
-            <div class="phase-tools">
-              <span class="phase-tool-tag">Grammatical Correctness</span>
-              <span class="phase-tool-tag">Phonological Accuracy</span>
-              <span class="phase-tool-tag">Motion Fluency</span>
-              <span class="phase-tool-tag">Generation Fidelity</span>
-              <span class="phase-tool-tag">Overall Score</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider" />
-
-<!-- ===================== SCORING DIMENSIONS ===================== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Scoring Dimensions</h2>
-    <p class="has-text-centered" style="color: #64748b; margin-bottom: 2rem; font-size: 0.95rem;">
-      BT2 evaluates four dimensions aligned with how native Deaf raters assess sign language quality.
+    <p style="font-size:0.95rem; color:var(--text-mid); line-height:1.8; text-align:justify; margin-bottom:40px;">
+      BackTranslation2.0 (BT2) is a deterministic agentic framework for linguistically grounded evaluation of text-to-sign translation. Rather than relying on a single end-to-end metric, BT2 runs a fixed two-phase pipeline of specialised tools assessing grammatical correctness, phonological accuracy, motion fluency, and generation fidelity. All intermediate outputs are retained in a shared memory trace, enabling deterministic scoring and an auditable final natural-language assessment.
     </p>
 
-    <div class="columns is-multiline">
-
-      <div class="column is-half">
-        <div class="dimension-card highlighted">
-          <div class="dimension-icon">📐</div>
-          <div class="dimension-title">Grammatical Correctness</div>
-          <div class="dimension-desc">
-            Adherence to target sign language syntax, including use of signing space, pronominal indexing,
-            and directional verb agreement (directionality).
-          </div>
+    <h3 class="phase-header"><span class="ph-num">Phase 1</span> &mdash; Base Evidence Extraction</h3>
+    <div class="feature-grid-2">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-spell-check"></i></div>
+        <div class="feature-text">
+          <strong>Pseudo-Gloss</strong>
+          LLM proposes BSL pseudo-gloss order from the source sentence.
         </div>
       </div>
-
-      <div class="column is-half">
-        <div class="dimension-card">
-          <div class="dimension-icon">🤲</div>
-          <div class="dimension-title">Phonological Accuracy</div>
-          <div class="dimension-desc">
-            Correctness of sub-lexical components, including handshape, movement, location, orientation,
-            and non-manual features.
-          </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-magnifying-glass"></i></div>
+        <div class="feature-text">
+          <strong>Sign Spotting</strong>
+          Top-<em>K</em> sign-embedding gloss matches per segment.
         </div>
       </div>
-
-      <div class="column is-half">
-        <div class="dimension-card">
-          <div class="dimension-icon">🌊</div>
-          <div class="dimension-title">Motion Fluency</div>
-          <div class="dimension-desc">
-            Naturalness and temporal smoothness of signing motion — capturing the fluid, continuous
-            articulation expected in native signing.
-          </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-arrows-left-right"></i></div>
+        <div class="feature-text">
+          <strong>Directionality</strong>
+          SL-GCN indexing/pointing classifier for directional verb agreement.
         </div>
       </div>
-
-      <div class="column is-half">
-        <div class="dimension-card">
-          <div class="dimension-icon">🎯</div>
-          <div class="dimension-title">Generation Fidelity</div>
-          <div class="dimension-desc">
-            Visual quality and anatomical plausibility of the generated output, ensuring the signer
-            representation is realistic and interpretable.
-          </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-map-pin"></i></div>
+        <div class="feature-text">
+          <strong>Topographic Scorer</strong>
+          FastDTW wrist-path direction matching for spatial grammar.
         </div>
       </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-hand"></i></div>
+        <div class="feature-text">
+          <strong>Handshape</strong>
+          Transformer handshape classifier for left &amp; right hands.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-crosshairs"></i></div>
+        <div class="feature-text">
+          <strong>Location</strong>
+          Location classifier from SMPL-X<sub>depth</sub> contact-proximity features.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-face-smile"></i></div>
+        <div class="feature-text">
+          <strong>Non-Manuals</strong>
+          AU-to-NMF classifier mapping per-frame action units to NMF categories.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-wave-square"></i></div>
+        <div class="feature-text">
+          <strong>Fluency</strong>
+          Flow-matching bottleneck fluency score via reference Gaussian in latent space.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="feature-text">
+          <strong>Visual Metrics</strong>
+          Deterministic smoothness/spectrum score encoding high-frequency energy, jerk, and motion activity.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-eye"></i></div>
+        <div class="feature-text">
+          <strong>Hand Fidelity</strong>
+          Binary hand-realism logit score (real vs. synthetic classifier over crops).
+        </div>
+      </div>
+    </div>
 
+    <h3 class="phase-header"><span class="ph-num">Phase 2</span> &mdash; Cross-Reference Comparison</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-align-left"></i></div>
+        <div class="feature-text">
+          <strong>Spot-Gloss Comparison</strong>
+          Semantic alignment between the pseudo-gloss and sign-spotted candidates using deterministic prefiltering followed by LLM matching on unresolved pairs.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+        <div class="feature-text">
+          <strong>Manual Features Comparison</strong>
+          Dictionary-based check of handshape and location against BSL lexical expectations, with optional LLM fallback for low-confidence entries.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-comment-dots"></i></div>
+        <div class="feature-text">
+          <strong>Non-Manual Features Comparison</strong>
+          Expected NMF markers inferred via LLM or deterministic rules, compared against detected non-manual evidence from Phase 1.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-route"></i></div>
+        <div class="feature-text">
+          <strong>Directionality Comparison</strong>
+          Deterministic cross-referencing of SL-GCN indexing predictions and topographic direction scores against grammatical expectations.
+        </div>
+      </div>
+    </div>
+
+    <h3 class="phase-header"><span class="ph-num">Output</span> &mdash; Deterministic Scoring &amp; Grounded Assessment</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-calculator"></i></div>
+        <div class="feature-text">
+          <strong>Deterministic Dimension Scores</strong>
+          Four dimension scores <em>d</em> = [<em>d</em><sub>gram</sub>, <em>d</em><sub>phon</sub>, <em>d</em><sub>flu</sub>, <em>d</em><sub>fid</sub>] are computed via fixed subcomponent weights on a common 0–4 scale. The overall understandability score is their arithmetic mean: <em>u</em> = ¼(<em>d</em><sub>gram</sub> + <em>d</em><sub>phon</sub> + <em>d</em><sub>flu</sub> + <em>d</em><sub>fid</sub>). No LLM step modifies these numeric scores.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-file-lines"></i></div>
+        <div class="feature-text">
+          <strong>Final Grounded Assessment</strong>
+          A final LLM stage receives the full memory trace together with the fixed deterministic scores, producing an auditable natural-language assessment. This stage is explanation-only and does not recompute or replace any numeric score.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SCORING DIMENSIONS -->
+<section class="section alt" id="dimensions">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Scoring Dimensions</h2>
+    <p style="font-size:0.95rem; color:var(--text-sec); text-align:center; margin-bottom:32px;">
+      BT2 evaluates four dimensions aligned with how native Deaf raters assess sign language quality.
+    </p>
+    <div class="feature-grid-2">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-ruler-combined"></i></div>
+        <div class="feature-text">
+          <strong>Grammatical Correctness</strong>
+          Adherence to target sign language syntax, including use of signing space, pronominal indexing, and directional verb agreement. Evaluated via pseudo-gloss order, topographic scoring, and directionality tools.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-hand-peace"></i></div>
+        <div class="feature-text">
+          <strong>Phonological Accuracy</strong>
+          Correctness of sub-lexical components including handshape, movement, location, orientation, and non-manual features. Assessed via handshape, location, and NMF tools with dictionary cross-referencing.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-water"></i></div>
+        <div class="feature-text">
+          <strong>Motion Fluency</strong>
+          Naturalness and temporal smoothness of signing motion — capturing the fluid, continuous articulation expected in native signing. Evaluated via flow-matching bottleneck score and visual motion metrics.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
+        <div class="feature-text">
+          <strong>Generation Fidelity</strong>
+          Visual quality and anatomical plausibility of the generated output, ensuring the signer representation is realistic and interpretable. Assessed via kinematic visual metrics and the hand-fidelity classifier.
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<hr class="section-divider" />
+<hr class="divider" />
 
-<!-- ===================== BIBTEX ===================== -->
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code id="bibtex-code">@article{backtranslation2_2026,
-  title     = {BackTranslation2.0: A Linguistically Motivated Metric
-               to Assess Sign Language Production},
-  author    = {Cory, Oliver and Ivashechkin, Maksym and Ranum, Oline and
-               Low, Jianhe and Fish, Edward and Pelykh, Anton and
-               Sahin, Karahan and Mercanoglu Sincan, Ozge and
-               Bowden, Richard},
-  booktitle = {European Conference on Computer Vision (ECCV)},
-  year      = {2026},
+<!-- QUANTITATIVE RESULTS -->
+<section class="section" id="results">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Quantitative Results</h2>
+
+    <p class="table-note">
+      We evaluate on four complementary benchmark subsets spanning real signing, controlled corruption, synthetic production, and targeted spatial-grammar evaluation. The table below compares BT2 with reference-free and reference-based baselines using direction-normalised Pearson <em>r</em> / Spearman <em>&rho;</em> against human judgements — higher values always indicate stronger alignment.
+    </p>
+
+    <!-- Benchmark composition -->
+    <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-sec); margin-bottom:12px;">Evaluation Benchmark</p>
+    <div class="table-wrap" style="margin-bottom:44px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>Subset</th>
+            <th>Content</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Human SRT</strong></td>
+            <td>6 signers &times; 6 sentences</td>
+            <td>Proficiency variation</td>
+          </tr>
+          <tr>
+            <td><strong>Known Corruptions</strong></td>
+            <td>6 sent. &times; 6 sign. &times; 3 corrupt.</td>
+            <td>Anomaly sensitivity</td>
+          </tr>
+          <tr>
+            <td><strong>Synthetic Productions</strong></td>
+            <td>6 production systems</td>
+            <td>Production-method evaluation</td>
+          </tr>
+          <tr>
+            <td><strong>Directionality / Topography</strong></td>
+            <td>Targeted spatial-grammar set</td>
+            <td>Grammatical placement</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Main results -->
+    <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-sec); margin-bottom:12px;">Metric &ndash; Human Alignment (Table 3)</p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="2" style="min-width:190px;">Method</th>
+            <th colspan="2">Known Corr.</th>
+            <th colspan="2">Synthetics (Under.)</th>
+            <th colspan="2">Synthetics (Qual.)</th>
+            <th colspan="2">Human SRT</th>
+          </tr>
+          <tr>
+            <th><em>r</em></th><th><em>&rho;</em></th>
+            <th><em>r</em></th><th><em>&rho;</em></th>
+            <th><em>r</em></th><th><em>&rho;</em></th>
+            <th><em>r</em></th><th><em>&rho;</em></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="9">Reference-based (requires source sequence)</td></tr>
+          <tr>
+            <td class="left">DTW-MPJPE</td>
+            <td>0.91</td><td>0.50</td>
+            <td>&minus;0.14</td><td>&minus;0.03</td>
+            <td>&minus;0.33</td><td>&minus;0.37</td>
+            <td>0.04</td><td>0.00</td>
+          </tr>
+          <tr>
+            <td class="left">SiBLEU</td>
+            <td>&minus;0.58</td><td>&minus;0.50</td>
+            <td>0.03</td><td>0.31</td>
+            <td>&minus;0.05</td><td>0.31</td>
+            <td><strong>0.96</strong></td><td><strong>0.90</strong></td>
+          </tr>
+          <tr>
+            <td class="left">SignCLIP p2p &ndash; BSL sent.</td>
+            <td>&minus;0.97</td><td>&minus;1.00</td>
+            <td><strong>0.85</strong></td><td>0.90</td>
+            <td>0.82</td><td>0.70</td>
+            <td>0.69</td><td>0.80</td>
+          </tr>
+          <tr>
+            <td class="left">SignCLIP p2p &ndash; multilingual</td>
+            <td>&minus;0.59</td><td>&minus;0.50</td>
+            <td>0.83</td><td>0.70</td>
+            <td>0.75</td><td>0.60</td>
+            <td>&minus;0.30</td><td>0.00</td>
+          </tr>
+          <tr>
+            <td class="left">SVAE</td>
+            <td>0.95</td><td><strong>1.00</strong></td>
+            <td>0.43</td><td>0.26</td>
+            <td>0.54</td><td>0.31</td>
+            <td>0.81</td><td>0.80</td>
+          </tr>
+          <tr class="section-header"><td colspan="9">Reference-free (requires source text only)</td></tr>
+          <tr>
+            <td class="left">BT1 / BLEU-4</td>
+            <td>&minus;0.19</td><td>0.00</td>
+            <td>&minus;0.38</td><td>&minus;0.44</td>
+            <td>&minus;0.15</td><td>&minus;0.10</td>
+            <td>0.00</td><td>0.00</td>
+          </tr>
+          <tr>
+            <td class="left">BLEURT</td>
+            <td>0.09</td><td>0.50</td>
+            <td>&minus;0.45</td><td>0.03</td>
+            <td>&minus;0.39</td><td>&minus;0.09</td>
+            <td>0.17</td><td>0.35</td>
+          </tr>
+          <tr>
+            <td class="left">SignCLIP p2t &ndash; multilingual seg.</td>
+            <td>0.89</td><td>0.50</td>
+            <td>&minus;0.64</td><td>&minus;0.60</td>
+            <td>&minus;0.41</td><td>&minus;0.30</td>
+            <td>&minus;0.07</td><td>&minus;0.10</td>
+          </tr>
+          <tr class="ours">
+            <td class="left"><strong>BT2 Overall (ours)</strong></td>
+            <td><strong>1.00</strong></td><td><strong>1.00</strong></td>
+            <td>0.42</td><td>0.60</td>
+            <td>0.52</td><td>0.66</td>
+            <td>&minus;0.43</td><td>&minus;0.30</td>
+          </tr>
+          <tr class="section-header"><td colspan="9">BT2 per-component sub-scores</td></tr>
+          <tr>
+            <td class="left">BT2 Phonology</td>
+            <td>0.28</td><td>0.50</td>
+            <td>0.48</td><td>0.26</td>
+            <td>0.35</td><td>&minus;0.03</td>
+            <td><strong>0.87</strong></td><td><strong>0.90</strong></td>
+          </tr>
+          <tr>
+            <td class="left">BT2 Grammar</td>
+            <td>&minus;0.25</td><td>&minus;0.50</td>
+            <td>&minus;0.33</td><td>&minus;0.30</td>
+            <td>&minus;0.20</td><td>&minus;0.10</td>
+            <td>&minus;0.45</td><td>&minus;0.60</td>
+          </tr>
+          <tr>
+            <td class="left">BT2 Fluency</td>
+            <td>0.28</td><td>0.50</td>
+            <td>0.21</td><td>0.37</td>
+            <td>0.40</td><td>0.54</td>
+            <td>&minus;0.42</td><td>&minus;0.40</td>
+          </tr>
+          <tr>
+            <td class="left">BT2 Fidelity</td>
+            <td>0.80</td><td>1.00</td>
+            <td>0.74</td><td><strong>0.94</strong></td>
+            <td><strong>0.83</strong></td><td><strong>0.94</strong></td>
+            <td>&minus;0.81</td><td>&minus;0.90</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">
+      BT2 Overall achieves perfect correlation (<em>r</em>&thinsp;=&thinsp;1.00, <em>&rho;</em>&thinsp;=&thinsp;1.00) on Known Corruptions — matching or exceeding the strongest reference-based alternatives while requiring only source text. BT2 Phonology reaches <em>&rho;</em>&thinsp;=&thinsp;0.90 on Human SRT where proficiency shows through articulatory form; BT2 Fidelity is strongest on Synthetic productions (<em>&rho;</em>&thinsp;=&thinsp;0.94). All values are direction-normalised so higher always indicates better metric&ndash;human alignment.
+    </p>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ACKNOWLEDGEMENTS -->
+<section class="section alt" id="acknowledgements">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Acknowledgements</h2>
+    <p style="font-size:0.92rem; color:var(--text-mid); line-height:1.8; text-align:justify;">
+      This work was supported by EPSRC grant APP24554 (SignGPT &mdash; EP/Z535370/1),
+      EPSRC grant APP78083 (UMCS &mdash; UKRI3927), and through funding from
+      <strong>Google.org</strong> via the AI for Global Goals scheme.
+      The authors acknowledge the use of the <strong>Isambard-AI</strong> National AI Research Resource (AIRR),
+      funded by UK DSIT via UKRI and STFC [ST/AIRR/I-A-I/1023].
+      This work reflects only the authors&rsquo; views; the funders are not responsible for any use
+      that may be made of the information it contains.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- BIBTEX -->
+<section class="section" id="bibtex">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-pre"><code id="bibtex-code">@article{cory2026backtranslation2,
+  title   = {BackTranslation2.0: A Linguistically Motivated Metric
+             to Assess Sign Language Production},
+  author  = {Cory, Oliver and Ivashechkin, Maksym and Sahin, Karahan and
+             Ranum, Oline and Low, Jianhe and Fish, Edward and
+             Pelykh, Anton and Mercanoglu Sincan, Ozge and
+             Bowden, Richard},
+  journal = {arXiv preprint arXiv:2606.28673},
+  year    = {2026},
 }</code></pre>
-    <button class="button is-small is-light" id="copy-bibtex" style="margin-top: -0.5rem;">
-      <span class="icon is-small"><i class="fas fa-copy"></i></span>
-      <span>Copy</span>
+    <button class="copy-btn" id="copy-bibtex">
+      <i class="fas fa-copy"></i> Copy BibTeX
     </button>
   </div>
 </section>
 
-<!-- ===================== FOOTER ===================== -->
-<footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content" style="text-align: center;">
-          <p>
-            This website is licensed under a
-            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-              Creative Commons Attribution-ShareAlike 4.0 International License
-            </a>.
-          </p>
-          <p>
-            Page template adapted from
-            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
-            We thank the authors for sharing the template.
-            &nbsp;·&nbsp;
-            <a href="../../index.html">CVSSP, University of Surrey, United Kingdom</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-<!-- Start of Signapse Web Translation Plugin Script Tag  -->
-<script src="https://translations.signapsesolutions.com/beta/signapse-loader.umd.js" app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6" version="v2" id="signapse" position="bottom-right" disable-survey></script>
-<!-- End of Signapse Web Translation Plugin Script Tag -->
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;&middot;&nbsp;
+    <a href="../index.html">CogVis Lab</a>
+  </p>
+  <script src="https://translations.signapsesolutions.com/beta/signapse-loader.umd.js"
+          app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6"
+          version="v2" id="signapse" position="bottom-right" disable-survey></script>
 </footer>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Expanded figure" />
+</div>
+
 <script>
-  /* BibTeX copy button */
+  /* Figure lightbox */
+  (function () {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    var figs = document.querySelectorAll('.teaser-img');
+    function openLb(src, alt) {
+      lbImg.src = src; lbImg.alt = alt || 'Expanded figure';
+      lb.classList.add('open'); document.body.style.overflow = 'hidden';
+    }
+    function closeLb() {
+      lb.classList.remove('open'); document.body.style.overflow = '';
+    }
+    figs.forEach(function (img) {
+      img.addEventListener('click', function () { openLb(img.src, img.alt); });
+    });
+    lb.addEventListener('click', closeLb);
+    document.getElementById('lightbox-close').addEventListener('click', closeLb);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('open')) closeLb();
+    });
+  })();
+
+  /* BibTeX copy */
   document.getElementById('copy-bibtex').addEventListener('click', function () {
-    var text = document.getElementById('bibtex-code').innerText;
-    navigator.clipboard.writeText(text).then(function () {
+    navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
       var btn = document.getElementById('copy-bibtex');
-      btn.querySelector('span:last-child').textContent = 'Copied!';
-      setTimeout(function () {
-        btn.querySelector('span:last-child').textContent = 'Copy';
-      }, 2000);
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy BibTeX'; }, 2000);
     });
   });
 
-  /* Navbar burger toggle */
-  document.addEventListener('DOMContentLoaded', function () {
-    var burger = document.querySelector('.navbar-burger');
-    var menu   = document.querySelector('.navbar-menu');
-    if (burger && menu) {
-      burger.addEventListener('click', function () {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
+  /* Section nav active highlight via IntersectionObserver */
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var ids = ['abstract','method','dimensions','results','acknowledgements','bibtex'];
+    var targets = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
       });
     }
-  });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    targets.forEach(function (t) { io.observe(t); });
+  })();
 </script>
+
 </body>
 </html>
