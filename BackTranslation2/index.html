@@ -131,6 +131,11 @@
 
     /* ── TEASER ── */
     .teaser-wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 60px; }
+    .fig-wrap { margin: 0 0 12px; }
+    .fig-wrap img { width: 100%; max-width: 100%; display: block; border-radius: 12px; border: 1px solid var(--gray-border); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .fig-caption { margin-top: 10px; font-size: 0.85rem; color: var(--text-sec); line-height: 1.65; }
+    .fig-caption strong { color: var(--text-mid); }
+
     .teaser-img {
       width: 100%; border-radius: 14px; border: 1px solid var(--gray-border);
       display: block; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -211,11 +216,11 @@
       border-bottom: 2px solid var(--gray-border); text-align: center;
     }
     .results-table thead th.left { text-align: left; }
+    .results-table thead tr.stat-row th { text-transform: none; letter-spacing: 0; font-style: italic; }
     .results-table tbody td { padding: 8px 10px; border-bottom: 1px solid var(--gray-border); color: var(--text-mid); text-align: center; }
     .results-table tbody td.left { text-align: left; }
     .results-table tbody tr:last-child td { border-bottom: none; }
     .results-table tbody tr:hover td { background: #fafafa; }
-    .results-table tr.ours td { background: var(--blue-light); color: var(--blue-dark); font-weight: 700; }
     .results-table tr.ours td.left { border-left: 3px solid var(--blue); }
     .results-table tr.section-header td {
       background: #f1f3f4; color: var(--text-sec); font-size: 0.72rem; font-weight: 600;
@@ -234,7 +239,7 @@
     td.win-mid   { background: #DBEDDB !important; color: #1a4d1a; }                   /* green!14 */
     td.win-light { background: #E6F2E6 !important; color: #2d5a2d; }                   /* green!10 */
     td.win-bad   { background: #FFE0E0 !important; color: #BF1A1A; font-style: italic; } /* red!12, Rcol */
-    td.win-target {}
+    td.win-target { box-shadow: inset 0 0 0 2px #1e40af; }
     .win-table .section-header td { text-align: left; }
     td.win-green { background: #c6efce !important; color: #1a5c2d; }
     .results-table tr.group-row td { background: transparent; font-weight: 600; font-size: 0.79rem; color: var(--text-mid); padding: 5px 10px 2px; border-bottom: none; }
@@ -302,6 +307,7 @@
   <a class="sec-link" href="#abstract">Abstract</a>
   <a class="sec-link" href="#method">Method</a>
   <a class="sec-link" href="#dimensions">Dimensions</a>
+  <a class="sec-link" href="#qualitative">Qualitative</a>
   <a class="sec-link" href="#results">Results</a>
   <a class="sec-link" href="#acknowledgements">Acknowledgements</a>
   <a class="sec-link" href="#bibtex">BibTeX</a>
@@ -549,6 +555,22 @@
 
 <hr class="divider" />
 
+<!-- QUALITATIVE ANALYSIS -->
+<section class="section alt" id="qualitative">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Qualitative Analysis</h2>
+    <div class="fig-wrap">
+      <img src="assets/qual_figure_tools_web.jpg"
+           alt="Qualitative evaluation of BT2 visual-base tools" />
+    </div>
+    <p class="fig-caption" style="margin-top:14px; text-align:left;">
+      <strong>Fig. 3</strong> — Qualitative evaluation of BT2 visual-base tools. Overlays show predicted class and score, with the <strong>top row</strong> rewarding good production and the <strong>bottom row</strong> penalising poor production. Columns (left to right): <em>Handshape</em>, <em>Non-manuals</em>, <em>Hand fidelity</em>, <em>Contact location</em>. Handshape and Non-manuals compare best production against matched corruptions; Hand fidelity contrasts a reference clip with poor-handed synthesis; Contact location shows correct (top) versus missing (bottom) contact via a frontal SMPL-X overlay, depth map, and side sparse view.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
 <!-- QUANTITATIVE RESULTS -->
 <section class="section" id="results">
   <div class="section-inner scroll-target">
@@ -606,7 +628,7 @@
             <th colspan="2">Synthetics (Qual.)</th>
             <th colspan="2">Human SRT</th>
           </tr>
-          <tr>
+          <tr class="stat-row">
             <th><em>r</em></th><th><em>&rho;</em></th>
             <th><em>r</em></th><th><em>&rho;</em></th>
             <th><em>r</em></th><th><em>&rho;</em></th>
@@ -627,17 +649,32 @@
             <td>&minus;0.58</td><td>&minus;0.50</td>
             <td>0.03</td><td>0.31</td>
             <td>&minus;0.05</td><td>0.31</td>
-            <td>0.96</td><td>0.90</td>
+            <td><strong>0.96</strong></td><td><strong>0.90</strong></td>
           </tr>
+          <tr class="group-row"><td class="left" colspan="9">SignCLIP p2p</td></tr>
           <tr>
-            <td class="left">SignCLIP p2p &ndash; BSL sent.</td>
+            <td class="left indent">BSL sentence</td>
             <td>&minus;0.97</td><td>&minus;1.00</td>
-            <td>0.85</td><td>0.90</td>
+            <td><strong>0.85</strong></td><td>0.90</td>
             <td>0.82</td><td>0.70</td>
             <td>0.69</td><td>0.80</td>
           </tr>
           <tr>
-            <td class="left">SignCLIP p2p &ndash; multilingual</td>
+            <td class="left indent">BSL segmentation</td>
+            <td>&minus;0.55</td><td>&minus;0.50</td>
+            <td>0.75</td><td>0.70</td>
+            <td>0.63</td><td>0.60</td>
+            <td>&minus;0.46</td><td>&minus;0.40</td>
+          </tr>
+          <tr>
+            <td class="left indent">Multilingual sentence</td>
+            <td>0.85</td><td><strong>1.00</strong></td>
+            <td>0.70</td><td>0.70</td>
+            <td>0.55</td><td>0.60</td>
+            <td>&minus;0.10</td><td>&minus;0.40</td>
+          </tr>
+          <tr>
+            <td class="left indent">Multilingual segmentation</td>
             <td>&minus;0.59</td><td>&minus;0.50</td>
             <td>0.83</td><td>0.70</td>
             <td>0.75</td><td>0.60</td>
@@ -645,32 +682,69 @@
           </tr>
           <tr>
             <td class="left">SVAE</td>
-            <td>0.95</td><td>1.00</td>
+            <td>0.95</td><td><strong>1.00</strong></td>
             <td>0.43</td><td>0.26</td>
             <td>0.54</td><td>0.31</td>
             <td>0.81</td><td>0.80</td>
           </tr>
           <tr class="section-header"><td colspan="9">Reference-free (requires source text only)</td></tr>
+          <tr class="group-row"><td class="left" colspan="9">BT1</td></tr>
           <tr>
-            <td class="left">BT1 / BLEU-4</td>
+            <td class="left indent">BLEU-4</td>
             <td>&minus;0.19</td><td>0.00</td>
             <td>&minus;0.38</td><td>&minus;0.44</td>
             <td>&minus;0.15</td><td>&minus;0.10</td>
             <td>0.00</td><td>0.00</td>
           </tr>
           <tr>
-            <td class="left">BLEURT</td>
+            <td class="left indent">BLEURT</td>
             <td>0.09</td><td>0.50</td>
-            <td>&minus;0.45</td><td>0.03</td>
+            <td>&minus;0.35</td><td>0.03</td>
             <td>&minus;0.39</td><td>&minus;0.09</td>
-            <td>0.17</td><td>0.35</td>
+            <td>0.15</td><td>0.35</td>
           </tr>
           <tr>
-            <td class="left">SignCLIP p2t &ndash; multilingual seg.</td>
+            <td class="left indent">ChrF</td>
+            <td>&minus;0.87</td><td>&minus;1.00</td>
+            <td>&minus;0.27</td><td>&minus;0.09</td>
+            <td>&minus;0.54</td><td>&minus;0.37</td>
+            <td>&minus;0.15</td><td>&minus;0.35</td>
+          </tr>
+          <tr>
+            <td class="left indent">ROUGE</td>
+            <td>&minus;0.19</td><td>0.00</td>
+            <td>&minus;0.34</td><td>&minus;0.44</td>
+            <td>&minus;0.08</td><td>&minus;0.10</td>
+            <td>0.00</td><td>0.00</td>
+          </tr>
+          <tr class="group-row"><td class="left" colspan="9">SignCLIP p2t</td></tr>
+          <tr>
+            <td class="left indent">BSL sentence</td>
+            <td>0.25</td><td>0.50</td>
+            <td>0.03</td><td>0.30</td>
+            <td>0.17</td><td>0.40</td>
+            <td>0.56</td><td>0.60</td>
+          </tr>
+          <tr>
+            <td class="left indent">BSL segmentation</td>
+            <td>&minus;0.25</td><td>&minus;0.50</td>
+            <td>&minus;0.33</td><td>&minus;0.30</td>
+            <td>&minus;0.20</td><td>&minus;0.10</td>
+            <td>&minus;0.78</td><td>&minus;0.70</td>
+          </tr>
+          <tr>
+            <td class="left indent">Multilingual sentence</td>
             <td>0.89</td><td>0.50</td>
             <td>&minus;0.64</td><td>&minus;0.60</td>
             <td>&minus;0.41</td><td>&minus;0.30</td>
             <td>&minus;0.07</td><td>&minus;0.10</td>
+          </tr>
+          <tr>
+            <td class="left indent">Multilingual segmentation</td>
+            <td>0.77</td><td>0.50</td>
+            <td>&minus;0.37</td><td>&minus;0.10</td>
+            <td>&minus;0.50</td><td>&minus;0.30</td>
+            <td>&minus;0.11</td><td>&minus;0.30</td>
           </tr>
           <!-- BT2 Overall: green = beats best ref-free; bold = also beats best ref-based -->
           <!-- ref-free bests: KC r/ρ 0.89/0.50 · SU r/ρ −0.38/0.03 · SQ r/ρ −0.15/−0.09 · SRT r/ρ 0.17/0.35 -->
@@ -685,31 +759,69 @@
           <tr class="section-header"><td colspan="9">BT2 per-component sub-scores</td></tr>
           <tr>
             <td class="left">BT2 Phonology</td>
-            <td>0.28</td><td class="win-green">0.50</td>
+            <td class="win-green">0.28</td><td class="win-green">0.50</td>
             <td class="win-green">0.48</td><td class="win-green">0.26</td>
-            <td class="win-green">0.35</td><td>&minus;0.03</td>
+            <td class="win-green">0.35</td><td class="win-green">&minus;0.03</td>
             <td class="win-green">0.87</td><td class="win-green"><strong>0.90</strong></td>
           </tr>
           <tr>
             <td class="left">BT2 Grammar</td>
-            <td>&minus;0.25</td><td>&minus;0.50</td>
-            <td>&minus;0.33</td><td>&minus;0.30</td>
-            <td>&minus;0.20</td><td>&minus;0.10</td>
+            <td>&minus;1.00</td><td>&minus;1.00</td>
+            <td>&minus;0.50</td><td>&minus;0.14</td>
+            <td>&minus;0.45</td><td>&minus;0.26</td>
             <td>&minus;0.45</td><td>&minus;0.60</td>
           </tr>
           <tr>
             <td class="left">BT2 Fluency</td>
-            <td>0.28</td><td class="win-green">0.50</td>
+            <td class="win-green">0.28</td><td class="win-green">0.50</td>
             <td class="win-green">0.21</td><td class="win-green">0.37</td>
             <td class="win-green">0.40</td><td class="win-green">0.54</td>
-            <td>&minus;0.42</td><td>&minus;0.40</td>
+            <td>&minus;0.46</td><td>&minus;0.40</td>
           </tr>
           <tr>
             <td class="left">BT2 Fidelity</td>
-            <td>0.80</td><td class="win-green"><strong>1.00</strong></td>
+            <td class="win-green">0.80</td><td class="win-green"><strong>1.00</strong></td>
             <td class="win-green">0.74</td><td class="win-green"><strong>0.94</strong></td>
             <td class="win-green"><strong>0.83</strong></td><td class="win-green"><strong>0.94</strong></td>
             <td>&minus;0.81</td><td>&minus;0.90</td>
+          </tr>
+
+          <!-- ── Human inter-rater agreement ── -->
+          <tr class="section-header"><td colspan="9">Human inter-rater agreement</td></tr>
+          <tr>
+            <td class="left">Gwet's AC2</td>
+            <td colspan="2">0.69</td><td colspan="2">0.69</td>
+            <td colspan="2">0.68</td><td colspan="2">0.69</td>
+          </tr>
+          <tr>
+            <td class="left">ICC(2,1)</td>
+            <td colspan="2">&minus;0.02</td><td colspan="2">0.51</td>
+            <td colspan="2">0.35</td><td colspan="2">0.07</td>
+          </tr>
+          <tr>
+            <td class="left">Within-1 agreement</td>
+            <td colspan="2">0.74</td><td colspan="2">0.79</td>
+            <td colspan="2">0.78</td><td colspan="2">0.75</td>
+          </tr>
+          <tr>
+            <td class="left">Quadratic weighted &kappa;</td>
+            <td colspan="2">&minus;0.03</td><td colspan="2">0.46</td>
+            <td colspan="2">0.35</td><td colspan="2">0.09</td>
+          </tr>
+          <tr>
+            <td class="left">Handshape flag &alpha;</td>
+            <td colspan="2">0.24</td><td colspan="2">0.26</td>
+            <td colspan="2">0.26</td><td colspan="2">0.09</td>
+          </tr>
+          <tr>
+            <td class="left">Non-manual flag &alpha;</td>
+            <td colspan="2">0.27</td><td colspan="2">0.29</td>
+            <td colspan="2">0.29</td><td colspan="2">&minus;0.03</td>
+          </tr>
+          <tr>
+            <td class="left">Word-order flag &alpha;</td>
+            <td colspan="2">0.30</td><td colspan="2">0.01</td>
+            <td colspan="2">0.01</td><td colspan="2">&minus;0.01</td>
           </tr>
         </tbody>
       </table>
@@ -1002,7 +1114,7 @@
   /* Section nav active highlight via IntersectionObserver */
   (function () {
     var links = document.querySelectorAll('.sec-link');
-    var ids = ['abstract','method','dimensions','results','acknowledgements','bibtex'];
+    var ids = ['abstract','method','dimensions','qualitative','results','acknowledgements','bibtex'];
     var targets = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
     var active = null;
     function setActive(id) {
