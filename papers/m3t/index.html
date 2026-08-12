@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description"
+        content="M3T: Discrete Multi-Modal Motion Tokens for Sign Language Production." />
+  <meta name="keywords" content="sign language production, non-manual features, SMPL-FX, FLAME, FSQ, discrete tokens, autoregressive transformer, sign language avatar" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="M3T: Discrete Multi-Modal Motion Tokens for Sign Language Production" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cogvis.github.io/papers/m3t/" />
+  <meta property="og:description"
+        content="M3T uses modality-specific FSQ VAEs and an autoregressive transformer to produce expressive, non-manual-aware 3D sign language sequences." />
+
+  <title>M3T — Discrete Multi-Modal Motion Tokens for Sign Language Production</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:         #1a73e8;
+      --blue-dark:    #185abc;
+      --blue-light:   #e8f0fe;
+      --blue-border:  #c5d9fc;
+      --green:        #137333;
+      --green-light:  #e6f4ea;
+      --green-border: #b7dfbf;
+      --gray-bg:      #f8f9fa;
+      --gray-border:  #e8eaed;
+      --text:         #202124;
+      --text-mid:     #3c4043;
+      --text-sec:     #5f6368;
+      --nav-h:        56px;
+      --snav-h:       44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP NAV ────────────────────────────────────────── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .site-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
+
+    /* ── SECTION NAV ────────────────────────────────────── */
+    .sec-nav {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: var(--snav-h);
+    }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 44px;
+      text-align: center;
+    }
+
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 9px 26px;
+      border-radius: 28px;
+      border: 2px solid var(--blue-border);
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(26,115,232,0.14);
+    }
+
+    .paper-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+    .paper-title .hl {
+      background: linear-gradient(45deg, #0d47a1, #00bcd4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .authors {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      margin-bottom: 8px;
+      line-height: 1.8;
+    }
+    .affil {
+      font-size: 0.9rem;
+      color: var(--text-sec);
+      margin-bottom: 32px;
+    }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-mid);
+      background: #fff;
+      cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pill-btn:hover {
+      background: var(--gray-bg);
+      border-color: #bdc1c6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+    .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
+    .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+
+    /* ── SHARED SECTION ─────────────────────────────────── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .section-sub {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      margin: 44px 0 16px;
+    }
+    .section-sub:first-of-type { margin-top: 0; }
+
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── TEASER ─────────────────────────────────────────── */
+    .teaser-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .teaser-img {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .teaser-img:hover {
+      transform: scale(1.012);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+
+    /* ── LIGHTBOX ───────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      cursor: zoom-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+    }
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+      transform: scale(0.96);
+      transition: transform 0.22s ease;
+    }
+    .lightbox.open img { transform: scale(1); }
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      color: #fff;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── ABSTRACT ───────────────────────────────────────── */
+    .abstract-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+      text-align: justify;
+    }
+
+    /* ── FIGURES ────────────────────────────────────────── */
+    .fig-wrap { margin: 0 0 12px; }
+    .fig-wrap img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .fig-wrap img:hover {
+      transform: scale(1.015);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+    .fig-caption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.65;
+      text-align: center;
+    }
+    .fig-caption strong { color: var(--text-mid); }
+
+    .method-sub {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 48px 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--gray-border);
+    }
+    .method-sub:first-of-type { margin-top: 0; }
+    .method-sub .ac { font-weight: 800; color: var(--blue); }
+
+    .feature-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0 0 28px;
+    }
+    .feature-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--blue);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.22s ease;
+    }
+    .feature-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 10px 26px rgba(26,115,232,0.12);
+      border-color: var(--blue-border);
+    }
+    .feature-card:hover::before { transform: scaleY(1); }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-card:hover .feature-icon {
+      background: var(--blue);
+      color: #fff;
+      transform: scale(1.06);
+    }
+    .feature-text { font-size: 0.88rem; color: var(--text-sec); line-height: 1.58; }
+    .feature-text strong {
+      display: block;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+    }
+    .feature-text .hl-num { color: var(--blue); font-weight: 700; }
+
+    /* ── TABLE ──────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      font-family: 'Roboto', sans-serif;
+      white-space: nowrap;
+    }
+    .results-table thead th {
+      background: var(--gray-bg);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-sec);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--gray-border);
+      text-align: center;
+    }
+    .results-table thead th.left { text-align: left; }
+    .results-table tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--gray-border);
+      color: var(--text-mid);
+      text-align: center;
+    }
+    .results-table tbody td.left { text-align: left; }
+    .results-table tbody tr:last-child td { border-bottom: none; }
+    .results-table tbody tr:hover td { background: #fafafa; }
+    .results-table tr.ours td {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-weight: 700;
+    }
+    .results-table tr.ours td.left { border-left: 3px solid var(--blue); }
+    .results-table tr.gt td { color: var(--text-sec); font-style: italic; }
+    .results-table tr.section-header td {
+      background: #f1f3f4;
+      color: var(--text-sec);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 7px 12px;
+      text-align: center;
+    }
+    .results-table .group-header {
+      border-left: 1px solid var(--gray-border);
+      border-right: 1px solid var(--gray-border);
+    }
+    .table-caption {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* ── NMF HIGHLIGHT BOX ──────────────────────────────── */
+    .highlight-box {
+      background: var(--blue-light);
+      border: 2px solid var(--blue-border);
+      border-radius: 14px;
+      padding: 24px 32px;
+      margin: 32px 0;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .highlight-box .big-num {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--blue);
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .highlight-box .big-num span { font-size: 1.4rem; }
+    .highlight-box .desc { font-size: 0.92rem; color: var(--text-mid); line-height: 1.7; }
+    .highlight-box .desc strong { color: var(--text); }
+
+    /* ── BIBTEX ─────────────────────────────────────────── */
+    .bibtex-pre {
+      background: #1a1a2e;
+      color: #8ab4f8;
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-size: 0.875rem;
+      line-height: 1.75;
+      overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--text-sec);
+      cursor: pointer;
+      background: none;
+      border: 1px solid var(--gray-border);
+      padding: 6px 18px;
+      border-radius: 16px;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: var(--gray-bg); }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .site-footer {
+      background: var(--gray-bg);
+      border-top: 1px solid var(--gray-border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
+      .highlight-box { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../../people.html">People</a>
+    <a href="../../projects.html">Projects</a>
+    <a href="../../index.html#publications">Publications</a>
+  </div>
+</nav>
+
+<!-- SECTION NAV -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#method">Method</a>
+  <a class="sec-link" href="#quantitative">Quantitative Results</a>
+  <a class="sec-link" href="#acknowledgements">Acknowledgements</a>
+  <a class="sec-link" href="#bibtex">BibTeX</a>
+</div>
+
+<!-- HERO -->
+<div class="hero-wrap">
+
+  <div class="conf-badge">
+    <i class="fas fa-file-alt"></i>
+    arXiv 2026
+  </div>
+
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">M3T</span>: Discrete Multi-Modal Motion Tokens for Sign&nbsp;Language Production
+  </h1>
+
+  <p class="authors">
+    Alexandre Symeonidis-Herzig<sup>1</sup>,&thinsp;
+    Jianhe Low<sup>1</sup>,&thinsp;
+    Ozge Mercanoglu Sincan<sup>1</sup>,&thinsp;
+    Richard Bowden<sup>1</sup>
+  </p>
+  <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom</p>
+
+  <div class="btn-row">
+    <a href="https://arxiv.org/pdf/2603.23617" class="pill-btn filled" target="_blank" rel="noopener">
+      <i class="fas fa-file-pdf"></i> Paper
+    </a>
+    <a href="https://arxiv.org/abs/2603.23617" class="pill-btn" target="_blank" rel="noopener">
+      <i class="ai ai-arxiv"></i> arXiv
+    </a>
+  </div>
+
+</div>
+
+<!-- TEASER -->
+<div class="teaser-wrap">
+  <img src="./assets/m3t.png" alt="M3T architecture overview" class="teaser-img" />
+  <p class="fig-caption" style="margin-top:14px;">
+    <strong>Fig. 1</strong> — M3T architecture: text and multi-modal motion tokens are combined in a shared vocabulary and processed by an autoregressive transformer for both Sign Language Production (SLP) and Sign Language Translation (SLT).
+  </p>
+</div>
+
+<hr class="divider" />
+
+<!-- ABSTRACT -->
+<section class="section alt" id="abstract">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-body">
+      Sign language production requires more than hand motion generation. Non-manual features, including
+      <strong>mouthings, eyebrow raises, gaze, and head movements</strong>, are grammatically obligatory
+      and cannot be recovered from manual articulators alone. Existing 3D production systems face two
+      barriers to integrating them: the standard body model provides a facial space too low-dimensional
+      to encode these articulations, and when richer representations are adopted, standard discrete
+      tokenization suffers from <strong>codebook collapse</strong>, leaving most of the expression space
+      unreachable. We propose <strong>SMPL-FX</strong>, which couples FLAME's rich expression space with
+      the SMPL-X body, and tokenize the resulting representation with modality-specific
+      <strong>Finite Scalar Quantization (FSQ) VAEs</strong> for body, hands, and face.
+      <strong>M3T</strong> is an autoregressive transformer trained on this multi-modal motion vocabulary,
+      with an auxiliary translation objective that encourages semantically grounded embeddings. Across
+      three standard benchmarks (How2Sign, CSL-Daily, Phoenix14T) M3T achieves state-of-the-art sign
+      language production quality, and on NMFs-CSL, where signs are distinguishable only by non-manual
+      features, reaches <strong>58.3% accuracy</strong> against 49.0% for the strongest comparable pose
+      baseline.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- METHOD -->
+<section class="section" id="method">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Method</h2>
+
+    <!-- SMPL-FX -->
+    <h3 class="method-sub"><span class="ac">SMPL-FX</span>: Expressive Full-Body Representation</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-face-smile"></i></div>
+        <div class="feature-text">
+          <strong>FLAME Expression Space</strong>
+          Integrates FLAME's high-dimensional facial model into SMPL-X, providing the rich expression
+          space needed to encode mouthings, eyebrow raises, gaze, and head movements.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-person"></i></div>
+        <div class="feature-text">
+          <strong>Unified Body–Face Model</strong>
+          SMPL-FX couples expressive facial articulations with the full-body SMPL-X skeleton, enabling
+          joint modelling of manual and non-manual features in a single representation.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+        <div class="feature-text">
+          <strong>Beyond Standard Body Models</strong>
+          Standard SMPL-X facial PCA space is too low-dimensional to encode grammatically obligatory
+          non-manual features — SMPL-FX resolves this limitation.
+        </div>
+      </div>
+    </div>
+
+    <!-- FSQ VAEs -->
+    <h3 class="method-sub"><span class="ac">Modality-Specific FSQ VAEs</span>: Discrete Token Learning</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-cubes"></i></div>
+        <div class="feature-text">
+          <strong>Finite Scalar Quantization</strong>
+          Replaces standard VQ codebooks with FSQ, which deterministically maps each dimension to a
+          finite set of scalar values, eliminating codebook collapse entirely.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+        <div class="feature-text">
+          <strong>Three Modality-Specific VAEs</strong>
+          Separate VAEs for <em>body</em>, <em>hands</em>, and <em>face</em> allow each modality to be
+          tokenized at its own appropriate resolution and codebook size.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-ban"></i></div>
+        <div class="feature-text">
+          <strong>No Codebook Collapse</strong>
+          Standard VQ tokenization leaves most of the expression space unreachable when applied to
+          facial articulations — FSQ guarantees full utilisation of the token vocabulary.
+        </div>
+      </div>
+    </div>
+
+    <!-- M3T Transformer -->
+    <h3 class="method-sub"><span class="ac">M3T</span>: Autoregressive Multi-Modal Transformer</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-robot"></i></div>
+        <div class="feature-text">
+          <strong>Shared Multi-Modal Vocabulary</strong>
+          Text tokens and multi-modal motion tokens (body, hands, face) are combined into a single
+          vocabulary, enabling the model to reason jointly over language and motion.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-language"></i></div>
+        <div class="feature-text">
+          <strong>Auxiliary Translation Objective</strong>
+          An auxiliary Sign Language Translation (SLT) task is trained alongside production, encouraging
+          semantically grounded token embeddings that better capture sign meaning.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-tags"></i></div>
+        <div class="feature-text">
+          <strong>Language Tag Conditioning</strong>
+          Language tags in the vocabulary support conditioning on different sign language corpora within
+          a unified model.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-arrows-left-right"></i></div>
+        <div class="feature-text">
+          <strong>Dual Task: SLP &amp; SLT</strong>
+          The same architecture handles both Sign Language Production (text → motion) and Sign Language
+          Translation (motion → text), with shared representations benefiting both directions.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- QUANTITATIVE -->
+<section class="section alt" id="quantitative">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Quantitative Results</h2>
+
+    <!-- NMF highlight -->
+    <div class="highlight-box">
+      <div class="big-num">58.3<span>%</span></div>
+      <div class="desc">
+        <strong>State-of-the-art on NMFs-CSL</strong> — a benchmark where signs are distinguishable
+        <em>only</em> by non-manual features. M3T achieves <strong>58.3%</strong> accuracy versus
+        <strong>49.0%</strong> for the strongest comparable pose baseline, demonstrating that expressive
+        facial modelling is critical for sign language production.
+      </div>
+    </div>
+
+    <!-- SLP Comparison -->
+    <h3 class="section-sub" style="text-align:left; margin-top:8px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Sign Language Production — Standard Benchmarks</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Method</th>
+            <th colspan="2" class="group-header">How2Sign</th>
+            <th colspan="2" class="group-header">CSL-Daily</th>
+            <th colspan="2" class="group-header">Phoenix14T</th>
+          </tr>
+          <tr>
+            <th class="left"></th>
+            <th>DTW-PA-JPE ↓</th>
+            <th>DTW-JPE ↓</th>
+            <th>DTW-PA-JPE ↓</th>
+            <th>DTW-JPE ↓</th>
+            <th>DTW-PA-JPE ↓</th>
+            <th>DTW-JPE ↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="7">Pose-Based Baselines</td></tr>
+          <tr><td class="left">Prog. Trans.</td><td>14.15</td><td>14.74</td><td>15.98</td><td>16.30</td><td>13.67</td><td>15.01</td></tr>
+          <tr><td class="left">T2S-GPT</td><td>11.48</td><td>12.65</td><td>11.94</td><td>12.32</td><td>10.38</td><td>11.65</td></tr>
+          <tr><td class="left">S-MotionGPT</td><td>11.23</td><td>12.41</td><td>10.81</td><td>11.58</td><td>9.45</td><td>10.42</td></tr>
+          <tr class="section-header"><td colspan="7">M3T (Ours)</td></tr>
+          <tr class="ours"><td class="left"><strong>M3T</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">M3T achieves state-of-the-art sign language production quality across How2Sign, CSL-Daily, and Phoenix14T. See the paper for full numerical results.</p>
+
+    <!-- NMF Table -->
+    <h3 class="section-sub" style="text-align:left; margin-top:40px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Non-Manual Feature Evaluation — NMFs-CSL</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Method</th>
+            <th>Representation</th>
+            <th>NMFs-CSL Accuracy ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">Pose Baseline (best)</td><td>SMPL-X (standard)</td><td>49.0%</td></tr>
+          <tr class="ours"><td class="left"><strong>M3T</strong></td><td><strong>SMPL-FX + FSQ VAE</strong></td><td><strong>58.3%</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">On NMFs-CSL, where sign identity depends entirely on non-manual features, M3T's expressive facial representation yields a <strong>+9.3 pp</strong> gain over the strongest pose-based competitor.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ACKNOWLEDGEMENTS -->
+<section class="section" id="acknowledgements">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Acknowledgements</h2>
+    <p style="font-size:0.92rem; color:var(--text-mid); line-height:1.8; text-align:justify;">
+      This work was supported by EPSRC grant APP24554 (SignGPT — EP/Z535370/1),
+      EPSRC grant APP78083 (UMCS — UKRI3927), and through funding from
+      <strong>Google.org</strong> via the AI for Global Goals scheme.
+      The authors acknowledge the use of <strong>Isambard-AI</strong> National AI Research Resource (AIRR),
+      funded by UK DSIT via UKRI and STFC [ST/AIRR/I-A-I/1023].
+      This work reflects only the authors' views; the funders are not responsible for any use
+      that may be made of the information it contains.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- BIBTEX -->
+<section class="section alt" id="bibtex">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-pre"><code id="bibtex-code">@article{symeonidisherzig2026m3t,
+  title   = {M3T: Discrete Multi-Modal Motion Tokens for
+             Sign Language Production},
+  author  = {Symeonidis-Herzig, Alexandre and Low, Jianhe and
+             Sincan, Ozge Mercanoglu and Bowden, Richard},
+  journal = {arXiv preprint arXiv:2603.23617},
+  year    = {2026},
+}</code></pre>
+    <button class="copy-btn" id="copy-bibtex">
+      <i class="fas fa-copy"></i> Copy BibTeX
+    </button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;·&nbsp;
+    <a href="../../index.html">CogVis Lab</a>
+  </p>
+  <script src="https://translations.signapsesolutions.com/signapse-loader.umd.js"
+          app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6"
+          version="v2" id="signapse" position="bottom-right" disable-survey></script>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Expanded figure" />
+</div>
+
+<script>
+  /* Figure lightbox */
+  (function () {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    var figs = document.querySelectorAll('.teaser-img, .fig-wrap img');
+    function open(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || 'Expanded figure';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    figs.forEach(function (img) {
+      img.addEventListener('click', function () { open(img.src, img.alt); });
+    });
+    lb.addEventListener('click', close);
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('open')) close();
+    });
+  })();
+
+  /* BibTeX copy */
+  document.getElementById('copy-bibtex').addEventListener('click', function () {
+    navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
+      var btn = document.getElementById('copy-bibtex');
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy BibTeX'; }, 2000);
+    });
+  });
+
+  /* Section nav active highlight */
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var targets = ['abstract','method','quantitative','acknowledgements','bibtex'].map(function (id) {
+      return document.getElementById(id);
+    }).filter(Boolean);
+
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    targets.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>
