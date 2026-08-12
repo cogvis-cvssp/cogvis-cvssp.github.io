@@ -323,7 +323,7 @@
             encoders that factorize the sign stream into its phonological parameters, enabling
             the downstream transformer to reason at the appropriate level of linguistic
             abstraction. Pre-training draws on a newly collected, large-scale BSL corpus
-            combining BBC archive material, BSLBT (BSL Zone) legacy broadcast content,
+            combining BBC archive material, LumoTV broadcast content,
             Signapse data, and existing resources including the BOBSL corpus (Oxford) and
             BSL Corpus (UCL DCAL).
           </p>
@@ -400,7 +400,7 @@
             plausible BSL from English has, by necessity, learned a generative model of BSL
             structure, which in turn improves translation accuracy. We will investigate
             scaling laws for this class of models, the effect of visual token vocabulary size,
-            and methods for conditioning on speaker identity and register.
+            and methods for conditioning on signer identity and register.
           </p>
           <p>
             The flagship demonstration of this work is a real-time, two-way conversational
@@ -457,22 +457,23 @@
           <p>
             BSL is a full natural language with its own distinct grammar — it is not a manual
             encoding of English. Its grammatical devices include use of three-dimensional signing
-            space to establish referents, classify predicates that indicate shape, size, and
-            movement of objects, and a topic-comment discourse structure. Non-manual articulators
-            carry essential grammatical information: raised eyebrows mark yes/no questions;
-            furrowed brows mark wh-questions; backward head tilt marks rhetorical questions.
+            space to establish referents, and classifier predicates that indicate shape, size, and
+            movement of objects. Non-manual articulators — including facial expression, mouthing,
+            eye gaze, and head position — interact with manual signs to convey essential
+            grammatical information, including distinctions between question types, negation,
+            and discourse-level structure.
           </p>
           <p>
             The Pillar 3 work, led by linguists at UCL DCAL, ensures that the transformer
             architecture is informed by — and evaluated against — this rich structural knowledge.
-            Specific contributions include: (i) a formal computational specification of BSL
-            spatial grammar suitable for neural grounding; (ii) annotated training data capturing
-            classifier predicates and agreement verbs; (iii) linguistically motivated evaluation
-            metrics that go beyond surface BLEU scores.
+            Specific contributions include: (i) theoretically-grounded linguistic descriptions of
+            BSL grammar to inform model design and evaluation; (ii) annotated training data capturing
+            classifier predicates and other grammatical phenomena; (iii) linguistically motivated
+            evaluation metrics that go beyond surface BLEU scores.
           </p>
           <p>
             This pillar also addresses the question of variation within BSL — regional dialects,
-            age-related variation, and differences between Deaf and hearing signers — ensuring
+            age-related variation, and sociolinguistic diversity across the signing community — ensuring
             that the system is robust and inclusive rather than trained to a narrow standard.
           </p>
         </div>
@@ -528,7 +529,7 @@
           </p>
           <p>
             We work with the British Deaf Association (BDA), the Royal Association for Deaf people
-            (RAD), BSL Broadcasting Trust (BSLBT / LumoTV), and Signapse Ltd to co-create recording protocols,
+            (RAD), LumoTV, and Signapse Ltd to co-create recording protocols,
             annotation guidelines, and test sets that reflect the diversity of BSL usage. An
             Advisory Board — including Dr Andrew McParland (BBC R&amp;D), Dr Oscar Koller
             (Microsoft Munich), Mark Wheatley (RAD), Graham Turner (BDA), and
@@ -561,7 +562,7 @@
             <div style="display:flex; flex-wrap:wrap; gap:6px;">
               <span class="badge badge-green">BDA</span>
               <span class="badge badge-green">RAD</span>
-              <span class="badge badge-green">BSLBT / LumoTV</span>
+              <span class="badge badge-green">LumoTV</span>
               <span class="badge badge-green">Signapse Ltd</span>
               <span class="badge">BBC R&D</span>
               <span class="badge">Microsoft Munich</span>
@@ -609,7 +610,7 @@
           <div class="tl-heading">Infrastructure &amp; team onboarding</div>
           <div class="tl-desc">
             All three partner sites activated; initial PhD and postdoctoral recruitment;
-            community partnership agreements established with BDA, RAD, and BSLBT;
+            community partnership agreements established with BDA, RAD, and LumoTV;
             corpus collection protocols agreed with linguistic advisors.
           </div>
         </div>
@@ -636,7 +637,7 @@
           <div class="tl-heading">End-to-end system, community pilots &amp; legacy outputs</div>
           <div class="tl-desc">
             Bidirectional BSL–English system integrated into pilot accessibility
-            applications with BDA and BSLBT; production avatar system released;
+            applications with BDA and LumoTV; production avatar system released;
             open-source model weights, benchmarks, and toolkit published.
             Final programme report and policy white paper on AI for Deaf accessibility;
             roadmap for continued community-led development beyond the grant.
@@ -663,8 +664,8 @@
         <div class="area-num">Corpus</div>
         <div class="area-name">Large-Scale BSL Video Corpus</div>
         <p class="area-desc">
-          A new multi-source BSL corpus combining BBC archive material, BSLBT (BSL Zone)
-          legacy broadcast content, Signapse data, and existing resources — the BOBSL corpus
+          A new multi-source BSL corpus combining BBC archive material, LumoTV broadcast
+          content, Signapse data, and existing resources — the BOBSL corpus
           (Oxford) and BSL Corpus (UCL DCAL) — with partial phonological and semantic
           annotation. Target: largest annotated BSL corpus to date.
         </p>
@@ -732,7 +733,7 @@
     </div>
   </div>
 <!-- Start of Signapse Web Translation Plugin Script Tag  -->
-<script src="https://translations.signapsesolutions.com/beta/signapse-loader.umd.js" app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6" version="v2" id="signapse" position="bottom-right" disable-survey></script>
+<script src="https://translations.signapsesolutions.com/signapse-loader.umd.js" app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6" version="v2" id="signapse" position="bottom-right" disable-survey></script>
 <!-- End of Signapse Web Translation Plugin Script Tag -->
 </footer>
 
