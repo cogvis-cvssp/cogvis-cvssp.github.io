@@ -59,6 +59,12 @@
     .nav-links a:hover { color: #fff; background: rgba(255,255,255,.07); }
     .nav-links a.active { color: #818cf8; background: transparent; }
     .nav-toggle span { background: rgba(255,255,255,.8); }
+
+    /* Photo avatars: circular crop */
+    .avatar-lg { overflow: hidden; }
+    .avatar-lg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .avatar-md { overflow: hidden; }
+    .avatar-md img { width: 100%; height: 100%; object-fit: cover; display: block; }
   </style>
 </head>
 <body>
@@ -105,8 +111,8 @@
     <!-- PI 1: Bowden -->
     <div class="pi-wrap reveal">
       <div class="pi-photo-wrap">
-        <div class="avatar-lg" style="background:#0f172a; font-size:1.8rem;">
-          RB
+        <div class="avatar-lg" style="background:#0f172a;">
+          <img src="../assets/profile/Bowden.jpg" alt="Prof. Richard Bowden" />
         </div>
         <div class="pi-social">
           <a href="mailto:r.bowden@surrey.ac.uk" class="icon-btn" title="Email">
@@ -152,8 +158,8 @@
     <!-- PI 2: Zisserman -->
     <div class="pi-wrap reveal">
       <div class="pi-photo-wrap">
-        <div class="avatar-lg" style="background:#1e293b; font-size:1.8rem;">
-          AZ
+        <div class="avatar-lg" style="background:#1e293b;">
+          <img src="assets/zisserman.jpeg" alt="Prof. Andrew Zisserman" />
         </div>
         <div class="pi-social">
           <a href="https://www.robots.ox.ac.uk/~az/" target="_blank" rel="noopener" class="icon-btn" title="Homepage">
@@ -191,8 +197,8 @@
     <!-- PI 3: Cormier -->
     <div class="pi-wrap reveal">
       <div class="pi-photo-wrap">
-        <div class="avatar-lg" style="background:#312e81; font-size:1.8rem;">
-          KC
+        <div class="avatar-lg" style="background:#312e81;">
+          <img src="assets/kearsy.jpg" alt="Prof. Kearsy Cormier" />
         </div>
         <div class="pi-social">
           <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="icon-btn" title="DCAL">
@@ -217,7 +223,7 @@
           <span class="interest-tag">Cross-Linguistic Sign Language Research</span>
         </div>
         <div class="pi-links">
-          <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+          <a href="https://profiles.ucl.ac.uk/5856-kearsy-cormier" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
             <i class="fas fa-up-right-from-square"></i> UCL DCAL
           </a>
         </div>
@@ -227,8 +233,8 @@
     <!-- PI 4: Woll -->
     <div class="pi-wrap reveal">
       <div class="pi-photo-wrap">
-        <div class="avatar-lg" style="background:#334155; font-size:1.8rem;">
-          BW
+        <div class="avatar-lg" style="background:#334155;">
+          <img src="assets/woll.png" alt="Prof. Bencie Woll" />
         </div>
         <div class="pi-social">
           <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="icon-btn" title="DCAL">
@@ -253,7 +259,7 @@
           <span class="interest-tag">BSL Policy</span>
         </div>
         <div class="pi-links">
-          <a href="https://www.ucl.ac.uk/dcal" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+          <a href="https://profiles.ucl.ac.uk/7678-bencie-woll" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
             <i class="fas fa-up-right-from-square"></i> UCL DCAL
           </a>
         </div>
