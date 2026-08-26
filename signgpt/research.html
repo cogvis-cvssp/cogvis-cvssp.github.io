@@ -230,7 +230,7 @@
     <div class="page-header-eyebrow">SignGPT · EPSRC Programme Grant</div>
     <h1>Research</h1>
     <p>
-      Four tightly integrated pillars spanning visual sign understanding, generative modelling,
+      Spanning visual sign understanding, generative modelling,
       linguistic grounding, and community co-design — working toward unconstrained,
       bidirectional BSL–English translation.
     </p>
@@ -280,7 +280,6 @@
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:16px;">
       <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 20px;">
-        <div style="font-size:0.65rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--indigo); margin-bottom:8px;">Direction 1</div>
         <div style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">BSL → English</div>
         <p style="font-size:0.875rem; color:var(--gray-700); line-height:1.65; margin:0;">
           Continuous recognition, linguistic analysis, and translation from British Sign Language
@@ -288,7 +287,6 @@
         </p>
       </div>
       <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 20px;">
-        <div style="font-size:0.65rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--indigo); margin-bottom:8px;">Direction 2</div>
         <div style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">English → BSL</div>
         <p style="font-size:0.875rem; color:var(--gray-700); line-height:1.65; margin:0;">
           Continuous generation and avatar-based production of fluent BSL from English text.
@@ -304,16 +302,14 @@
   <div class="container">
     <div class="pillar-block pillar-anchor">
       <div class="pillar-header">
-        <div class="pillar-num-badge">P1</div>
         <div class="pillar-meta">
-          <div class="pillar-eyebrow">Pillar One</div>
           <h2 class="pillar-title-main">Visual Sign Understanding</h2>
         </div>
       </div>
       <div class="pillar-body">
         <div class="pillar-text">
           <p>
-            The first pillar addresses the fundamental perceptual challenge: extracting
+            The first strand of work addresses the fundamental perceptual challenge: extracting
             linguistically meaningful representations from raw BSL video. A signer communicates
             simultaneously through hand shape (<em>handshape</em>), hand position relative to the
             body and signing space (<em>location</em>), direction and speed of movement
@@ -321,14 +317,11 @@
             — facial expression, eye gaze, mouth patterns, and head position.
           </p>
           <p>
-            Existing visual backbones were designed for action recognition and are poorly suited
+            Existing visual backbones are poorly suited
             to this multi-channel, fine-grained signal. SignGPT will develop purpose-built video
             encoders that factorize the sign stream into its phonological parameters, enabling
             the downstream transformer to reason at the appropriate level of linguistic
-            abstraction. Pre-training draws on a newly collected, large-scale BSL corpus
-            combining BBC archive material, LumoTV broadcast content,
-            Signapse data, and existing resources including the BOBSL corpus (Oxford) and
-            BSL Corpus (UCL DCAL).
+            abstraction.
           </p>
           <p>
             A key research challenge is handling the continuous, co-articulated nature of
@@ -373,9 +366,7 @@
   <div class="container">
     <div class="pillar-block pillar-anchor">
       <div class="pillar-header">
-        <div class="pillar-num-badge">P2</div>
         <div class="pillar-meta">
-          <div class="pillar-eyebrow">Pillar Two</div>
           <h2 class="pillar-title-main">Generative Sign Language Modelling</h2>
         </div>
       </div>
@@ -389,20 +380,9 @@
             to the visual-linguistic domain of sign language.
           </p>
           <p>
-            The model operates on visual sign representations produced by the
-            Pillar 1 encoder. At inference time, it can be conditioned on English text to
-            generate a sequence of sign tokens (production), or conditioned on a sign token
-            sequence to decode English (translation). This unified architecture avoids the
-            asymmetry of separate recognition and production systems and enables joint training
-            on heterogeneous data sources — annotated BSL video, unannotated BSL broadcast
-            material, and parallel text corpora.
-          </p>
-          <p>
             Bidirectional training is central to our approach: a model that can produce
             plausible BSL from English has, by necessity, learned a generative model of BSL
-            structure, which in turn improves translation accuracy. We will investigate
-            scaling laws for this class of models, the effect of visual token vocabulary size,
-            and methods for conditioning on signer identity and register.
+            structure, which in turn improves translation accuracy.
           </p>
           <p>
             The flagship demonstration of this work is a real-time, two-way conversational
@@ -447,10 +427,8 @@
   <div class="container">
     <div class="pillar-block pillar-anchor">
       <div class="pillar-header">
-        <div class="pillar-num-badge">P3</div>
         <div class="pillar-meta">
-          <div class="pillar-eyebrow">Pillar Three</div>
-          <h2 class="pillar-title-main">BSL Linguistics Integration</h2>
+          <h2 class="pillar-title-main">BSL Grammar and Linguistic Modelling</h2>
         </div>
       </div>
       <div class="pillar-body">
@@ -465,17 +443,12 @@
             and discourse-level structure.
           </p>
           <p>
-            The Pillar 3 work, led by linguists at UCL DCAL, ensures that the transformer
+            This strand of work ensures that the transformer
             architecture is informed by — and evaluated against — this rich structural knowledge.
             Specific contributions include: (i) theoretically-grounded linguistic descriptions of
             BSL grammar to inform model design and evaluation; (ii) annotated training data capturing
             classifier/depicting constructions and other grammatical phenomena; (iii) linguistically motivated
             evaluation metrics that go beyond surface BLEU scores.
-          </p>
-          <p>
-            This pillar also addresses the question of variation within BSL — regional dialects,
-            age-related variation, and sociolinguistic diversity across the signing community — ensuring
-            that the system is robust and inclusive rather than trained to a narrow standard.
           </p>
         </div>
         <div class="pillar-sidebar">
@@ -512,9 +485,7 @@
   <div class="container">
     <div class="pillar-block pillar-anchor">
       <div class="pillar-header">
-        <div class="pillar-num-badge">P4</div>
         <div class="pillar-meta">
-          <div class="pillar-eyebrow">Pillar Four</div>
           <h2 class="pillar-title-main">Community Co-Design &amp; Evaluation</h2>
         </div>
       </div>
@@ -522,7 +493,7 @@
         <div class="pillar-text">
           <p>
             Technical excellence alone does not guarantee that an AI system serves the
-            community it is intended to benefit. Pillar 4 embeds Deaf community participation
+            community it is intended to benefit. This strand of work embeds Deaf community participation
             throughout the programme — not as a downstream validation step, but as a
             co-design activity that shapes research questions, dataset construction, and
             evaluation criteria from the outset.
@@ -574,80 +545,6 @@
   </div>
 </section>
 
-<!-- ========== ROADMAP ========== -->
-<section class="section" style="border-bottom:1px solid var(--border);">
-  <div class="container">
-    <div class="section-header" style="margin-bottom:40px;">
-      <span class="section-eyebrow">Programme Timeline</span>
-      <h2 class="section-title">Research Roadmap</h2>
-      <p class="section-desc">
-        Key milestones across the five-year programme, structured around the four research pillars.
-      </p>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 2fr; gap:56px; align-items:start;">
-      <div style="background:var(--gray-50); border:1px solid var(--border); border-radius:var(--radius); padding:24px 20px;">
-        <div class="sidebar-label">Programme Phases</div>
-        <div class="sidebar-item" style="margin-bottom:14px;">
-          <i class="fas fa-layer-group" style="color:var(--indigo);"></i>
-          <span><strong>Phase I (Y1–2):</strong> Foundations &amp; corpus collection</span>
-        </div>
-        <div class="sidebar-item" style="margin-bottom:14px;">
-          <i class="fas fa-layer-group" style="color:var(--indigo);"></i>
-          <span><strong>Phase II (Y3–4):</strong> Model training &amp; benchmarks</span>
-        </div>
-        <div class="sidebar-item" style="margin-bottom:14px;">
-          <i class="fas fa-layer-group" style="color:var(--indigo);"></i>
-          <span><strong>Phase III (Y5):</strong> Integration &amp; pilot deployment</span>
-        </div>
-        <div class="sidebar-item">
-          <i class="fas fa-flag-checkered"></i>
-          <span><strong>Completion (2030):</strong> Legacy &amp; policy outputs</span>
-        </div>
-      </div>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-year">2025 — Programme Launch</div>
-          <div class="tl-heading">Infrastructure &amp; team onboarding</div>
-          <div class="tl-desc">
-            All three partner sites activated; initial PhD and postdoctoral recruitment;
-            community partnership agreements established with BDA, RAD, and LumoTV;
-            corpus collection protocols agreed with linguistic advisors.
-          </div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">2026 — Phase I Milestones</div>
-          <div class="tl-heading">BSL corpus v1 &amp; visual backbone pre-training</div>
-          <div class="tl-desc">
-            First large-scale BSL corpus release; phonological tokeniser trained and
-            benchmarked; Pillar 3 annotation schema finalised; community co-design
-            workshops completed across all Deaf organisation partners.
-          </div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">2027–2028 — Phase II Milestones</div>
-          <div class="tl-heading">Generative transformer training &amp; evaluation benchmarks</div>
-          <div class="tl-desc">
-            First generation of the SignGPT transformer trained at scale; new BSL
-            translation and production benchmarks released; Deaf-user evaluation study 1
-            conducted; Pillar 3 linguistic evaluation framework published.
-          </div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">2029–2030 — Phase III &amp; Completion</div>
-          <div class="tl-heading">End-to-end system, community pilots &amp; legacy outputs</div>
-          <div class="tl-desc">
-            Bidirectional BSL–English system integrated into pilot accessibility
-            applications with BDA and LumoTV; production avatar system released;
-            open-source model weights, benchmarks, and toolkit published.
-            Final programme report and policy white paper on AI for Deaf accessibility;
-            roadmap for continued community-led development beyond the grant.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ========== DATA & BENCHMARKS ========== -->
 <section class="section" style="padding-bottom:72px;">
   <div class="container">
@@ -659,18 +556,7 @@
         to be released openly throughout the programme.
       </p>
     </div>
-    <div class="area-grid" style="grid-template-columns:repeat(3, 1fr);">
-      <div class="area-card">
-        <div class="area-num">Corpus</div>
-        <div class="area-name">Large-Scale BSL Video Corpus</div>
-        <p class="area-desc">
-          A new multi-source BSL corpus combining BBC archive material, LumoTV broadcast
-          content, Signapse data, and existing resources — the BOBSL corpus
-          (Oxford) and BSL Corpus (UCL DCAL) — with partial phonological and semantic
-          annotation. Target: largest annotated BSL corpus to date.
-        </p>
-        <span class="badge" style="margin-top:12px;">Release: forthcoming</span>
-      </div>
+    <div class="area-grid" style="grid-template-columns:repeat(2, 1fr);">
       <div class="area-card">
         <div class="area-num">Benchmark</div>
         <div class="area-name">BSL Translation Benchmark</div>
@@ -689,10 +575,7 @@
           phonological parameter extraction, and sign spotting, built on the
           SignGPT visual backbone.
         </p>
-        <a href="https://github.com/cogvis-cvssp/Sign-Language-Toolkit" target="_blank" rel="noopener"
-           class="btn btn-outline btn-xs" style="margin-top:12px; display:inline-flex;">
-          View on GitHub →
-        </a>
+        <span class="badge" style="margin-top:12px;">Release: forthcoming</span>
       </div>
     </div>
   </div>
