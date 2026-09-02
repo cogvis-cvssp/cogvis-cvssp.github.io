@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test — CogVis Lab</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:         #1a73e8;
+      --blue-dark:    #185abc;
+      --blue-light:   #e8f0fe;
+      --blue-border:  #c5d9fc;
+      --gray-bg:      #f8f9fa;
+      --gray-border:  #e8eaed;
+      --text:         #202124;
+      --text-mid:     #3c4043;
+      --text-sec:     #5f6368;
+      --nav-h:        56px;
+      --snav-h:       44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP NAV ────────────────────────────────────────── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .site-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
+
+    /* ── SECTION NAV ────────────────────────────────────── */
+    .sec-nav {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: var(--snav-h);
+    }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 44px;
+      text-align: center;
+    }
+
+    .paper-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+    .paper-title .hl {
+      background: linear-gradient(45deg, #0d47a1, #00bcd4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* ── SHARED SECTION ─────────────────────────────────── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── VIDEO ──────────────────────────────────────────── */
+    .video-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--gray-border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      background: #000;
+    }
+    .video-container video {
+      width: 100%;
+      display: block;
+    }
+    .fig-caption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.65;
+      text-align: center;
+    }
+    .fig-caption strong { color: var(--text-mid); }
+
+    /* ── VIDEO GRID ─────────────────────────────────────── */
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .site-footer {
+      background: var(--gray-bg);
+      border-top: 1px solid var(--gray-border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../../people.html">People</a>
+    <a href="../../projects.html">Projects</a>
+    <a href="../../index.html#publications">Publications</a>
+  </div>
+</nav>
+
+<!-- SECTION NAV -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#results">Results</a>
+</div>
+
+<!-- HERO -->
+<div class="hero-wrap">
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">Test</span> Page
+  </h1>
+</div>
+
+<hr class="divider" />
+
+<!-- RESULTS / VIDEO -->
+<section class="section alt" id="results">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Results</h2>
+
+    <div class="video-grid">
+      <div>
+        <div class="video-container">
+          <video controls loop muted playsinline>
+            <source src="https://huggingface.co/AntResearch/4DAnyone/resolve/main/data/source/pexels/15443888_1080_1920_100fps.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <p class="fig-caption" style="margin-top:10px;">
+          <strong>Video 1</strong> — Sample result.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;·&nbsp;
+    <a href="../../index.html">CogVis Lab</a>
+  </p>
+</footer>
+
+<script>
+  /* Section nav active highlight */
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var targets = ['results'].map(function (id) {
+      return document.getElementById(id);
+    }).filter(Boolean);
+
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    targets.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>
