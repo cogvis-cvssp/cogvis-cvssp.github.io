@@ -9,7 +9,7 @@
 
   <meta property="og:title" content="VisualSpeaker: Visually-Guided 3D Avatar Lip Synthesis" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://cogvis.github.io/papers/visualspeaker/" />
+  <meta property="og:url" content="https://cogvis-cvssp.github.io/papers/visualspeaker/" />
   <meta property="og:description"
         content="VisualSpeaker introduces a perceptual lip-reading loss via 3D Gaussian Splatting renders, achieving 56.1% improvement in Lip Vertex Error for 3D avatar lip synthesis." />
 
@@ -554,8 +554,11 @@
   <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom</p>
 
   <div class="btn-row">
-    <a href="https://arxiv.org/pdf/2507.06060" class="pill-btn filled" target="_blank" rel="noopener">
+    <a href="https://doi.org/10.1109/ICCVW69036.2025.00694" class="pill-btn filled" target="_blank" rel="noopener">
       <i class="fas fa-file-pdf"></i> Paper
+    </a>
+    <a href="https://arxiv.org/pdf/2507.06060" class="pill-btn" target="_blank" rel="noopener">
+      <i class="fas fa-file-pdf"></i> PDF
     </a>
     <a href="https://arxiv.org/abs/2507.06060" class="pill-btn" target="_blank" rel="noopener">
       <i class="ai ai-arxiv"></i> arXiv
@@ -695,13 +698,15 @@
   <div class="section-inner scroll-target">
     <h2 class="section-title">Qualitative Results</h2>
     <div class="fig-wrap">
-      <img src="./assets/visualspeaker.png" alt="VisualSpeaker qualitative comparison: ground truth, predicted mesh, and VisualSpeaker renders" />
+      <img src="./assets/visualspeaker_qualitative.png" alt="Qualitative comparison for four unseen MEAD subjects: Pseudo-GT render, VisualSpeaker without the lip-reading loss, and VisualSpeaker with full supervision, each with a zoomed crop of the mouth region" />
     </div>
     <p class="fig-caption">
-      <strong>Fig. 2</strong> — Frame-by-frame comparison on the MEAD dataset for the utterance
-      <em>"No price too high."</em> Each column highlights a different word (bold). VisualSpeaker
-      renders (bottom row) closely match the ground truth lip shapes, demonstrating visually
-      intelligible articulation across the full utterance.
+      <strong>Fig. 2</strong> — Visual comparisons for four unseen subjects and sentences from MEAD,
+      highlighting how VisualSpeaker better preserves lip articulation than the baseline. Each subfigure
+      shows three frames, left to right: <em>Pseudo-GT render</em>, <em>VisualSpeaker without the
+      lip-reading loss</em> (&#8466;<sub>read</sub>), and <em>VisualSpeaker with full supervision</em>.
+      Alongside these, a zoomed-in crop of the mouth region in the same order, top to bottom,
+      highlights the differences in lip articulation.
     </p>
   </div>
 </section>
@@ -717,35 +722,71 @@
     <div class="highlight-box">
       <div class="big-num">56.1<span>%</span></div>
       <div class="desc">
-        <strong>Improvement in Lip Vertex Error on MEAD</strong> — VisualSpeaker's perceptual
-        lip-reading loss drives the model to produce visually intelligible lip shapes, yielding a
-        <strong>56.1% reduction</strong> in Lip Vertex Error over prior mesh-domain baselines while
-        maintaining full animation controllability.
+        <strong>Reduction in Lip Vertex Error on MEAD</strong> — adding the perceptual lip-reading loss
+        cuts LVE from <strong>3.85 mm</strong> to <strong>1.69 mm</strong>, a <strong>56.1% reduction</strong>,
+        driving the model to produce visually intelligible lip shapes while maintaining full
+        mesh-driven animation controllability.
       </div>
     </div>
 
     <!-- Metrics table -->
-    <h3 style="text-align:left; margin-bottom:14px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">MEAD Dataset — Lip Synthesis Evaluation</h3>
+    <h3 style="text-align:left; margin-bottom:14px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Lip Vertex Error</h3>
     <div class="table-wrap">
       <table class="results-table">
         <thead>
           <tr>
-            <th class="left">Method</th>
-            <th>Lip Vertex Error ↓</th>
+            <th class="left">Stage / Method</th>
+            <th>LVE VOCASET ↓</th>
+            <th>LVE MEAD ↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">Pretraining</td><td>3.06</td><td>7.05</td></tr>
+          <tr><td class="left">VisualSpeaker w/o &#8466;<sub>read</sub></td><td>–</td><td>3.85</td></tr>
+          <tr class="ours"><td class="left"><strong>VisualSpeaker</strong></td><td>–</td><td><strong>1.69</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">Lip Vertex Error (LVE, mm — lower is better) across pipeline stages. Removing the perceptual lip-reading loss &#8466;<sub>read</sub> raises MEAD LVE from 1.69 to 3.85 mm, the <strong>56.1%</strong> gap the method is built to close.</p>
+
+    <h3 style="text-align:left; margin:40px 0 14px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Visual Quality — MEAD Test Set</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Stage / Method</th>
+            <th>PSNR ↑</th>
             <th>SSIM ↑</th>
             <th>LPIPS ↓</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="section-header"><td colspan="4">Audio-Driven Baselines</td></tr>
-          <tr><td class="left">FaceFormer</td><td>—</td><td>—</td><td>—</td></tr>
-          <tr><td class="left">Wav2Lip</td><td>—</td><td>—</td><td>—</td></tr>
-          <tr class="section-header"><td colspan="4">Ours</td></tr>
-          <tr class="ours"><td class="left"><strong>VisualSpeaker</strong></td><td><strong>↓ 56.1%</strong></td><td><strong>—</strong></td><td><strong>—</strong></td></tr>
+          <tr class="gt"><td class="left">Pseudo-GT Vertices</td><td>20.47</td><td>0.9126</td><td>0.1265</td></tr>
+          <tr><td class="left">Pretraining</td><td>19.48</td><td>0.9057</td><td>0.1353</td></tr>
+          <tr><td class="left">VisualSpeaker w/o &#8466;<sub>read</sub></td><td>19.29</td><td>0.9077</td><td>0.1326</td></tr>
+          <tr class="ours"><td class="left"><strong>VisualSpeaker</strong></td><td><strong>19.32</strong></td><td><strong>0.9083</strong></td><td><strong>0.1316</strong></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="table-caption">See the paper for full numerical results including SSIM and LPIPS scores across all baselines and ablations.</p>
+    <p class="table-caption">PSNR, SSIM and LPIPS for different training stages on the MEAD test set. Pseudo-GT vertices (italic) are an upper bound rather than a competing method. VisualSpeaker improves every perceptual metric over the ablated variant while staying close to the pseudo-GT ceiling.</p>
+
+    <h3 style="text-align:left; margin:40px 0 14px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">User Study — Overall Preference</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Comparison</th>
+            <th>Realism (%) ↑</th>
+            <th>Lip Clarity (%) ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="ours"><td class="left"><strong>Ours vs. Baseline</strong></td><td><strong>63.8 ± 8.8</strong></td><td><strong>66.6 ± 10.5</strong></td></tr>
+          <tr><td class="left">Ours vs. Pseudo-GT</td><td>34.9 ± 8.0</td><td>33.6 ± 8.7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">Percentage of A/B comparisons in which VisualSpeaker was preferred, ± standard deviation. Participants preferred VisualSpeaker over the baseline for both realism and lip clarity; against pseudo-GT vertices it remains behind, as expected of an upper bound.</p>
   </div>
 </section>
 
@@ -756,12 +797,11 @@
   <div class="section-inner scroll-target">
     <h2 class="section-title">Acknowledgements</h2>
     <p style="font-size:0.92rem; color:var(--text-mid); line-height:1.8; text-align:justify;">
-      This work was supported by EPSRC grant APP24554 (SignGPT — EP/Z535370/1),
-      EPSRC grant APP78083 (UMCS — UKRI3927), and through funding from
-      <strong>Google.org</strong> via the AI for Global Goals scheme.
-      The authors acknowledge the use of <strong>Isambard-AI</strong> National AI Research Resource (AIRR),
-      funded by UK DSIT via UKRI and STFC [ST/AIRR/I-A-I/1023].
-      This work reflects only the authors' views; the funders are not responsible for any use
+      This work was supported by the <strong>SNSF</strong> project &ldquo;SMILE II&rdquo; (CRSII5 193686),
+      the <strong>Innosuisse</strong> IICT Flagship (PFFS-21-47), EPSRC grant APP24554
+      (SignGPT — EP/Z535370/1), and through funding from <strong>Google.org</strong> via the
+      AI for Global Goals scheme.
+      This work reflects only the authors' views and the funders are not responsible for any use
       that may be made of the information it contains.
     </p>
   </div>
@@ -773,13 +813,17 @@
 <section class="section" id="bibtex">
   <div class="section-inner scroll-target">
     <h2 class="section-title">BibTeX</h2>
-    <pre class="bibtex-pre"><code id="bibtex-code">@article{symeonidisherzig2025visualspeaker,
-  title   = {VisualSpeaker: Visually-Guided 3D Avatar Lip Synthesis},
-  author  = {Symeonidis-Herzig, Alexandre and
-             Sincan, {\"O}zge Mercano{\u{g}}lu and
-             Bowden, Richard},
-  journal = {arXiv preprint arXiv:2507.06060},
-  year    = {2025},
+    <pre class="bibtex-pre"><code id="bibtex-code">@inproceedings{symeonidisherzig2025visualspeaker,
+  title     = {VisualSpeaker: Visually-Guided 3D Avatar Lip Synthesis},
+  author    = {Symeonidis-Herzig, Alexandre and
+               Sincan, {\"O}zge Mercano{\u{g}}lu and
+               Bowden, Richard},
+  booktitle = {Proceedings of the IEEE/CVF International Conference on
+               Computer Vision (ICCV) Workshops},
+  pages     = {6725--6734},
+  year      = {2025},
+  publisher = {IEEE},
+  doi       = {10.1109/ICCVW69036.2025.00694},
 }</code></pre>
     <button class="copy-btn" id="copy-bibtex">
       <i class="fas fa-copy"></i> Copy BibTeX

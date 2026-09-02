@@ -9,7 +9,7 @@
 
   <meta property="og:title" content="M3T: Discrete Multi-Modal Motion Tokens for Sign Language Production" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://cogvis.github.io/papers/m3t/" />
+  <meta property="og:url" content="https://cogvis-cvssp.github.io/papers/m3t/" />
   <meta property="og:description"
         content="M3T uses modality-specific FSQ VAEs and an autoregressive transformer to produce expressive, non-manual-aware 3D sign language sequences." />
 
@@ -189,6 +189,31 @@
     .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
     .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
     .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+    .pill-btn.soon {
+      background: var(--gray-bg);
+      color: var(--text-sec);
+      border-style: dashed;
+      border-color: var(--gray-border);
+      cursor: default;
+      box-shadow: none;
+    }
+    .pill-btn.soon:hover {
+      background: var(--gray-bg);
+      border-color: var(--gray-border);
+      box-shadow: none;
+    }
+    .soon-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #fff;
+      color: var(--text-sec);
+      border: 1px solid var(--gray-border);
+      border-radius: 10px;
+      padding: 2px 7px;
+      line-height: 1.5;
+    }
 
     /* ── SHARED SECTION ─────────────────────────────────── */
     .section { padding: 68px 24px; }
@@ -565,6 +590,9 @@
     <a href="https://arxiv.org/abs/2603.23617" class="pill-btn" target="_blank" rel="noopener">
       <i class="ai ai-arxiv"></i> arXiv
     </a>
+    <span class="pill-btn soon" aria-disabled="true">
+      <i class="fab fa-github"></i> Code <span class="soon-tag">Coming soon</span>
+    </span>
   </div>
 
 </div>
@@ -719,10 +747,10 @@
     <div class="highlight-box">
       <div class="big-num">58.3<span>%</span></div>
       <div class="desc">
-        <strong>State-of-the-art on NMFs-CSL</strong> — a benchmark where signs are distinguishable
-        <em>only</em> by non-manual features. M3T achieves <strong>58.3%</strong> accuracy versus
-        <strong>49.0%</strong> for the strongest comparable pose baseline, demonstrating that expressive
-        facial modelling is critical for sign language production.
+        <strong>Top-1 accuracy on the NMFs-CSL <em>Confusing</em> split</strong> — signs distinguishable
+        <em>only</em> by non-manual features. M3T reaches <strong>58.3%</strong> versus
+        <strong>49.0%</strong> for BEST, the strongest directly comparable pose baseline, demonstrating that
+        expressive facial modelling is critical for sign language production.
       </div>
     </div>
 
@@ -732,32 +760,42 @@
       <table class="results-table">
         <thead>
           <tr>
-            <th class="left">Method</th>
-            <th colspan="2" class="group-header">How2Sign</th>
-            <th colspan="2" class="group-header">CSL-Daily</th>
-            <th colspan="2" class="group-header">Phoenix14T</th>
+            <th class="left" rowspan="3">Method</th>
+            <th colspan="4" class="group-header">How2Sign</th>
+            <th colspan="4" class="group-header">CSL-Daily</th>
+            <th colspan="4" class="group-header">Phoenix14T</th>
           </tr>
           <tr>
-            <th class="left"></th>
-            <th>DTW-PA-JPE ↓</th>
-            <th>DTW-JPE ↓</th>
-            <th>DTW-PA-JPE ↓</th>
-            <th>DTW-JPE ↓</th>
-            <th>DTW-PA-JPE ↓</th>
-            <th>DTW-JPE ↓</th>
+            <th colspan="2" class="group-header">DTW-PA-JPE ↓</th>
+            <th colspan="2" class="group-header">DTW-JPE ↓</th>
+            <th colspan="2" class="group-header">DTW-PA-JPE ↓</th>
+            <th colspan="2" class="group-header">DTW-JPE ↓</th>
+            <th colspan="2" class="group-header">DTW-PA-JPE ↓</th>
+            <th colspan="2" class="group-header">DTW-JPE ↓</th>
+          </tr>
+          <tr>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th>
+            <th>Body</th><th>Hand</th><th>Body</th><th>Hand</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="section-header"><td colspan="7">Pose-Based Baselines</td></tr>
-          <tr><td class="left">Prog. Trans.</td><td>14.15</td><td>14.74</td><td>15.98</td><td>16.30</td><td>13.67</td><td>15.01</td></tr>
-          <tr><td class="left">T2S-GPT</td><td>11.48</td><td>12.65</td><td>11.94</td><td>12.32</td><td>10.38</td><td>11.65</td></tr>
-          <tr><td class="left">S-MotionGPT</td><td>11.23</td><td>12.41</td><td>10.81</td><td>11.58</td><td>9.45</td><td>10.42</td></tr>
-          <tr class="section-header"><td colspan="7">M3T (Ours)</td></tr>
-          <tr class="ours"><td class="left"><strong>M3T</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td><td><strong>—</strong></td></tr>
+          <tr class="section-header"><td colspan="13">Prior Work</td></tr>
+          <tr><td class="left">NAR</td><td>13.94</td><td>11.80</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td class="left">Prog. Trans.</td><td>14.15</td><td>11.57</td><td>14.74</td><td>30.17</td><td>15.98</td><td>12.91</td><td>16.30</td><td>32.63</td><td>13.67</td><td>11.95</td><td>15.01</td><td>31.77</td></tr>
+          <tr><td class="left">Text2Mesh</td><td>13.99</td><td>13.47</td><td>15.50</td><td>32.97</td><td>13.47</td><td>12.10</td><td>13.76</td><td>30.37</td><td>13.48</td><td>12.06</td><td>14.04</td><td>31.64</td></tr>
+          <tr><td class="left">Adv. Train.</td><td>13.78</td><td>11.17</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td class="left">T2S-GPT</td><td>11.48</td><td>6.39</td><td>12.65</td><td>18.44</td><td>11.94</td><td>5.93</td><td>12.32</td><td>15.43</td><td>10.38</td><td>6.47</td><td>11.65</td><td>19.09</td></tr>
+          <tr><td class="left">NSA</td><td>7.83</td><td>7.33</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td class="left">S-MotionGPT</td><td>11.23</td><td>4.39</td><td>12.41</td><td>13.74</td><td>10.81</td><td>3.78</td><td>11.58</td><td>11.31</td><td>9.45</td><td>3.41</td><td>10.42</td><td>9.08</td></tr>
+          <tr><td class="left">SOKE</td><td>6.82</td><td>2.35</td><td>7.75</td><td>10.08</td><td>6.24</td><td>1.71</td><td>7.38</td><td>9.68</td><td>4.77</td><td><strong>1.38</strong></td><td>6.04</td><td><strong>7.72</strong></td></tr>
+          <tr class="section-header"><td colspan="13">M3T (Ours)</td></tr>
+          <tr class="ours"><td class="left">M3T w/o SLT</td><td>4.52</td><td>2.42</td><td>5.02</td><td><strong>8.94</strong></td><td>4.13</td><td>1.59</td><td>4.77</td><td>9.94</td><td>3.54</td><td>1.54</td><td>4.17</td><td>9.14</td></tr>
+          <tr class="ours"><td class="left"><strong>M3T w/ SLT</strong></td><td><strong>4.28</strong></td><td><strong>2.28</strong></td><td><strong>4.86</strong></td><td>9.44</td><td><strong>3.97</strong></td><td><strong>1.51</strong></td><td><strong>4.63</strong></td><td><strong>9.28</strong></td><td><strong>3.41</strong></td><td>1.46</td><td><strong>4.02</strong></td><td>8.55</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="table-caption">M3T achieves state-of-the-art sign language production quality across How2Sign, CSL-Daily, and Phoenix14T. See the paper for full numerical results.</p>
+    <p class="table-caption">Comparison with state-of-the-art SLP (text-to-sign) methods. DTW-PA-JPE measures pose-aligned joint error after rigid normalisation, while DTW-JPE measures raw joint position error; both are reported separately for body and hand joints. <strong>Bold</strong> marks the best value in each column. M3T reduces body DTW-PA-JPE by 37–29% relative to the strongest prior method (SOKE) across all three benchmarks, with the auxiliary SLT objective improving 9 of 12 metrics over the ablated variant.</p>
 
     <!-- NMF Table -->
     <h3 class="section-sub" style="text-align:left; margin-top:40px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Non-Manual Feature Evaluation — NMFs-CSL</h3>
@@ -765,18 +803,37 @@
       <table class="results-table">
         <thead>
           <tr>
-            <th class="left">Method</th>
-            <th>Representation</th>
-            <th>NMFs-CSL Accuracy ↑</th>
+            <th class="left" rowspan="2">Method</th>
+            <th colspan="2" class="group-header">Overall</th>
+            <th colspan="2" class="group-header">Confusing</th>
+            <th colspan="2" class="group-header">Normal</th>
+          </tr>
+          <tr>
+            <th>T-1 ↑</th><th>T-5 ↑</th>
+            <th>T-1 ↑</th><th>T-5 ↑</th>
+            <th>T-1 ↑</th><th>T-5 ↑</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td class="left">Pose Baseline (best)</td><td>SMPL-X (standard)</td><td>49.0%</td></tr>
-          <tr class="ours"><td class="left"><strong>M3T</strong></td><td><strong>SMPL-FX + FSQ VAE</strong></td><td><strong>58.3%</strong></td></tr>
+          <tr class="section-header"><td colspan="7">RGB-Based Methods</td></tr>
+          <tr><td class="left">3D-R50</td><td>62.1</td><td>82.9</td><td>43.1</td><td>72.4</td><td>87.4</td><td>97.0</td></tr>
+          <tr><td class="left">DNF</td><td>55.8</td><td>82.4</td><td>51.9</td><td>71.4</td><td>86.3</td><td>97.0</td></tr>
+          <tr><td class="left">I3D</td><td>64.4</td><td>88.0</td><td>47.3</td><td>81.8</td><td>87.1</td><td>97.3</td></tr>
+          <tr><td class="left">TSM</td><td>64.5</td><td>88.7</td><td>42.9</td><td>81.0</td><td>93.3</td><td>99.0</td></tr>
+          <tr><td class="left">SlowFast</td><td>66.3</td><td>86.6</td><td>47.0</td><td>77.4</td><td>92.0</td><td>98.9</td></tr>
+          <tr><td class="left">GLE-Net</td><td>69.0</td><td>88.1</td><td>50.6</td><td>79.6</td><td>93.6</td><td>99.3</td></tr>
+          <tr><td class="left">HMA</td><td>64.7</td><td>91.0</td><td>42.3</td><td>84.8</td><td>94.6</td><td>99.3</td></tr>
+          <tr><td class="left">NLASLR<sup>&dagger;</sup></td><td>83.1</td><td>98.3</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr class="section-header"><td colspan="7">Pose-Based Methods</td></tr>
+          <tr><td class="left">ST-GCN</td><td>59.9</td><td>86.8</td><td>42.2</td><td>79.4</td><td>83.4</td><td>96.7</td></tr>
+          <tr><td class="left">SignBERT</td><td>67.0</td><td>95.3</td><td>46.4</td><td>92.1</td><td>94.5</td><td>99.6</td></tr>
+          <tr><td class="left">BEST</td><td>68.5</td><td>94.4</td><td>49.0</td><td>90.3</td><td>94.6</td><td>99.7</td></tr>
+          <tr><td class="left">ScalingUp<sup>&dagger;</sup></td><td>80.2</td><td>97.5</td><td>67.2</td><td>95.7</td><td>97.5</td><td>99.8</td></tr>
+          <tr class="ours"><td class="left"><strong>M3T</strong></td><td><strong>74.1</strong></td><td><strong>95.1</strong></td><td><strong>58.3</strong></td><td><strong>93.0</strong></td><td><strong>93.5</strong></td><td><strong>97.6</strong></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="table-caption">On NMFs-CSL, where sign identity depends entirely on non-manual features, M3T's expressive facial representation yields a <strong>+9.3 pp</strong> gain over the strongest pose-based competitor.</p>
+    <p class="table-caption">SLR results on NMFs-CSL, separated by RGB and pose modalities. <sup>&dagger;</sup> denotes pre-training on large sign datasets. On the <em>Confusing</em> split — signs distinguishable only by non-manual features — M3T reaches <strong>58.3%</strong> Top-1 against <strong>49.0%</strong> for BEST, the strongest directly comparable pose baseline, a <strong>+9.3 pp</strong> gain.</p>
   </div>
 </section>
 
@@ -811,6 +868,10 @@
              Sincan, Ozge Mercanoglu and Bowden, Richard},
   journal = {arXiv preprint arXiv:2603.23617},
   year    = {2026},
+  eprint  = {2603.23617},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  doi     = {10.48550/arXiv.2603.23617},
 }</code></pre>
     <button class="copy-btn" id="copy-bibtex">
       <i class="fas fa-copy"></i> Copy BibTeX
