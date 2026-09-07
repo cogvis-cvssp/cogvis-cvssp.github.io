@@ -12,7 +12,7 @@
   <meta property="og:url" content="https://cogvis-cvssp.github.io/papers/signrefine/" />
   <meta property="og:description"
         content="SignRefine steers a frozen video Diffusion Transformer with local adapters to generate comprehensible sign language video from 2D keypoints alone." />
-  <meta property="og:image" content="https://cogvis-cvssp.github.io/papers/signrefine/assets/teaser.jpg" />
+  <meta property="og:image" content="https://cogvis-cvssp.github.io/papers/signrefine/assets/teaser_og.jpg" />
 
   <title>SignRefine — Adapting Foundational Video Models for Sign Language Generation</title>
 
@@ -497,6 +497,7 @@
       letter-spacing: 0.06em;
     }
     .video-card.stub { background: #fff; }
+    .qual-card + .qual-card { margin-top: 22px; }
 
     .hero-video-wrap { max-width: 940px; margin: 0 auto; padding: 8px 24px; }
     .shorts-grid {
@@ -701,11 +702,11 @@
 
 <!-- TEASER -->
 <div class="teaser-wrap">
-  <img src="./assets/teaser.jpg" alt="Qualitative comparison of sign language video generation from 2D keypoint conditioning" class="teaser-img" />
+  <img src="./assets/teaser.webp" alt="Qualitative comparison of sign language video generation from 2D keypoint conditioning" class="teaser-img" />
   <p class="fig-caption" style="margin-top:14px;">
     <strong>Fig. 1</strong> — Sign language video generated from 2D keypoint conditioning. Left to right: input keypoint
-    condition, SignRefine (ours), Wan2.1-1.3B-Fun-Control, Wan2.1-1.3B-VACE. General-purpose video models collapse
-    exactly where meaning lives — the hands and the face.
+    condition, SignRefine (ours), Wan2.1-1.3B-Fun-Control, Wan2.1-1.3B-VACE. General-purpose video models corrupt hand
+    and face regions that carry the most information in sign languages.
   </p>
 </div>
 
@@ -739,10 +740,9 @@
     <h2 class="section-title">Problem &amp; Motivation</h2>
 
     <p class="body-text">
-      Sign languages are the primary means of communication for Deaf communities worldwide, and — lacking a widely
-      adopted written form — video is their natural medium. Automatic sign language video generation is therefore a
+      Sign languages are the primary means of communication for Deaf communities worldwide and video is their natural medium. Automatic sign language video generation is therefore a
       prerequisite for accessible content creation. Yet the field faces a stark duality: general-purpose video models
-      generalize beautifully but cannot sign, while sign-specific models can sign but do not generalize.
+      generalize beautifully but cannot sign, while sign-specific models do not generalize.
     </p>
 
     <div class="feature-grid" style="margin-top:28px;">
@@ -783,14 +783,6 @@
         </div>
       </div>
     </div>
-
-    <p class="body-text" style="margin-top:28px;">
-      Modern sign language production pipelines translate spoken language into an intermediate representation
-      (skeletal data or latent motion tokens) and then render video from it. <strong>SignRefine targets the second
-      stage</strong>: given a reference image defining signer appearance and a driving 2D skeleton sequence, generate
-      anatomically precise, expressive signing video across diverse appearances — using only sparse keypoints, with no
-      dense structural modalities at inference time.
-    </p>
   </div>
 </section>
 
@@ -847,13 +839,13 @@
     <p class="body-text">
       SignRefine is built on <strong>Wan2.1-1.3B-Fun-Control</strong>, a pretrained video DiT conditioned on skeleton
       sequences. The full-body skeleton drives global body movement effectively, but the backbone lacks precision
-      exactly where sign language needs it. We keep the <strong>backbone entirely frozen</strong> — preserving its
-      generalized video prior — and add trainable local adapters that extract regional conditions at higher resolution
+      exactly where sign language needs it. We keep the <strong>backbone frozen</strong>, preserving its
+      quality and generalization, and add trainable local adapters for hand and face regions. They extract regional conditions at higher resolution
       and inject them into selected DiT blocks through masked cross-attention.
     </p>
 
     <div class="fig-wrap" style="margin-top:28px;">
-      <img src="./assets/architecture.jpg" alt="SignRefine architecture overview" />
+      <img src="./assets/architecture.webp" alt="SignRefine architecture overview" />
     </div>
     <p class="fig-caption" style="margin-bottom:8px;">
       <strong>Fig. 2</strong> — A reference image and a full-body skeleton sequence guide the DiT backbone. Regional
@@ -867,8 +859,8 @@
         <div class="feature-icon"><i class="fas fa-object-group"></i></div>
         <div class="feature-text">
           <strong>Per-channel condition encoders</strong>
-          Signing operates over two articulatory channels with very different morphology: manual (hands) and non-manual
-          (face). Face, left hand and right hand are therefore processed by three independent encoders, each free to
+          Signing operates over two articulatory channels with different morphology: manual (hands) and non-manual
+          (face). Each region is therefore processed by an independent encoder, each free to
           specialize its representation.
         </div>
       </div>
@@ -909,7 +901,7 @@
         <div class="feature-icon"><i class="fas fa-mask"></i></div>
         <div class="feature-text">
           <strong>Masked attention with a sink token</strong>
-          A binary spatial mask separates articulator patches from background on the coarse latent grid. Foreground
+          A binary spatial mask separates articulator patches from background on the latent grid. Foreground
           queries attend to the high-resolution regional features; background queries are routed to a learned
           <em>sink token</em> that safely absorbs them, preventing the adapter from bleeding hand or face features into
           unrelated areas.
@@ -920,18 +912,11 @@
         <div class="feature-text">
           <strong>Region-weighted training objective</strong>
           Output projections are zero-initialized for stability on the frozen backbone. The MSE loss is weighted per
-          region (<em>w</em><sub>hand</sub> = <em>w</em><sub>face</sub> = 10, <em>w</em><sub>bg</sub> = 1), raising the
-          articulators' share of the gradient to match their linguistic importance while retaining roughly a third of it
+          region, raising the articulators' share of the gradient to match their linguistic importance while retaining roughly a third of it
           on the background to preserve global coherence and identity.
         </div>
       </div>
     </div>
-
-    <p class="body-text" style="margin-top:32px;">
-      Training uses ~40,000 clips from the NVSign train partition for 30,000 iterations on 4 NVIDIA GH200 GPUs. Two
-      adapters (face and hands), six cross-attention blocks each, project 512-dimensional regional features to the
-      backbone's 1536-dimensional hidden size.
-    </p>
   </div>
 </section>
 
@@ -951,16 +936,15 @@
 
     <p class="body-text">
       <strong>NVSign</strong> is a large-scale dataset of web video content <em>natively produced</em> in sign
-      language: 44,759 atomic signing segments sourced from 317 longer videos, in varied real-world environments with
-      dynamic camera work — the two properties every prior
-      corpus lacks. Roughly 40% of the data involves two or more participants, unlocking research directions that are
+      language: 44,759 signing segments sourced from 317 longer videos, in varied real-world environments with
+      dynamic camera work. Roughly 40% of the data involves two or more participants, unlocking research directions that are
       impossible with single-signer corpora: multi-signer dynamics, turn-taking, signer diarisation, and non-manual
       features used as backchannels and discourse markers.
     </p>
 
     <p class="body-text">
       Each video ships with a comprehensive multi-modal annotation set — time-aligned English transcripts, extracted 2D
-      body keypoints, per-signer activity scores, depth maps, and SMPL body, MANO hand and FLAME face parameters. Three
+      body keypoints, per-signer activity scores, depth maps, SMPL body, MANO hand and FLAME face parameters. Three
       data partitions navigate different trade-offs between signer overlap and content diversity, enabling nuanced
       appearance-independent evaluation.
     </p>
@@ -974,72 +958,26 @@
 <section class="section" id="results">
   <div class="section-inner wide scroll-target">
     <h2 class="section-title">Qualitative Results</h2>
-
-    <!--
-      ══════════════════════════════════════════════════════════════════
-      VIDEO PLACEHOLDERS
-      Drop the clips into ./assets/ and replace each `.video-stub` div
-      with the matching <video> tag, e.g.:
-
-        <video class="native-video"
-               src="./assets/<clip>.mp4"
-               poster="./assets/<clip>_poster.jpg"
-               autoplay muted loop playsinline preload="metadata"></video>
-      ══════════════════════════════════════════════════════════════════
-    -->
-
-    <h3 class="label-sub">Method comparison</h3>
-    <div class="video-card stub">
-      <div class="video-stub">
-        <div class="stub-icon"><i class="fas fa-film"></i></div>
-        <div class="stub-text">Video coming soon</div>
-      </div>
-      <div class="video-caption">
-        <strong>Side-by-side comparison</strong> — SignRefine vs. Wan-FC, Wan-VACE, SignViP and SignGAN driven by the
-        same keypoint condition.
-      </div>
+    <p class="body-text" style="margin-bottom:22px;">
+      Each row shows the three methods driven by the same 2D keypoint sequence and reference frame. None of these
+      clips, signers or scenes were seen during training, so the examples illustrate how the models generalize.
+      Playback stops automatically to highlight the regional differences between models.
+    </p>
+    <div class="video-card qual-card">
+      <video class="native-video" src="./assets/qual_ytsl_1L5w.mp4" poster="./assets/qual_ytsl_1L5w_poster.jpg"
+             autoplay muted loop playsinline preload="metadata"></video>
     </div>
-
-    <h3 class="label-sub">Generation examples</h3>
-    <div class="shorts-grid">
-      <div class="video-card stub">
-        <div class="video-stub">
-          <div class="stub-icon"><i class="fas fa-film"></i></div>
-          <div class="stub-text">Video coming soon</div>
-        </div>
-        <div class="video-caption">
-          <strong>Appearance generalization</strong> — one keypoint sequence rendered across unseen signers and
-          environments.
-        </div>
-      </div>
-      <div class="video-card stub">
-        <div class="video-stub">
-          <div class="stub-icon"><i class="fas fa-film"></i></div>
-          <div class="stub-text">Video coming soon</div>
-        </div>
-        <div class="video-caption">
-          <strong>Hand &amp; face detail</strong> — magnified articulator crops showing handshape and mouthing fidelity.
-        </div>
-      </div>
-      <div class="video-card stub">
-        <div class="video-stub">
-          <div class="stub-icon"><i class="fas fa-film"></i></div>
-          <div class="stub-text">Video coming soon</div>
-        </div>
-        <div class="video-caption">
-          <strong>In-the-wild conditions</strong> — generation in cluttered, natural scenes from the NVSign test set.
-        </div>
-      </div>
-      <div class="video-card stub">
-        <div class="video-stub">
-          <div class="stub-icon"><i class="fas fa-film"></i></div>
-          <div class="stub-text">Video coming soon</div>
-        </div>
-        <div class="video-caption">
-          <strong>Cross-dataset transfer</strong> — the same model applied to Phoenix14T and BSL Corpus conditions
-          without dataset-specific adaptation.
-        </div>
-      </div>
+    <div class="video-card qual-card">
+      <video class="native-video" src="./assets/qual_ytsl_3AEC.mp4" poster="./assets/qual_ytsl_3AEC_poster.jpg"
+             autoplay muted loop playsinline preload="metadata"></video>
+    </div>
+    <div class="video-card qual-card">
+      <video class="native-video" src="./assets/qual_ytsl_351i.mp4" poster="./assets/qual_ytsl_351i_poster.jpg"
+             autoplay muted loop playsinline preload="metadata"></video>
+    </div>
+    <div class="video-card qual-card">
+      <video class="native-video" src="./assets/qual_marcel.mp4" poster="./assets/qual_marcel_poster.jpg"
+             autoplay muted loop playsinline preload="metadata"></video>
     </div>
 
   </div>
@@ -1054,9 +992,8 @@
 
     <p class="body-text" style="margin-bottom:28px;">
       Because the goal is articulator quality, evaluation concentrates on <strong>regional metrics</strong>: MPJPE for
-      keypoint accuracy and structural precision, LPIPS and SSIM for perceptual quality, computed on face and hand crops
-      derived from ground-truth bounding boxes. Testing spans the NVSign appearance-independent test set, Phoenix14T and
-      BSL Corpus.
+      keypoint accuracy and structural precision, LPIPS and SSIM for perceptual quality, computed on face and hand crops.
+      NVSign appearance-independent test set, Phoenix14T and BSL Corpus are used for testing.
     </p>
 
     <h3 class="label-sub">Regional quality across three datasets</h3>
@@ -1100,22 +1037,24 @@
       </table>
     </div>
     <p class="table-caption">
-      SignRefine is best on every metric except BSL Corpus face LPIPS (<strong>bold</strong> marks the best value where
-      it falls outside our row; <u>underline</u> marks second-best). Gains are most pronounced on the hands —
-      roughly a <strong>30% reduction in MPJPE</strong> over the strongest baseline on NVSign — with face precision
+      <strong>Table 1</strong> — SignRefine is consistently outperforming the baselines on all the metrics. Gains are most pronounced on the hands —
+      roughly a <strong>30% reduction in MPJPE</strong> over the strongest baseline on NVSign, with face precision
       improving by up to 20% on Phoenix14T and 15% on BSL Corpus. Note the generalization pattern: SignViP, trained
       exclusively on Phoenix14T, collapses on NVSign and BSL Corpus, while SignRefine holds stable performance across
       all three without any dataset-specific adaptation.
     </p>
 
-    <h3 class="label-sub" style="margin-top:48px;">User study — perceptual quality</h3>
+    <h3 class="label-sub" style="margin-top:48px;">User study</h3>
     <p class="body-text" style="margin-bottom:20px;">
-      Fifteen participants of varying BSL proficiency completed 17 questions each, ranking four models per question
-      under a balanced exclusion schedule (~200 observations per model). Questions covered <em>Visual Ranking</em>
-      (naturalness of signing, hand and face quality) and <em>Text Reference Ranking</em> (semantic fidelity against an
-      English reference, shown only to intermediate-or-higher signers).
+      Two studies complement the automated metrics. In the <strong>perceptual study</strong>, fifteen participants of
+      varying BSL proficiency answered 17 questions each, ranking models by naturalness and hand/face quality, plus
+      semantic fidelity against an English reference for intermediate-or-higher signers. SignRefine obtains the lowest
+      mean rank overall and in every category (Table 2); SignRefine wins more than <strong>83%</strong> of head-to-head
+      comparisons against each baseline, giving the ordering Ours &gt; Wan-FC &gt; Wan-VACE &gt; SignGAN ≈ SignViP.
+      In the <strong>comprehension study</strong>, six fluent BSL signers wrote blind free-text translations of ten clips
+      rendered by SignRefine and Wan-FC. Viewers of SignRefine recover more key content, land
+      closer to the reference translation and abandon fewer clips as unintelligible (Table 3).
     </p>
-
     <div class="two-col">
       <div>
         <div class="table-wrap">
@@ -1134,11 +1073,7 @@
             </tbody>
           </table>
         </div>
-        <p class="table-caption">
-          Mean rank assigned by participants (1 = best, 5 = worst). SignRefine achieves the lowest mean rank overall and
-          in every category, with all baselines significantly worse under Holm-corrected Wilcoxon tests
-          (<em>p</em> &lt; 0.001).
-        </p>
+        <p class="table-caption"><strong>Table 2</strong> — Mean rank assigned by participants (1 = best, 5 = worst).</p>
       </div>
       <div>
         <div class="table-wrap">
@@ -1154,24 +1089,9 @@
             </tbody>
           </table>
         </div>
-        <p class="table-caption">
-          <strong>Comprehension study.</strong> Six fluent BSL signers produced blind free-text translations of ten
-          YouTube-SL-25 clips rendered by each model. Viewers recover more key content, land closer to the reference
-          translation, and abandon fewer clips as unintelligible — significant for Keyword Recall and BLEURT
-          (<em>p</em> &lt; 0.05).
-        </p>
+        <p class="table-caption"><strong>Table 3</strong> — Comprehension study, SignRefine vs. Wan-FC.</p>
       </div>
     </div>
-
-    <div class="fig-wrap" style="margin-top:40px;">
-      <img src="./assets/user_study.jpg" alt="User study rank-1 win rates and head-to-head preference matrix" />
-    </div>
-    <p class="fig-caption">
-      <strong>Fig. 4</strong> — <strong>Left:</strong> Rank-1 win rates with confidence intervals per question category.
-      <strong>Right:</strong> Head-to-head preference matrix aggregated across categories. SignRefine is preferred over
-      every individual baseline in more than <strong>83%</strong> of direct comparisons, yielding a clear hierarchy:
-      Ours &gt; Wan-FC &gt; Wan-VACE &gt; SignGAN ≈ SignViP — the same ordering as the quantitative evaluation.
-    </p>
 
   </div>
 </section>
@@ -1207,6 +1127,7 @@
   booktitle = {Proceedings of the European Conference on
                Computer Vision (ECCV)},
   year      = {2026},
+  note      = {To appear}
 }</code></pre>
     <button class="copy-btn" id="copy-bibtex">
       <i class="fas fa-copy"></i> Copy BibTeX
