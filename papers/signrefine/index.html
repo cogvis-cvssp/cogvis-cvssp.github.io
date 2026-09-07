@@ -251,7 +251,7 @@
 
     /* ── TEASER ─────────────────────────────────────────── */
     .teaser-wrap {
-      max-width: 940px;
+      max-width: 1020px;
       margin: 0 auto;
       padding: 0 24px 60px;
     }
@@ -655,7 +655,6 @@
   <a class="sec-link" href="#contributions">Contributions</a>
   <a class="sec-link" href="#architecture">Architecture</a>
   <a class="sec-link" href="#dataset">NVSign</a>
-  <a class="sec-link" href="#results">Qualitative</a>
   <a class="sec-link" href="#quantitative">Quantitative</a>
   <a class="sec-link" href="#bibtex">BibTeX</a>
 </div>
@@ -700,13 +699,28 @@
 
 </div>
 
-<!-- TEASER -->
-<div class="teaser-wrap">
-  <img src="./assets/teaser.webp" alt="Qualitative comparison of sign language video generation from 2D keypoint conditioning" class="teaser-img" />
-  <p class="fig-caption" style="margin-top:14px;">
-    <strong>Fig. 1</strong> — Sign language video generated from 2D keypoint conditioning. Left to right: input keypoint
-    condition, SignRefine (ours), Wan2.1-1.3B-Fun-Control, Wan2.1-1.3B-VACE. General-purpose video models corrupt hand
-    and face regions that carry the most information in sign languages.
+<!-- TEASER: qualitative comparison videos -->
+<div class="teaser-wrap" id="results">
+  <div class="video-card qual-card">
+    <video class="native-video" src="./assets/qual_ytsl_1L5w.mp4" poster="./assets/qual_ytsl_1L5w_poster.jpg"
+           autoplay muted loop playsinline preload="metadata"></video>
+  </div>
+  <div class="video-card qual-card">
+    <video class="native-video" src="./assets/qual_ytsl_3AEC.mp4" poster="./assets/qual_ytsl_3AEC_poster.jpg"
+           autoplay muted loop playsinline preload="metadata"></video>
+  </div>
+  <div class="video-card qual-card">
+    <video class="native-video" src="./assets/qual_ytsl_351i.mp4" poster="./assets/qual_ytsl_351i_poster.jpg"
+           autoplay muted loop playsinline preload="metadata"></video>
+  </div>
+  <div class="video-card qual-card">
+    <video class="native-video" src="./assets/qual_marcel.mp4" poster="./assets/qual_marcel_poster.jpg"
+           autoplay muted loop playsinline preload="metadata"></video>
+  </div>
+  <p class="body-text" style="margin-top:22px;">
+    Each row shows the three methods driven by the same 2D keypoint sequence and reference frame. None of these
+    clips, signers or scenes were seen during training, so the examples illustrate how the models generalize.
+    Playback stops automatically to highlight the regional differences between models.
   </p>
 </div>
 
@@ -948,37 +962,6 @@
       data partitions navigate different trade-offs between signer overlap and content diversity, enabling nuanced
       appearance-independent evaluation.
     </p>
-
-  </div>
-</section>
-
-<hr class="divider" />
-
-<!-- QUALITATIVE RESULTS -->
-<section class="section" id="results">
-  <div class="section-inner wide scroll-target">
-    <h2 class="section-title">Qualitative Results</h2>
-    <p class="body-text" style="margin-bottom:22px;">
-      Each row shows the three methods driven by the same 2D keypoint sequence and reference frame. None of these
-      clips, signers or scenes were seen during training, so the examples illustrate how the models generalize.
-      Playback stops automatically to highlight the regional differences between models.
-    </p>
-    <div class="video-card qual-card">
-      <video class="native-video" src="./assets/qual_ytsl_1L5w.mp4" poster="./assets/qual_ytsl_1L5w_poster.jpg"
-             autoplay muted loop playsinline preload="metadata"></video>
-    </div>
-    <div class="video-card qual-card">
-      <video class="native-video" src="./assets/qual_ytsl_3AEC.mp4" poster="./assets/qual_ytsl_3AEC_poster.jpg"
-             autoplay muted loop playsinline preload="metadata"></video>
-    </div>
-    <div class="video-card qual-card">
-      <video class="native-video" src="./assets/qual_ytsl_351i.mp4" poster="./assets/qual_ytsl_351i_poster.jpg"
-             autoplay muted loop playsinline preload="metadata"></video>
-    </div>
-    <div class="video-card qual-card">
-      <video class="native-video" src="./assets/qual_marcel.mp4" poster="./assets/qual_marcel_poster.jpg"
-             autoplay muted loop playsinline preload="metadata"></video>
-    </div>
 
   </div>
 </section>
