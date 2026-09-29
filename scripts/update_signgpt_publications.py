@@ -5,6 +5,12 @@ Downloads "Sheet1" (gid=0) of the SignGPT Project Publications spreadsheet as
 CSV and regenerates the auto-generated block in ``signgpt/publications.html``
 (the content between the ``PUBLICATIONS:START`` / ``PUBLICATIONS:END`` markers).
 
+The sheet is the single source of truth: do not hand-edit the generated block.
+The GitHub Action in ``.github/workflows/sync-signgpt-publications.yml`` runs
+this script once a day and commits the result if anything changed. To publish
+a sheet edit immediately, trigger that workflow from the repo's Actions tab
+("Run workflow"), or run the script locally and commit.
+
 Usage:
     python3 scripts/update_signgpt_publications.py
 
@@ -217,6 +223,9 @@ def main() -> None:
     csv_text = fetch_csv(CSV_URL)
     pubs = parse_rows(csv_text)
     print(f"Parsed {len(pubs)} publications.")
+    if not pubs:
+        # Runs unattended in CI: never wipe the page because of a bad fetch.
+        raise SystemExit("No publications parsed from the sheet; refusing to update.")
     block = render_block(pubs)
     update_html(block)
     print(f"Updated {TARGET_HTML}")

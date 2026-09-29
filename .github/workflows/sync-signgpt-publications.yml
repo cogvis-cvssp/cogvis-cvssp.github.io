@@ -1,0 +1,44 @@
+# Regenerates signgpt/publications.html from the SignGPT Project Publications
+# Google Sheet and commits the result if it changed. The sheet is the source of
+# truth; see scripts/update_signgpt_publications.py.
+name: Sync SignGPT publications
+
+on:
+  schedule:
+    - cron: "17 6 * * *" # daily, 06:17 UTC
+  workflow_dispatch: # "Run workflow" button for an immediate sync
+  push:
+    branches: [master]
+    paths:
+      - scripts/update_signgpt_publications.py
+      - .github/workflows/sync-signgpt-publications.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-signgpt-publications
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Regenerate publications from sheet
+        run: python3 scripts/update_signgpt_publications.py
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet -- signgpt/publications.html; then
+            echo "Publications already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add signgpt/publications.html
+          git commit -m "SignGPT publications: sync from Google Sheet"
+          git pull --rebase origin master
+          git push origin HEAD:master
