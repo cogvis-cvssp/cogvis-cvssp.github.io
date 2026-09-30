@@ -5,7 +5,7 @@ name: Sync SignGPT publications
 
 on:
   schedule:
-    - cron: "54 8 * * *" # daily, 08:54 UTC
+    - cron: "18 13 * * *" # TEMP one-off schedule test; restore to a daily off-peak time
   workflow_dispatch: # "Run workflow" button for an immediate sync
   push:
     branches: [master]
