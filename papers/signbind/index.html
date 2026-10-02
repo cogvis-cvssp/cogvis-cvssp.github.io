@@ -189,6 +189,7 @@
     .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
     .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
     .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+    .pill-btn.disabled { opacity: 0.55; cursor: default; pointer-events: none; }
 
     /* ── SHARED SECTION ─────────────────────────────────── */
     .section { padding: 68px 24px; }
@@ -506,9 +507,9 @@
     <a href="https://arxiv.org/abs/2509.00030" class="pill-btn" target="_blank" rel="noopener">
       <i class="ai ai-arxiv"></i> arXiv
     </a>
-    <a href="#" class="pill-btn">
+    <span class="pill-btn disabled" aria-disabled="true">
       <i class="fab fa-github"></i> Code (Coming Soon)
-    </a>
+    </span>
   </div>
 
 </div>
