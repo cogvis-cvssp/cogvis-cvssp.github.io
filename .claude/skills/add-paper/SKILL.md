@@ -49,8 +49,10 @@ For an update, edit the existing page and entry instead of creating new ones.
 
 ## 4. Verify
 
-Run `python3 scripts/check_publications.py` and fix anything it reports for your
-paper. Preview with `python3 -m http.server` and open `/publications.html` and the
+Check that no button on the new page or its `publications.html` entry is
+`href="#"` (a link with no URL yet should be a non-clickable "Coming Soon"
+button), and that the entry has a Page button pointing at the paper's folder.
+Preview with `python3 -m http.server` and open `/publications.html` and the
 new page; click every button.
 
 ## 5. SignGPT
