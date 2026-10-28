@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description"
+        content="SignSeek: Learning Transferable Representations for Sign Dictionary Retrieval." />
+  <meta name="keywords" content="sign dictionary retrieval, sign language, contrastive learning, articulator masking, saliency, skeleton, pose, zero-shot, British Sign Language, subtitle alignment" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="SignSeek: Learning Transferable Representations for Sign Dictionary Retrieval" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cogvis-cvssp.github.io/papers/signseek/" />
+  <meta property="og:image" content="https://cogvis-cvssp.github.io/papers/signseek/assets/teaser_og.jpg" />
+  <meta property="og:description"
+        content="SignSeek learns pose-based sign embeddings with saliency-guided articulator masking, setting a new state of the art in zero-shot sign dictionary retrieval." />
+
+  <title>SignSeek — Learning Transferable Representations for Sign Dictionary Retrieval</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:         #1a73e8;
+      --blue-dark:    #185abc;
+      --blue-light:   #e8f0fe;
+      --blue-border:  #c5d9fc;
+      --green:        #137333;
+      --green-light:  #e6f4ea;
+      --green-border: #b7dfbf;
+      --gray-bg:      #f8f9fa;
+      --gray-border:  #e8eaed;
+      --text:         #202124;
+      --text-mid:     #3c4043;
+      --text-sec:     #5f6368;
+      --nav-h:        56px;
+      --snav-h:       44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP NAV ────────────────────────────────────────── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .site-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
+
+    /* ── SECTION NAV ────────────────────────────────────── */
+    .sec-nav {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: var(--snav-h);
+    }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 44px;
+      text-align: center;
+    }
+
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 9px 26px;
+      border-radius: 28px;
+      border: 2px solid var(--blue-border);
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(26,115,232,0.14);
+    }
+
+    .paper-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+    .paper-title .hl {
+      background: linear-gradient(45deg, #0d47a1, #00bcd4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .authors {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      margin-bottom: 8px;
+      line-height: 1.8;
+    }
+    .affil {
+      font-size: 0.9rem;
+      color: var(--text-sec);
+      margin-bottom: 32px;
+    }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-mid);
+      background: #fff;
+      cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pill-btn:hover {
+      background: var(--gray-bg);
+      border-color: #bdc1c6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+    .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
+    .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+    .soon-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #fff;
+      color: var(--text-sec);
+      border: 1px solid var(--gray-border);
+      border-radius: 10px;
+      padding: 2px 7px;
+      line-height: 1.5;
+    }
+
+    /* ── SHARED SECTION ─────────────────────────────────── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .section-sub {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      margin: 44px 0 16px;
+    }
+    .section-sub:first-of-type { margin-top: 0; }
+
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── TEASER ─────────────────────────────────────────── */
+    .teaser-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .teaser-img {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .teaser-img:hover {
+      transform: scale(1.012);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+
+    /* ── LIGHTBOX ───────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      cursor: zoom-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+    }
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+      transform: scale(0.96);
+      transition: transform 0.22s ease;
+    }
+    .lightbox.open img { transform: scale(1); }
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      color: #fff;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── ABSTRACT ───────────────────────────────────────── */
+    .abstract-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+      text-align: justify;
+    }
+
+    /* ── FIGURES ────────────────────────────────────────── */
+    .fig-wrap { margin: 0 0 12px; }
+    .fig-wrap img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .fig-wrap img:hover {
+      transform: scale(1.015);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+    .fig-caption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.65;
+      text-align: center;
+    }
+    .fig-caption strong { color: var(--text-mid); }
+
+    .method-sub {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 48px 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--gray-border);
+    }
+    .method-sub:first-of-type { margin-top: 0; }
+    .method-sub .ac { font-weight: 800; color: var(--blue); }
+
+    .feature-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0 0 28px;
+    }
+    .feature-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--blue);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.22s ease;
+    }
+    .feature-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 10px 26px rgba(26,115,232,0.12);
+      border-color: var(--blue-border);
+    }
+    .feature-card:hover::before { transform: scaleY(1); }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-card:hover .feature-icon {
+      background: var(--blue);
+      color: #fff;
+      transform: scale(1.06);
+    }
+    .feature-text { font-size: 0.88rem; color: var(--text-sec); line-height: 1.58; }
+    .feature-text strong {
+      display: block;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+    }
+    .feature-text .hl-num { color: var(--blue); font-weight: 700; }
+
+    /* ── TABLE ──────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      font-family: 'Roboto', sans-serif;
+      white-space: nowrap;
+    }
+    .results-table thead th {
+      background: var(--gray-bg);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-sec);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--gray-border);
+      text-align: center;
+    }
+    .results-table thead th.left { text-align: left; }
+    .results-table tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--gray-border);
+      color: var(--text-mid);
+      text-align: center;
+    }
+    .results-table tbody td.left { text-align: left; }
+    .results-table tbody tr:last-child td { border-bottom: none; }
+    .results-table tbody tr:hover td { background: #fafafa; }
+    .results-table tr.ours td {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-weight: 700;
+    }
+    .results-table tr.ours td.left { border-left: 3px solid var(--blue); }
+    .results-table tr.gt td { color: var(--text-sec); font-style: italic; }
+    .results-table tr.section-header td {
+      background: #f1f3f4;
+      color: var(--text-sec);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 7px 12px;
+      text-align: center;
+    }
+    .results-table .group-header {
+      border-left: 1px solid var(--gray-border);
+      border-right: 1px solid var(--gray-border);
+    }
+    .table-caption {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* ── NMF HIGHLIGHT BOX ──────────────────────────────── */
+    .highlight-box {
+      background: var(--blue-light);
+      border: 2px solid var(--blue-border);
+      border-radius: 14px;
+      padding: 24px 32px;
+      margin: 32px 0;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .highlight-box .big-num {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--blue);
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .highlight-box .big-num span { font-size: 1.4rem; }
+    .highlight-box .desc { font-size: 0.92rem; color: var(--text-mid); line-height: 1.7; }
+    .highlight-box .desc strong { color: var(--text); }
+
+    /* ── BIBTEX ─────────────────────────────────────────── */
+    .bibtex-pre {
+      background: #1a1a2e;
+      color: #8ab4f8;
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-size: 0.875rem;
+      line-height: 1.75;
+      overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--text-sec);
+      cursor: pointer;
+      background: none;
+      border: 1px solid var(--gray-border);
+      padding: 6px 18px;
+      border-radius: 16px;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: var(--gray-bg); }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .site-footer {
+      background: var(--gray-bg);
+      border-top: 1px solid var(--gray-border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
+      .highlight-box { flex-direction: column; text-align: center; }
+    }
+
+    /* ── VIDEO ──────────────────────────────────────────── */
+    .video-card {
+      border-radius: 14px;
+      border: 1px solid var(--gray-border);
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      background: #fff;
+    }
+    .native-video { display: block; width: 100%; height: auto; }
+    .qual-wrap { max-width: 720px; margin: 0 auto; }
+
+    .body-text {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text-mid);
+      text-align: justify;
+      margin-bottom: 24px;
+    }
+
+    /* ── STAT ROW ───────────────────────────────────────── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 0 0 36px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 14px;
+      padding: 20px 18px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .stat-card .num { font-size: 2.1rem; font-weight: 700; color: var(--blue); line-height: 1.1; }
+    .stat-card .num span { font-size: 1rem; }
+    .stat-card .lbl { font-size: 0.82rem; color: var(--text-sec); margin-top: 6px; line-height: 1.5; }
+    .stat-card .lbl strong { color: var(--text); }
+    .results-table td.second { text-decoration: underline; }
+    @media (max-width: 640px) {
+      .stat-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../../people.html">People</a>
+    <a href="../../projects.html">Projects</a>
+    <a href="../../index.html#publications">Publications</a>
+  </div>
+</nav>
+
+<!-- SECTION NAV -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#method">Method</a>
+  <a class="sec-link" href="#retrieval">Retrieval Results</a>
+  <a class="sec-link" href="#downstream">Downstream Tasks</a>
+  <a class="sec-link" href="#acknowledgements">Acknowledgements</a>
+  <a class="sec-link" href="#bibtex">BibTeX</a>
+</div>
+
+<!-- HERO -->
+<div class="hero-wrap">
+
+  <div class="conf-badge">
+    <i class="fas fa-file-alt"></i>
+    WACV 2027
+  </div>
+
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">SignSeek</span>: Learning Transferable Representations for Sign&nbsp;Dictionary Retrieval
+  </h1>
+
+  <p class="authors">
+    Sobhan Asasi<sup>1</sup>,&thinsp;
+    Ozge Mercanoglu Sincan<sup>1</sup>,&thinsp;
+    Richard Bowden<sup>1</sup>
+  </p>
+  <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom</p>
+
+  <div class="btn-row">
+    <a href="https://arxiv.org/pdf/2609.03695" class="pill-btn filled" target="_blank" rel="noopener">
+      <i class="fas fa-file-pdf"></i> Paper
+    </a>
+    <a href="https://arxiv.org/abs/2609.03695" class="pill-btn" target="_blank" rel="noopener">
+      <i class="ai ai-arxiv"></i> arXiv
+    </a>
+    <a href="https://github.com/elsobhano/SignSeek" class="pill-btn" target="_blank" rel="noopener">
+      <i class="fab fa-github"></i> Code <span class="soon-tag">Coming soon</span>
+    </a>
+  </div>
+
+</div>
+
+<!-- TEASER -->
+<div class="teaser-wrap">
+  <div class="video-card">
+    <video class="native-video" src="./assets/demo.mp4" poster="./assets/demo_poster.jpg"
+           autoplay muted loop playsinline preload="metadata"></video>
+  </div>
+  <p class="fig-caption" style="margin-top:14px;">
+    <strong>Sign dictionary retrieval with SignSeek.</strong> Given only a query video of an unknown sign,
+    SignSeek ranks the entries of a sign dictionary by embedding similarity and returns the top matches,
+    with no fine-tuning on the dictionary.
+  </p>
+</div>
+
+<hr class="divider" />
+
+<!-- ABSTRACT -->
+<section class="section alt" id="abstract">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-body">
+      Sign language dictionaries are essential resources for sign language learners, yet automatically
+      retrieving a sign from a dictionary, given only a query video, remains a challenging problem due to
+      the natural variability between signers. Existing sign representation learning methods are built for
+      closed-set recognition, producing embeddings that do not generalise to the open-set,
+      signer-independent setting that retrieval demands. <strong>SignSeek</strong> closes this gap by
+      contrastively learning sign representations with saliency-guided articulator masking. A contrastive
+      objective aligns same-gloss signs across signers, while our <strong>Articulator Saliency-Guided
+      Masking (ASGM)</strong> pinpoints the single most critical articulator per sign. This drives two
+      complementary objectives, a <strong>masked contrastive alignment (MAC)</strong> loss that sees the
+      sign through a single articulator and a <strong>masked prediction (MAP)</strong> loss that
+      reconstructs it in latent space from the surrounding spatio-temporal context. Pretrained on 266K
+      samples (~5,700 glosses) across multiple sign languages, <strong>SignSeek</strong> sets a new
+      state-of-the-art performance in cross-corpus retrieval on ASL-Citizen, WLASL, and NMFs-CSL without
+      any downstream fine-tuning. Strikingly, it achieves <strong>zero-shot generalisation</strong> to an
+      entirely unseen British Sign Language (BSL), surpassing methods explicitly trained on BSL, and
+      transfers seamlessly to isolated sign recognition and subtitle alignment, outperforming prior
+      skeleton-based methods.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- METHOD -->
+<section class="section" id="method">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Method</h2>
+
+    <div class="fig-wrap">
+      <img src="./assets/framework.webp" alt="SignSeek framework overview" />
+    </div>
+    <p class="fig-caption" style="margin-bottom:44px;">
+      <strong>Fig. 1</strong> — Overview of SignSeek. A balanced-sample batch of query and reference clips
+      is encoded per articulator by the Articulatory Graph Encoder, fused by a Conformer and pooled into a
+      single embedding. GAC contrasts intact embeddings, MAC aligns a query seen only through its dominant
+      articulator with clean same-gloss references, and MAP predicts the clean representation of a clip
+      whose dominant articulator is masked. ASGM selects that dominant articulator per clip.
+    </p>
+
+    <!-- Backbone -->
+    <h3 class="method-sub"><span class="ac">Articulatory Backbone</span>: Pose In, One Embedding Out</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-diagram-project"></i></div>
+        <div class="feature-text">
+          <strong>Per-Articulator Graph Encoders</strong>
+          2D keypoints are split into body, face, left hand and right hand. Each stream is encoded by its
+          own adaptive graph network; the two hands share an encoder, with the right hand mirrored so both
+          live in a common canonical frame.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-wave-square"></i></div>
+        <div class="feature-text">
+          <strong>Temporal Fusion Encoder</strong>
+          The concatenated articulator streams are fused by a Conformer and pooled by attention into a
+          single L2-normalised clip embedding, used directly for retrieval by cosine similarity.
+        </div>
+      </div>
+    </div>
+
+    <!-- ASGM -->
+    <h3 class="method-sub"><span class="ac">ASGM</span>: Articulator Saliency-Guided Masking</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-crosshairs"></i></div>
+        <div class="feature-text">
+          <strong>Which Articulator Carries the Sign?</strong>
+          Saliency is read from the encoder itself: the norm of each articulator's standardised, temporally
+          pooled embedding. No auxiliary supervision and no learned parameters.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-dice"></i></div>
+        <div class="feature-text">
+          <strong>Gumbel-Max Selection</strong>
+          A temperature-scaled softmax turns saliency into a distribution, and one dominant articulator is
+          sampled per clip, keeping the saliency ordering in expectation while preserving variety.
+        </div>
+      </div>
+    </div>
+
+    <!-- Objectives -->
+    <h3 class="method-sub"><span class="ac">Three Objectives</span>: Through and Without the Dominant Articulator</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-object-group"></i></div>
+        <div class="feature-text">
+          <strong>Global Articulator Contrast (GAC)</strong>
+          A supervised contrastive loss over intact clips pulls same-gloss signs from different signers
+          together, shaping the signer-invariant space that retrieval demands.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-eye"></i></div>
+        <div class="feature-text">
+          <strong>Masked Articulator Contrast (MAC)</strong>
+          Keeps <em>only</em> the dominant articulator of the query and aligns it with clean same-gloss
+          references, forcing the most salient articulator alone to be gloss-discriminative.
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
+        <div class="feature-text">
+          <strong>Masked Articulator Prediction (MAP)</strong>
+          Masks the dominant articulator and predicts the clean Conformer representation in latent space
+          from the surrounding context, capturing the structural dependencies between articulators.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- RETRIEVAL RESULTS -->
+<section class="section alt" id="retrieval">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Sign Dictionary Retrieval</h2>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="num">57.7<span>%</span></div>
+        <div class="lbl"><strong>R@1 on ASL-Citizen</strong><br />+7.7 over SignRep, zero-shot</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">65.2<span>%</span></div>
+        <div class="lbl"><strong>R@1 on NMFs-CSL</strong><br />+2.2 over SignRep, zero-shot</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">12.8<span>%</span></div>
+        <div class="lbl"><strong>R@1 on unseen BSL</strong><br />+3.6 over Video-Swin, trained on BSL</div>
+      </div>
+    </div>
+
+    <h3 class="section-sub" style="text-align:left; margin-top:8px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Cross-Corpus Retrieval — No Fine-Tuning</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="2">Features</th>
+            <th class="left" rowspan="2">Pre-training (Scale)</th>
+            <th colspan="3" class="group-header">ASL-Citizen</th>
+            <th colspan="3" class="group-header">WLASL2000</th>
+            <th colspan="3" class="group-header">NMFs-CSL</th>
+          </tr>
+          <tr>
+            <th>DCG ↑</th><th>R@1 ↑</th><th>R@5 ↑</th>
+            <th>DCG ↑</th><th>R@1 ↑</th><th>R@5 ↑</th>
+            <th>DCG ↑</th><th>R@1 ↑</th><th>R@5 ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="11">Image / video pre-trained features</td></tr>
+          <tr><td class="left">HieraMAE</td><td class="left">Kinetics-400 (700 h)</td><td>11.64</td><td>0.25</td><td>0.84</td><td>13.21</td><td>2.08</td><td>3.40</td><td>23.29</td><td>3.96</td><td>12.18</td></tr>
+          <tr><td class="left">HieraMAE</td><td class="left">YT-SL-25 (3,000 h)</td><td>12.12</td><td>0.39</td><td>1.34</td><td>14.06</td><td>2.57</td><td>4.41</td><td>28.03</td><td>7.57</td><td>18.38</td></tr>
+          <tr><td class="left">I3D</td><td class="left">BSL-1K (273 K)</td><td>13.32</td><td>0.63</td><td>2.06</td><td>17.06</td><td>3.41</td><td>6.81</td><td>25.82</td><td>6.34</td><td>16.03</td></tr>
+          <tr><td class="left">Video-Swin</td><td class="left">BOBSL (5,500 K)</td><td>27.21</td><td>7.55</td><td>19.38</td><td>36.84</td><td>13.97</td><td>33.39</td><td>65.31</td><td>43.97</td><td>71.62</td></tr>
+          <tr class="section-header"><td colspan="11">Pose / keypoint features</td></tr>
+          <tr><td class="left">All Joint Angles</td><td class="left">–</td><td>13.82</td><td>0.57</td><td>2.17</td><td>17.92</td><td>2.54</td><td>6.50</td><td>32.51</td><td>7.93</td><td>25.50</td></tr>
+          <tr><td class="left">All Keypoints</td><td class="left">–</td><td>14.29</td><td>0.98</td><td>2.74</td><td>19.37</td><td>3.16</td><td>8.23</td><td>36.64</td><td>12.26</td><td>30.99</td></tr>
+          <tr><td class="left">Hand Keypoints</td><td class="left">–</td><td>25.91</td><td>7.96</td><td>19.58</td><td>28.11</td><td>7.57</td><td>20.92</td><td>41.72</td><td>15.91</td><td>42.62</td></tr>
+          <tr><td class="left">Hand Joint Angle</td><td class="left">–</td><td>26.93</td><td>8.81</td><td>21.41</td><td>30.61</td><td>9.42</td><td>24.36</td><td>44.17</td><td>18.13</td><td>46.34</td></tr>
+          <tr class="section-header"><td colspan="11">Learned sign representations</td></tr>
+          <tr><td class="left">SignCLIP</td><td class="left">Spreadthesign (456 K)</td><td>21.80</td><td>4.00</td><td>11.42</td><td>22.10</td><td>5.25</td><td>11.78</td><td>51.20</td><td>26.75</td><td>53.03</td></tr>
+          <tr><td class="left">MASA</td><td class="left">4× ISLR sets (146 K)</td><td>49.31</td><td>27.96</td><td>49.78</td><td>36.98<sup>&dagger;</sup></td><td>14.38<sup>&dagger;</sup></td><td>32.63<sup>&dagger;</sup></td><td>74.94<sup>&dagger;</sup></td><td>54.69<sup>&dagger;</sup></td><td>83.27<sup>&dagger;</sup></td></tr>
+          <tr><td class="left">SignRep</td><td class="left">YT-SL-25 (3,000 h)</td><td class="second">71.21</td><td class="second">49.95</td><td class="second">80.09</td><td class="second">57.93</td><td class="second">29.92</td><td class="second">67.41</td><td class="second">83.05</td><td class="second">63.04</td><td class="second">95.63</td></tr>
+          <tr class="ours"><td class="left"><strong>SignSeek (Ours)</strong></td><td class="left">5× corpora (266 K)</td><td>77.21</td><td>57.66</td><td>86.67</td><td>61.24</td><td>34.75</td><td>70.25</td><td>85.17</td><td>65.20</td><td>96.79</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">No method is fine-tuned on the evaluation datasets, which are unseen during pre-training except where marked <sup>&dagger;</sup> (MASA includes WLASL and NMFs-CSL). SignSeek is pretrained on five sign corpora across four languages, none overlapping the evaluation sets. The best result in each column is in the highlighted SignSeek row; the second best is <u>underlined</u>. Scale is in hours (h) for continuous-signing corpora and thousands of clips (K) for isolated-sign sets.</p>
+
+    <h3 class="section-sub" style="text-align:left; margin-top:40px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Qualitative Retrieval — Top-1 Match</h3>
+    <div class="qual-wrap">
+      <div class="video-card">
+        <video class="native-video" src="./assets/qualitative_top1.mp4" poster="./assets/qualitative_top1_poster.jpg"
+               autoplay muted loop playsinline preload="metadata"></video>
+      </div>
+    </div>
+    <p class="table-caption" style="text-align:center;">Top-1 dictionary entry retrieved for each query sign. SignSeek returns the correct gloss across signers, while Video-Swin and SignRep often retrieve visually similar but wrong signs.</p>
+
+    <h3 class="section-sub" style="text-align:left; margin-top:40px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Zero-Shot British Sign Language Dictionary Lookup</h3>
+    <p class="body-text">
+      We query 726 BSL signs, performed by a native signer, against the public BSL SignBank dictionary.
+      SignSeek never saw BSL during pre-training, yet it beats Video-Swin, which was trained on BSL.
+    </p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Model</th><th>Input</th><th>#Params (M)</th><th>BSL seen?</th>
+            <th>R@1 ↑</th><th>R@5 ↑</th><th>mAP ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">I3D</td><td>RGB</td><td>13.4</td><td>✓</td><td>0.55</td><td>2.22</td><td>1.67</td></tr>
+          <tr><td class="left">SignCLIP</td><td>Pose</td><td>109.4</td><td>✗</td><td>1.02</td><td>3.05</td><td>2.85</td></tr>
+          <tr><td class="left">SignRep</td><td>RGB</td><td>51.5</td><td>✗</td><td>4.30</td><td>12.62</td><td>8.72</td></tr>
+          <tr><td class="left">MASA</td><td>Pose</td><td>68.2</td><td>✗</td><td>6.80</td><td>15.40</td><td>11.57</td></tr>
+          <tr><td class="left">Video-Swin</td><td>RGB</td><td>49.5</td><td>✓</td><td class="second">9.15</td><td class="second">16.78</td><td class="second">13.37</td></tr>
+          <tr class="ours"><td class="left"><strong>SignSeek (Ours)</strong></td><td>Pose</td><td>15.7</td><td>✗</td><td>12.76 (+3.61)</td><td>29.54 (+12.76)</td><td>20.84 (+7.47)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption"><strong>#Params</strong>: parameters of the frozen feature extractor. <strong>BSL seen?</strong>: whether the backbone observed British Sign Language during pre-training. No method is fine-tuned on SignBank.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- DOWNSTREAM -->
+<section class="section" id="downstream">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Downstream Tasks</h2>
+
+    <h3 class="method-sub"><span class="ac">Sign–Subtitle Alignment</span> with a Frozen Encoder</h3>
+    <div class="fig-wrap" style="max-width:600px; margin:0 auto 12px;">
+      <img src="./assets/ssa.webp" alt="Sign-subtitle alignment with SignSeek" />
+    </div>
+    <p class="fig-caption" style="margin-bottom:28px;">
+      <strong>Fig. 2</strong> — A subtitle is filtered into pseudo-glosses (1), each looked up in a
+      language-matched isolated-sign dictionary and encoded by the frozen SignSeek encoder into a prototype
+      bank (2). The same encoder embeds the episode windows, and a monotonic path through the
+      gloss-to-window similarity matrix is decoded by dynamic programming (3).
+    </p>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="2">Method</th>
+            <th colspan="2" class="group-header">How2Sign</th>
+            <th colspan="2" class="group-header">BOBSL</th>
+          </tr>
+          <tr><th>Val</th><th>Test</th><th>Val</th><th>Test</th></tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="5">Static baselines</td></tr>
+          <tr><td class="left">Original (audio-based)</td><td>30.63</td><td>33.06</td><td>29.09</td><td>14.11</td></tr>
+          <tr><td class="left">Original* (fixed offsets)</td><td>31.91</td><td>36.21</td><td>49.63</td><td>44.61</td></tr>
+          <tr class="section-header"><td colspan="5">Segment and align</td></tr>
+          <tr><td class="left">Segmentation</td><td>33.38</td><td>36.17</td><td>66.24</td><td>49.58</td></tr>
+          <tr><td class="left">Segmentation-BSLCP</td><td>–</td><td>–</td><td>63.61</td><td>47.75</td></tr>
+          <tr class="section-header"><td colspan="5">Segment, embed, and align</td></tr>
+          <tr><td class="left">SignCLIP</td><td>35.51</td><td>37.51</td><td>66.70</td><td>50.68</td></tr>
+          <tr class="section-header"><td colspan="5">Dictionary-guided alignment</td></tr>
+          <tr class="ours"><td class="left"><strong>SignSeek</strong></td><td>36.51</td><td>40.20</td><td>66.94</td><td>50.72</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">Sentence-level temporal alignment accuracy (F1@0.5 ↑) on How2Sign and BOBSL. SignSeek is trained from pose with gloss labels only, with no alignment-specific training.</p>
+
+    <h3 class="method-sub" style="margin-top:56px;"><span class="ac">Isolated Sign Recognition</span> with Fine-Tuning</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="2">Method</th>
+            <th colspan="2" class="group-header">WLASL</th>
+            <th colspan="2" class="group-header">NMFs-CSL</th>
+            <th colspan="2" class="group-header">ASL-Citizen</th>
+          </tr>
+          <tr>
+            <th>Top-1 ↑</th><th>Top-5 ↑</th>
+            <th>Top-1 ↑</th><th>Top-5 ↑</th>
+            <th>Top-1 ↑</th><th>Top-5 ↑</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="section-header"><td colspan="7">Skeleton-based</td></tr>
+          <tr><td class="left">ST-GCN</td><td>34.40</td><td>66.57</td><td>59.9</td><td>86.8</td><td>59.52</td><td>82.68</td></tr>
+          <tr><td class="left">SignBERT</td><td>39.40</td><td>73.35</td><td>67.0</td><td>95.3</td><td>–</td><td>–</td></tr>
+          <tr><td class="left">BEST</td><td>46.25</td><td>79.33</td><td>68.5</td><td>94.4</td><td>–</td><td>–</td></tr>
+          <tr><td class="left">SignBERT+</td><td>48.85</td><td>82.48</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td class="left">MASA</td><td>49.06</td><td>82.90</td><td>71.7</td><td>97.0</td><td>–</td><td>–</td></tr>
+          <tr><td class="left">SignCLIP</td><td>–</td><td>–</td><td>–</td><td>–</td><td>60.0</td><td>84.0</td></tr>
+          <tr class="ours"><td class="left"><strong>SignSeek</strong></td><td>56.65</td><td>87.67</td><td>73.8</td><td>98.8</td><td>74.7</td><td>94.0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">ISLR accuracy after adding a classification layer and fine-tuning the pretrained encoder (per-instance accuracy on WLASL). SignSeek is the strongest skeleton-based method on all three datasets, +7.6 Top-1 over MASA on WLASL and +14.7 over SignCLIP on ASL-Citizen.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ACKNOWLEDGEMENTS -->
+<section class="section alt" id="acknowledgements">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Acknowledgements</h2>
+    <p style="font-size:0.92rem; color:var(--text-mid); line-height:1.8; text-align:justify;">
+      This work was supported by EPSRC grant APP24554 (SignGPT — EP/Z535370/1),
+      EPSRC grant APP78083 (UMCS — UKRI3927), and through funding from
+      <strong>Google.org</strong> via the AI for Global Goals scheme.
+      The authors acknowledge the use of <strong>Isambard-AI</strong> National AI Research Resource (AIRR),
+      funded by UK DSIT via UKRI and STFC [ST/AIRR/I-A-I/1023].
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- BIBTEX -->
+<section class="section" id="bibtex">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-pre"><code id="bibtex-code">@article{asasi2026signseeklearningtransferablerepresentations,
+      title={SignSeek: Learning Transferable Representations for Sign Dictionary Retrieval},
+      author={Sobhan Asasi and Ozge Mercanoglu Sincan and Richard Bowden},
+      year={2026},
+      archivePrefix={arXiv},
+ }</code></pre>
+    <button class="copy-btn" id="copy-bibtex">
+      <i class="fas fa-copy"></i> Copy BibTeX
+    </button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;·&nbsp;
+    <a href="../../index.html">CogVis Lab</a>
+  </p>
+  <script src="https://translations.signapsesolutions.com/signapse-loader.umd.js"
+          app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6"
+          version="v2" id="signapse" position="bottom-right" disable-survey></script>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Expanded figure" />
+</div>
+
+<script>
+  /* Figure lightbox */
+  (function () {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    var figs = document.querySelectorAll('.teaser-img, .fig-wrap img');
+    function open(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || 'Expanded figure';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    figs.forEach(function (img) {
+      img.addEventListener('click', function () { open(img.src, img.alt); });
+    });
+    lb.addEventListener('click', close);
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('open')) close();
+    });
+  })();
+
+  /* BibTeX copy */
+  document.getElementById('copy-bibtex').addEventListener('click', function () {
+    navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
+      var btn = document.getElementById('copy-bibtex');
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy BibTeX'; }, 2000);
+    });
+  });
+
+  /* Section nav active highlight */
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var targets = ['abstract','method','retrieval','downstream','acknowledgements','bibtex'].map(function (id) {
+      return document.getElementById(id);
+    }).filter(Boolean);
+
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    targets.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>
