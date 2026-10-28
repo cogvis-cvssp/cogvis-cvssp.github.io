@@ -151,6 +151,7 @@ p { max-width: 72ch; }
 .venue-lrec    { background: #f8fafc; color: #475569; border-color: #cbd5e1; }
 .venue-eccvws  { background: #f0fdfa; color: #0f766e; border-color: #99f6e4; }
 .venue-bmvc    { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+.venue-wacv    { background: #eef2ff; color: #4338ca; border-color: #c7d2fe; }
 
 /* ---- Buttons ---- */
 .btn {
