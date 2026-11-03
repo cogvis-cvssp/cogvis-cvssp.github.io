@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description"
+        content="CSLR-XL: Scaling Continuous Sign Language Recognition with Synthetic Pretraining." />
+  <meta name="keywords" content="continuous sign language recognition, CSLR, synthetic pretraining, pseudo-glossing, SignSynth-X, CTC, skeleton-based, sign spotting, forced alignment" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="CSLR-XL: Scaling Continuous Sign Language Recognition with Synthetic Pretraining" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cogvis-cvssp.github.io/papers/cslrxl/" />
+  <meta property="og:description"
+        content="CSLR-XL combines synthetic pretraining on the SignSynth-X corpus with visually grounded pseudo-glossing to tackle data scarcity in continuous sign language recognition." />
+
+  <title>CSLR-XL — Scaling Continuous Sign Language Recognition with Synthetic Pretraining</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:         #1a73e8;
+      --blue-dark:    #185abc;
+      --blue-light:   #e8f0fe;
+      --blue-border:  #c5d9fc;
+      --green:        #137333;
+      --green-light:  #e6f4ea;
+      --green-border: #b7dfbf;
+      --gray-bg:      #f8f9fa;
+      --gray-border:  #e8eaed;
+      --text:         #202124;
+      --text-mid:     #3c4043;
+      --text-sec:     #5f6368;
+      --nav-h:        56px;
+      --snav-h:       44px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── TOP NAV ────────────────────────────────────────── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-border);
+      padding: 0 32px;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .site-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .site-nav a:hover { background: var(--gray-bg); }
+    .nav-home { color: var(--blue) !important; font-weight: 700 !important; display: flex; align-items: center; gap: 6px; }
+    .nav-sep  { color: var(--gray-border); font-size: 1.1rem; user-select: none; }
+    .nav-right { margin-left: auto; display: flex; gap: 2px; }
+
+    /* ── SECTION NAV ────────────────────────────────────── */
+    .sec-nav {
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 90;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: var(--snav-h);
+    }
+    .sec-nav::-webkit-scrollbar { display: none; }
+    .sec-link {
+      text-decoration: none;
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sec-link:hover  { color: var(--blue); }
+    .sec-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+    .scroll-target { scroll-margin-top: calc(var(--nav-h) + var(--snav-h) + 16px); }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 64px 24px 44px;
+      text-align: center;
+    }
+
+    .conf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 9px 26px;
+      border-radius: 28px;
+      border: 2px solid var(--blue-border);
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(26,115,232,0.14);
+    }
+
+    .paper-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.22;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+    .paper-title .hl {
+      background: linear-gradient(45deg, #0d47a1, #00bcd4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .authors {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      margin-bottom: 8px;
+      line-height: 1.8;
+    }
+    .affil {
+      font-size: 0.9rem;
+      color: var(--text-sec);
+      margin-bottom: 32px;
+    }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid var(--gray-border);
+      color: var(--text-mid);
+      background: #fff;
+      cursor: pointer;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .pill-btn:hover {
+      background: var(--gray-bg);
+      border-color: #bdc1c6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .pill-btn.filled { background: var(--blue); color: #fff; border-color: transparent; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+    .pill-btn.filled:hover { background: var(--blue-dark); box-shadow: 0 4px 12px rgba(26,115,232,0.35); }
+    .pill-btn i, .pill-btn .ai { font-size: 1rem; }
+    .soon-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #fff;
+      color: var(--text-sec);
+      border: 1px solid var(--gray-border);
+      border-radius: 10px;
+      padding: 2px 7px;
+      line-height: 1.5;
+    }
+
+    /* ── SHARED SECTION ─────────────────────────────────── */
+    .section { padding: 68px 24px; }
+    .section.alt { background: var(--gray-bg); }
+    .section-inner { max-width: 860px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .section-sub {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      margin: 44px 0 16px;
+    }
+    .section-sub:first-of-type { margin-top: 0; }
+
+    hr.divider { border: none; border-top: 1px solid var(--gray-border); }
+
+    /* ── TEASER ─────────────────────────────────────────── */
+    .teaser-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .teaser-img {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .teaser-img:hover {
+      transform: scale(1.012);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+
+    /* ── VIDEO CARD ─────────────────────────────────────── */
+    .video-card {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.07);
+      border: 1px solid var(--gray-border);
+      background: #000;
+    }
+    .native-video {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #000;
+    }
+    .video-caption {
+      background: var(--gray-bg);
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      text-align: center;
+      line-height: 1.5;
+      border-top: 1px solid var(--gray-border);
+    }
+    .video-caption strong { color: var(--text-mid); }
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 8px;
+    }
+    @media (max-width: 640px) {
+      .video-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── LIGHTBOX ───────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      cursor: zoom-out;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+    }
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img {
+      max-width: 95vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 12px 50px rgba(0,0,0,0.55);
+      transform: scale(0.96);
+      transition: transform 0.22s ease;
+    }
+    .lightbox.open img { transform: scale(1); }
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      color: #fff;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── ABSTRACT ───────────────────────────────────────── */
+    .abstract-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text-mid);
+      text-align: justify;
+    }
+
+    /* ── FIGURES ────────────────────────────────────────── */
+    .fig-wrap { margin: 0 0 12px; }
+    .fig-wrap img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--gray-border);
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .fig-wrap img:hover {
+      transform: scale(1.015);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+    }
+    .fig-caption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.65;
+      text-align: center;
+    }
+    .fig-caption strong { color: var(--text-mid); }
+
+    .method-sub {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 48px 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--gray-border);
+    }
+    .method-sub:first-of-type { margin-top: 0; }
+    .method-sub .ac { font-weight: 800; color: var(--blue); }
+
+    .feature-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0 0 28px;
+    }
+    .feature-card {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--blue);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.22s ease;
+    }
+    .feature-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 10px 26px rgba(26,115,232,0.12);
+      border-color: var(--blue-border);
+    }
+    .feature-card:hover::before { transform: scaleY(1); }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .feature-card:hover .feature-icon {
+      background: var(--blue);
+      color: #fff;
+      transform: scale(1.06);
+    }
+    .feature-text { font-size: 0.88rem; color: var(--text-sec); line-height: 1.58; }
+    .feature-text strong {
+      display: block;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.97rem;
+      margin-bottom: 4px;
+    }
+    .feature-text .hl-num { color: var(--blue); font-weight: 700; }
+
+    /* ── TABLE ──────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      font-family: 'Roboto', sans-serif;
+      white-space: nowrap;
+    }
+    .results-table thead th {
+      background: var(--gray-bg);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-sec);
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--gray-border);
+      text-align: center;
+    }
+    .results-table thead th.left { text-align: left; }
+    .results-table tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--gray-border);
+      color: var(--text-mid);
+      text-align: center;
+    }
+    .results-table tbody td.left { text-align: left; }
+    .results-table tbody tr:last-child td { border-bottom: none; }
+    .results-table tbody tr:hover td { background: #fafafa; }
+    .results-table tr.ours td {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-weight: 700;
+    }
+    .results-table tr.ours td.left { border-left: 3px solid var(--blue); }
+    .results-table tr.gt td { color: var(--text-sec); font-style: italic; }
+    .results-table tr.section-header td {
+      background: #f1f3f4;
+      color: var(--text-sec);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 7px 12px;
+      text-align: center;
+    }
+    .results-table .group-header {
+      border-left: 1px solid var(--gray-border);
+      border-right: 1px solid var(--gray-border);
+    }
+    .table-caption {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* ── HIGHLIGHT BOX ──────────────────────────────────── */
+    .highlight-box {
+      background: var(--blue-light);
+      border: 2px solid var(--blue-border);
+      border-radius: 14px;
+      padding: 24px 32px;
+      margin: 32px 0;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .highlight-box .big-num {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--blue);
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .highlight-box .big-num span { font-size: 1.4rem; }
+    .highlight-box .desc { font-size: 0.92rem; color: var(--text-mid); line-height: 1.7; }
+    .highlight-box .desc strong { color: var(--text); }
+
+    /* ── BIBTEX ─────────────────────────────────────────── */
+    .bibtex-pre {
+      background: #1a1a2e;
+      color: #8ab4f8;
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-size: 0.875rem;
+      line-height: 1.75;
+      overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--text-sec);
+      cursor: pointer;
+      background: none;
+      border: 1px solid var(--gray-border);
+      padding: 6px 18px;
+      border-radius: 16px;
+      font-family: 'Google Sans', sans-serif;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: var(--gray-bg); }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    .site-footer {
+      background: var(--gray-bg);
+      border-top: 1px solid var(--gray-border);
+      padding: 36px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-sec);
+      line-height: 1.8;
+    }
+    .site-footer a { color: var(--blue); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .paper-title { font-size: 1.75rem; }
+      .highlight-box { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="site-nav">
+  <a class="nav-home" href="../../index.html">
+    <i class="fas fa-home" style="font-size:0.85rem;"></i>
+    CogVis Lab
+  </a>
+  <span class="nav-sep">|</span>
+  <div class="nav-right">
+    <a href="../../people.html">People</a>
+    <a href="../../projects.html">Projects</a>
+    <a href="../../index.html#publications">Publications</a>
+  </div>
+</nav>
+
+<!-- SECTION NAV -->
+<div class="sec-nav" id="sec-nav">
+  <a class="sec-link" href="#abstract">Abstract</a>
+  <a class="sec-link" href="#examples">Examples</a>
+  <a class="sec-link" href="#quantitative">Quantitative Results</a>
+  <a class="sec-link" href="#acknowledgements">Acknowledgements</a>
+  <a class="sec-link" href="#bibtex">BibTeX</a>
+</div>
+
+<!-- HERO -->
+<div class="hero-wrap">
+
+  <div class="conf-badge">
+    <i class="fas fa-file-alt"></i>
+    WACV 2027
+  </div>
+
+  <h1 class="paper-title" style="text-wrap: balance;">
+    <span class="hl">CSLR-XL</span>: Scaling Continuous Sign Language Recognition with Synthetic&nbsp;Pretraining
+  </h1>
+
+  <p class="authors">
+    Karahan Sahin<sup>1</sup>,&thinsp;
+    Ozge Mercanoglu Sincan<sup>1</sup>,&thinsp;
+    Edward Fish<sup>2</sup>,&thinsp;
+    Richard Bowden<sup>1</sup>
+  </p>
+  <p class="affil"><sup>1</sup>CVSSP, University of Surrey, United Kingdom&nbsp;&nbsp;·&nbsp;&nbsp;<sup>2</sup>Tavus</p>
+
+  <div class="btn-row">
+    <a href="#" class="pill-btn filled">
+      <i class="fas fa-file-pdf"></i> Paper <span class="soon-tag">Coming soon</span>
+    </a>
+    <a href="https://huggingface.co/karahansahin/CSLR-XL" class="pill-btn" target="_blank" rel="noopener">
+      <span style="font-size:1.05rem;">🤗</span> Dataset
+    </a>
+    <a href="#" class="pill-btn">
+      <i class="fab fa-github"></i> Code <span class="soon-tag">Coming soon</span>
+    </a>
+  </div>
+
+</div>
+
+<!-- TEASER -->
+<div class="teaser-wrap">
+  <img src="./assets/cslrxl.png" alt="CSLR-XL synthetic data generation overview" class="teaser-img" />
+  <p class="fig-caption" style="margin-top:14px;">
+    <strong>Fig. 1</strong> — Synthetic data generation in the CSLR-XL framework. From an input text translation, the framework returns a gloss sequence and its signing, sampling each gloss from continuous signing rather than isolated dictionaries to approximate natural co-articulation.
+  </p>
+</div>
+
+<hr class="divider" />
+
+<!-- ABSTRACT -->
+<section class="section alt" id="abstract">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Abstract</h2>
+    <p class="abstract-body">
+      Continuous sign language recognition (CSLR) is a crucial task in sign language understanding,
+      providing the temporally ordered, sign-level supervision that downstream tasks such as translation
+      can build upon. Unlike sign language translation, which maps signing to spoken-language text, CSLR
+      focuses on aligning the visual stream to its underlying sequence of signs. Yet its applications
+      remain constrained by the scarcity of annotated data. In this work, we present <strong>CSLR-XL</strong>,
+      a framework that addresses these gaps through synthetic pretraining and visually grounded
+      pseudo-glossing. We introduce <strong>SignSynth-X</strong>, a large-scale synthetic corpus of densely
+      annotated continuous pose sequences produced by stitching sign spottings sourced from continuous
+      video. Unlike prior isolated-dictionary stitching, our method approximates natural co-articulation
+      between signs, enabling the learning of sign priors from synthetic data. To demonstrate the value of
+      the resulting synthetic sequences, we train a multi-stream skeleton-based recogniser. Relative to the
+      MSKA recogniser, our EHM representation and synthetic pretraining together reduce test WER by
+      <strong>3.6 points on CSL-Daily</strong> and <strong>5.2 on MeineDGS</strong>, of which synthetic
+      pretraining alone contributes 2.6 and 2.5, respectively. The model remains competitive with
+      skeleton-based methods on Phoenix2014T. We further introduce a force-aligned CTC pseudo-glosser,
+      trained only on synthetic data, that scores complete candidate gloss sequences against the visual
+      stream. On Phoenix2014T, it reduces pseudo-gloss WER from 60.9 to <strong>41.8</strong> compared with
+      the strongest prior baseline, an absolute improvement of 19.1 points and a relative reduction of 31%.
+      SignSynth-X and our code will be made publicly available.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- SIGNSYNTH-X EXAMPLES -->
+<section class="section" id="examples">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">SignSynth-X Examples</h2>
+    <p class="abstract-body" style="text-align:center; margin-bottom:28px;">
+      Stitched synthetic sequences from SignSynth-X, visualising the LBS-skinned EHM mesh overlaid with
+      frame-level <strong>BIO</strong> spans, <strong>sign segmentation</strong>, and <strong>gloss</strong>
+      annotation tiers &mdash; one example per benchmark subset.
+    </p>
+    <div class="video-grid">
+      <div class="video-card">
+        <video class="native-video"
+          src="./assets/phoenix-synth.mp4"
+          poster="./assets/phoenix-synth_poster.jpg"
+          autoplay muted loop playsinline preload="metadata"></video>
+        <div class="video-caption"><strong>Phoenix-Synth</strong> — German Sign Language (DGS)</div>
+      </div>
+      <div class="video-card">
+        <video class="native-video"
+          src="./assets/csl-synth.mp4"
+          poster="./assets/csl-synth_poster.jpg"
+          autoplay muted loop playsinline preload="metadata"></video>
+        <div class="video-caption"><strong>CSL-Synth</strong> — Chinese Sign Language (CSL)</div>
+      </div>
+      <div class="video-card">
+        <video class="native-video"
+          src="./assets/meinedgs-synth.mp4"
+          poster="./assets/meinedgs-synth_poster.jpg"
+          autoplay muted loop playsinline preload="metadata"></video>
+        <div class="video-caption"><strong>MeineDGS-Synth</strong> — German Sign Language (DGS)</div>
+      </div>
+      <div class="video-card">
+        <video class="native-video"
+          src="./assets/bslcp-synth.mp4"
+          poster="./assets/bslcp-synth_poster.jpg"
+          autoplay muted loop playsinline preload="metadata"></video>
+        <div class="video-caption"><strong>BSLCP-Synth</strong> — British Sign Language (BSL)</div>
+      </div>
+    </div>
+    <p class="fig-caption" style="margin-top:18px;">
+      BIO tier: <strong>B</strong>egin (green), <strong>I</strong>n (yellow), <strong>O</strong>ut (grey)
+      frames &middot; Seg tier: sign spans S<sub>0</sub>…S<sub>N</sub> &middot; SS tier: gloss boundaries.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- QUANTITATIVE -->
+<section class="section alt" id="quantitative">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Quantitative Results</h2>
+
+    <!-- Pseudo-gloss highlight -->
+    <div class="highlight-box">
+      <div class="big-num">41.8<span>WER</span></div>
+      <div class="desc">
+        <strong>Pseudo-gloss WER on Phoenix2014T</strong> &mdash; our force-aligned CTC pseudo-glosser
+        reduces WER from <strong>60.9</strong> (strongest prior baseline) to <strong>41.8</strong>, a
+        <strong>19.1-point</strong> absolute improvement and a <strong>31%</strong> relative reduction,
+        demonstrating the value of grounding pseudo-glosses in visual evidence.
+      </div>
+    </div>
+
+    <!-- CSLR Comparison -->
+    <h3 class="section-sub" style="text-align:left; margin-top:8px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Continuous Sign Language Recognition &mdash; Skeleton-Based Methods (WER %)</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left" rowspan="2">Method</th>
+            <th colspan="2" class="group-header">Phoenix2014</th>
+            <th colspan="2" class="group-header">Phoenix2014T</th>
+            <th colspan="2" class="group-header">CSL-Daily</th>
+            <th colspan="2" class="group-header">MeineDGS</th>
+            <th colspan="2" class="group-header">BSLCP</th>
+          </tr>
+          <tr>
+            <th>Dev</th><th>Test</th>
+            <th>Dev</th><th>Test</th>
+            <th>Dev</th><th>Test</th>
+            <th>Dev</th><th>Test</th>
+            <th>Dev</th><th>Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">TwoStream-SLR</td><td>28.6</td><td>28.0</td><td>27.1</td><td>27.2</td><td>34.6</td><td>34.1</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+          <tr><td class="left">SignBERT+</td><td>34.0</td><td>34.1</td><td>32.9</td><td>33.6</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+          <tr><td class="left">CoSign-1s</td><td>20.9</td><td><strong>21.2</strong></td><td>20.4</td><td>20.6</td><td>29.5</td><td>29.1</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td></tr>
+          <tr><td class="left">MSKA</td><td>21.7</td><td>22.1</td><td>20.1</td><td>20.5</td><td>28.2</td><td>27.8</td><td>54.1<sup>&dagger;</sup></td><td>54.7<sup>&dagger;</sup></td><td>71.7<sup>&dagger;</sup></td><td>71.3<sup>&dagger;</sup></td></tr>
+          <tr class="ours"><td class="left"><strong>CSLR-XL (Ours)</strong></td><td><strong>20.4</strong></td><td>21.3</td><td><strong>19.1</strong></td><td><strong>20.5</strong></td><td><strong>25.5</strong></td><td><strong>24.2</strong></td><td><strong>49.1</strong></td><td><strong>49.5</strong></td><td><strong>65.6</strong></td><td><strong>64.9</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">CSLR results across five benchmarks; lower WER is better. <sup>&dagger;</sup> We train MSKA on MeineDGS and BSLCP, as the original work reports no results on these benchmarks. CSLR-XL attains the lowest CSL-Daily test WER (24.2) among reported methods and the strongest skeleton-only results on MeineDGS and BSLCP, while remaining competitive on Phoenix2014/2014T.</p>
+
+    <!-- Synthetic scaling -->
+    <h3 class="section-sub" style="text-align:left; margin-top:40px; font-size:1rem; color:var(--text-sec); font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Effect of Synthetic Pretraining Scale &mdash; CSL-Daily (WER %)</h3>
+    <div class="table-wrap">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th class="left">Synthetic Scale</th>
+            <th>Dev WER ↓</th>
+            <th>Test WER ↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="left">None</td><td>27.5</td><td>26.8</td></tr>
+          <tr><td class="left">2.5&times;</td><td>26.8</td><td>25.5</td></tr>
+          <tr><td class="left">5&times;</td><td>25.7</td><td>24.9</td></tr>
+          <tr><td class="left">7.5&times;</td><td>25.5</td><td>24.4</td></tr>
+          <tr class="ours"><td class="left"><strong>10&times;</strong></td><td><strong>25.5</strong></td><td><strong>24.2</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-caption">Effect of synthetic pretraining data scale on CSL-Daily, relative to the real training set. Improvements become substantial at around 2.5&times; the real training set and continue to improve with further scale.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ACKNOWLEDGEMENTS -->
+<section class="section" id="acknowledgements">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">Acknowledgements</h2>
+    <p style="font-size:0.92rem; color:var(--text-mid); line-height:1.8; text-align:justify;">
+      This work was supported by EPSRC grant APP24554 (SignGPT &mdash; EP/Z535370/1),
+      EPSRC grant APP78083 (UMCS &mdash; UKRI3927), and through funding from
+      <strong>Google.org</strong> via the AI for Global Goals scheme.
+      The authors acknowledge the use of <strong>Isambard-AI</strong> National AI Research Resource (AIRR),
+      funded by UK DSIT via UKRI and STFC [ST/AIRR/I-A-I/1023].
+      This work reflects only the authors' views; the funders are not responsible for any use
+      that may be made of the information it contains.
+    </p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- BIBTEX -->
+<section class="section alt" id="bibtex">
+  <div class="section-inner scroll-target">
+    <h2 class="section-title">BibTeX</h2>
+    <pre class="bibtex-pre"><code id="bibtex-code">@inproceedings{sahin2027cslrxl,
+  title     = {CSLR-XL: Scaling Continuous Sign Language Recognition
+               with Synthetic Pretraining},
+  author    = {Sahin, Karahan and Sincan, Ozge Mercanoglu and
+               Fish, Edward and Bowden, Richard},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on
+               Applications of Computer Vision (WACV)},
+  year      = {2027},
+}</code></pre>
+    <button class="copy-btn" id="copy-bibtex">
+      <i class="fas fa-copy"></i> Copy BibTeX
+    </button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>
+    This website is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+  </p>
+  <p style="margin-top:6px;">
+    Page template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+    &nbsp;·&nbsp;
+    <a href="../../index.html">CogVis Lab</a>
+  </p>
+  <script src="https://translations.signapsesolutions.com/signapse-loader.umd.js"
+          app-id="1d5ee253-de29-4036-b0f0-c5a0ceede3e6"
+          version="v2" id="signapse" position="bottom-right" disable-survey></script>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Expanded figure" />
+</div>
+
+<script>
+  /* Figure lightbox */
+  (function () {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightbox-img');
+    var figs = document.querySelectorAll('.teaser-img, .fig-wrap img');
+    function open(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || 'Expanded figure';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    figs.forEach(function (img) {
+      img.addEventListener('click', function () { open(img.src, img.alt); });
+    });
+    lb.addEventListener('click', close);
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('open')) close();
+    });
+  })();
+
+  /* BibTeX copy */
+  document.getElementById('copy-bibtex').addEventListener('click', function () {
+    navigator.clipboard.writeText(document.getElementById('bibtex-code').innerText).then(function () {
+      var btn = document.getElementById('copy-bibtex');
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function () { btn.innerHTML = '<i class="fas fa-copy"></i> Copy BibTeX'; }, 2000);
+    });
+  });
+
+  /* Section nav active highlight */
+  (function () {
+    var links = document.querySelectorAll('.sec-link');
+    var targets = ['abstract','examples','quantitative','acknowledgements','bibtex'].map(function (id) {
+      return document.getElementById(id);
+    }).filter(Boolean);
+
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      active = id;
+      links.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    targets.forEach(function (t) { io.observe(t); });
+  })();
+</script>
+
+</body>
+</html>
